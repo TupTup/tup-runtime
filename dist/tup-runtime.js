@@ -403,7 +403,7 @@ function i({ type: e, text: i, distance: a }) {
       <div class="instruction-step-icon-wrap" aria-hidden="true">
         <img
           class="instruction-step-icon"
-          src="/images/icons/${o}"
+          src="images/icons/${o}"
           alt=""
         />
       </div>

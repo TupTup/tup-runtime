@@ -92,11 +92,11 @@ tup-navigation-button {
 }
 
 .icon-button--bookmark::before {
-  background-image: url("/images/icons/bookmark.svg");
+  background-image: url("images/icons/bookmark.svg");
 }
 
 .icon-button--share::before {
-  background-image: url("/images/icons/share.svg");
+  background-image: url("images/icons/share.svg");
 }
 
 .place-preview {
@@ -181,7 +181,7 @@ tup-navigation-button {
   width: 18px;
   height: 18px;
 
-  background: url("/images/icons/pushpin.svg") center / contain no-repeat;
+  background: url("images/icons/pushpin.svg") center / contain no-repeat;
 }
 
 .place-address-text {
@@ -304,15 +304,15 @@ tup-navigation-button {
 }
 
 .place-badge-item--building::before {
-  background-image: url("/images/icons/building.svg");
+  background-image: url("images/icons/building.svg");
 }
 
 .place-badge-item--stairs::before {
-  background-image: url("/images/icons/stairs.svg");
+  background-image: url("images/icons/stairs.svg");
 }
 
 .place-badge-item--door::before {
-  background-image: url("/images/icons/door.svg");
+  background-image: url("images/icons/door.svg");
 }
 
 .place-badge-item--brand {
@@ -336,7 +336,7 @@ tup-navigation-button {
   width: 28px;
   height: 22px;
 
-  background-image: url("/images/tuptup.svg");
+  background-image: url("images/tuptup.svg");
 }
 
 .place-badge-item--chevron {
@@ -676,7 +676,7 @@ a.place-summary-item--parking:hover::before {
   width: 24px;
   height: 24px;
 
-  background: url("/images/icons/chevron-left.svg") no-repeat center / contain;
+  background: url("images/icons/chevron-left.svg") no-repeat center / contain;
 
   filter: brightness(0) invert(1);
 }
@@ -1038,7 +1038,7 @@ a.place-summary-item--parking:hover::before {
   width: 28px;
   height: 22px;
 
-  background: url("/images/tuptup.svg") center / contain no-repeat;
+  background: url("images/tuptup.svg") center / contain no-repeat;
 
   filter: brightness(0) invert(1);
 }

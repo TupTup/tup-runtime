@@ -55,7 +55,7 @@ export function renderRouteStepMarkup({
       <div class="instruction-step-icon-wrap" aria-hidden="true">
         <img
           class="instruction-step-icon"
-          src="/images/icons/${iconFile}"
+          src="images/icons/${iconFile}"
           alt=""
         />
       </div>
