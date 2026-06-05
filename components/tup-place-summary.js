@@ -1,5 +1,6 @@
+import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
-import "./tup-badge.js?v=20260603-5";
+import "./tup-badge.js";
 
 class TupPlaceSummary extends HTMLElement {
 
@@ -62,7 +63,7 @@ class TupPlaceSummary extends HTMLElement {
   }
 }
 
-customElements.define(
+defineCustomElement(
   "tup-place-summary",
   TupPlaceSummary
 );

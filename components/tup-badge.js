@@ -1,3 +1,4 @@
+import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 
 const SHOW_PARKING_BADGE = false;
@@ -184,7 +185,7 @@ class TupBadge extends HTMLElement {
   }
 }
 
-customElements.define(
+defineCustomElement(
   "tup-badge",
   TupBadge
 );

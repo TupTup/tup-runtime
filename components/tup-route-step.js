@@ -1,3 +1,4 @@
+import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 
 export const ROUTE_ICONS = {
@@ -70,7 +71,7 @@ export function renderRouteStepMarkup({
 
 class TupRouteStep extends HTMLElement {}
 
-customElements.define(
+defineCustomElement(
   "tup-route-step",
   TupRouteStep
 );

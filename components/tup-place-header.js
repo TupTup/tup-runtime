@@ -1,3 +1,4 @@
+import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 
 class TupPlaceHeader extends HTMLElement {
@@ -190,7 +191,7 @@ class TupPlaceHeader extends HTMLElement {
   }
 }
 
-customElements.define(
+defineCustomElement(
   "tup-place-header",
   TupPlaceHeader
 );

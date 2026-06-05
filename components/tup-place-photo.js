@@ -1,3 +1,4 @@
+import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 
 class TupPlacePhoto extends HTMLElement {
@@ -303,7 +304,7 @@ class TupPlacePhoto extends HTMLElement {
   }
 }
 
-customElements.define(
+defineCustomElement(
   "tup-place-photo",
   TupPlacePhoto
 );

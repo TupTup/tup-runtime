@@ -1,3 +1,4 @@
+import { defineCustomElement } from "./define-custom-element.js";
 import { renderRouteStepMarkup } from "./tup-route-step.js";
 
 export class TupRoute extends HTMLElement {
@@ -35,7 +36,7 @@ export class TupRoute extends HTMLElement {
   }
 }
 
-customElements.define(
+defineCustomElement(
   "tup-route",
   TupRoute
 );

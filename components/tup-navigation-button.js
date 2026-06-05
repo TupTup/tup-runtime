@@ -1,3 +1,5 @@
+import { defineCustomElement } from "./define-custom-element.js";
+
 class TupNavigationButton extends HTMLElement {
 
   connectedCallback() {
@@ -27,7 +29,7 @@ class TupNavigationButton extends HTMLElement {
   }
 }
 
-customElements.define(
+defineCustomElement(
   "tup-navigation-button",
   TupNavigationButton
 );
