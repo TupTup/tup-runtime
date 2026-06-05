@@ -1,3 +1,4 @@
+import './components/components.css';
 import './css/app.css';
 
 import './components/tup-place-header.js';

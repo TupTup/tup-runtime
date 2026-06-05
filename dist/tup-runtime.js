@@ -444,7 +444,7 @@ var a = class extends HTMLElement {
     `;
 	}
 };
-e("tup-route", a), e("tup-navigation-button", class extends HTMLElement {
+e("tup-route", a), e("tup-route-steps", class extends a {}), e("tup-navigation-button", class extends HTMLElement {
 	connectedCallback() {
 		if (this.querySelector("button")) return;
 		let e = this.textContent.trim() || "Prowadź";
@@ -457,5 +457,5 @@ e("tup-route", a), e("tup-navigation-button", class extends HTMLElement {
 			}));
 		}), this.append(t);
 	}
-}), e("tup-route-steps", class extends a {});
+});
 //#endregion
