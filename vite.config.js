@@ -6,7 +6,7 @@ export default defineConfig({
       entry: 'index.js',
       name: 'TupRuntime',
       fileName: 'tup-runtime',
-      cssFileName: 'style',
+      cssFileName: 'tup-runtime',
       formats: ['es']
     }
   }
