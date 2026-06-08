@@ -3,10 +3,9 @@ import { escapeHtml } from "./tup-html.js";
 import { renderHeroSlide } from "./tup-hero-slide.js";
 import {
   createOsmMap,
-  fetchBuildingFootprint,
+  fetchGeojson,
   readPlaceMapConfig,
 } from "./tup-maplibre.js";
-import { fetchOsmGeometry } from "./tup-osm-geometry.js";
 
 class TupPlaceMap extends HTMLElement {
 
@@ -16,8 +15,6 @@ class TupPlaceMap extends HTMLElement {
     "src",
     "default-zoom",
     "zoom",
-    "osm-type",
-    "osm-id",
     "lat",
     "lng",
   ];
@@ -83,17 +80,17 @@ class TupPlaceMap extends HTMLElement {
     this.#visibilityObserver.observe(container);
   }
 
-  #mountPreviewMap(container, geojson, center, buildingFootprint, defaultZoom) {
+  #mountPreviewMap(container, { center, geojson, defaultZoom }) {
     if (!container.isConnected) {
       return;
     }
 
     this.#destroyPreviewMap();
-    this.#previewMap = createOsmMap(container, geojson, {
+    this.#previewMap = createOsmMap(container, {
       interactive: false,
       center,
       zoom: defaultZoom,
-      buildingFootprint,
+      geojson,
     });
     this.#observeMapVisibility(container);
   }
@@ -109,36 +106,27 @@ class TupPlaceMap extends HTMLElement {
   }
 
   #loadPreviewMap() {
-    const mapConfig = readPlaceMapConfig(this);
+    const { src, defaultZoom, center } = readPlaceMapConfig(this);
     const container = this.querySelector(".hero-map-preview");
 
     if (!container) {
       return;
     }
 
-    const { src, defaultZoom, center, needsOsmFetch, osmType, osmId } =
-      mapConfig;
-
-    const mountWhenReady = (geojson, mapCenter, buildingFootprint = null) => {
+    const mount = (geojson = null) => {
       requestAnimationFrame(() => {
-        this.#mountPreviewMap(
-          container,
-          geojson,
-          mapCenter,
-          buildingFootprint,
-          defaultZoom
-        );
+        this.#mountPreviewMap(container, { center, geojson, defaultZoom });
       });
     };
 
     if (src) {
-      fetchBuildingFootprint(src)
-        .then((buildingFootprint) => {
-          mountWhenReady(null, center, buildingFootprint);
+      fetchGeojson(src)
+        .then((geojson) => {
+          mount(geojson);
         })
         .catch(() => {
           if (center) {
-            mountWhenReady(null, center);
+            mount();
             return;
           }
 
@@ -147,28 +135,9 @@ class TupPlaceMap extends HTMLElement {
       return;
     }
 
-    if (!needsOsmFetch) {
-      if (center) {
-        mountWhenReady(null, center);
-      }
-      return;
-    }
-
     if (center) {
-      mountWhenReady(null, center);
+      mount();
     }
-
-    fetchOsmGeometry(osmType, osmId)
-      .then((geojson) => {
-        mountWhenReady(geojson, center);
-      })
-      .catch(() => {
-        if (center) {
-          return;
-        }
-
-        this.#showMapError(container);
-      });
   }
 }
 

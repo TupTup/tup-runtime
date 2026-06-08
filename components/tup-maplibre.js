@@ -23,8 +23,8 @@ const OSM_STYLE = {
   ],
 };
 
-const footprintCache = new Map();
-const FOOTPRINT_TIMEOUT_MS = 12_000;
+const geojsonCache = new Map();
+const GEOJSON_TIMEOUT_MS = 12_000;
 
 function parseDefaultZoom(element) {
   const raw =
@@ -39,33 +39,33 @@ function parseDefaultZoom(element) {
   return Number.isFinite(value) ? value : null;
 }
 
-export function fetchBuildingFootprint(src) {
+export function fetchGeojson(src) {
   const normalizedSrc = src?.trim();
 
   if (!normalizedSrc) {
-    return Promise.reject(new Error("Missing footprint source"));
+    return Promise.reject(new Error("Missing GeoJSON source"));
   }
 
-  if (footprintCache.has(normalizedSrc)) {
-    return footprintCache.get(normalizedSrc);
+  if (geojsonCache.has(normalizedSrc)) {
+    return geojsonCache.get(normalizedSrc);
   }
 
   const request = fetch(normalizedSrc, {
-    signal: AbortSignal.timeout(FOOTPRINT_TIMEOUT_MS),
+    signal: AbortSignal.timeout(GEOJSON_TIMEOUT_MS),
   })
     .then(async (response) => {
       if (!response.ok) {
-        throw new Error(`Footprint request failed (${response.status})`);
+        throw new Error(`GeoJSON request failed (${response.status})`);
       }
 
       return response.json();
     })
     .catch((error) => {
-      footprintCache.delete(normalizedSrc);
+      geojsonCache.delete(normalizedSrc);
       throw error;
     });
 
-  footprintCache.set(normalizedSrc, request);
+  geojsonCache.set(normalizedSrc, request);
 
   return request;
 }
@@ -73,19 +73,12 @@ export function fetchBuildingFootprint(src) {
 export function readPlaceMapConfig(element) {
   const src = element.getAttribute("src")?.trim() ?? "";
   const defaultZoom = parseDefaultZoom(element);
-  const osmType = element.getAttribute("osm-type")?.trim() ?? "";
-  const osmId = element.getAttribute("osm-id")?.trim() ?? "";
   const lat = element.getAttribute("lat")?.trim() ?? "";
   const lng = element.getAttribute("lng")?.trim() ?? "";
-  const hasOsmRef = Boolean(osmType && osmId);
 
   return {
     src,
     defaultZoom,
-    osmType,
-    osmId,
-    hasOsmRef,
-    needsOsmFetch: hasOsmRef && !src,
     lat,
     lng,
     center: lat && lng ? { lat, lng } : null,
@@ -119,14 +112,13 @@ function zoomFromBoundsSpan(bounds, interactive) {
 
 function fitMapView(
   map,
-  { geojson, center, zoom, interactive, buildingFootprint }
+  { center, zoom, interactive, geojson }
 ) {
   const defaultZoom = zoom ?? (interactive ? 16 : 15);
 
-  if (buildingFootprint) {
-    const bounds = getGeojsonBounds(buildingFootprint);
-    const mapCenter =
-      parseCenter(center) ?? getGeojsonCenter(buildingFootprint);
+  if (geojson) {
+    const bounds = getGeojsonBounds(geojson);
+    const mapCenter = parseCenter(center) ?? getGeojsonCenter(geojson);
 
     if (bounds && mapCenter) {
       const buildingPadding = interactive ? 32 : 20;
@@ -157,7 +149,7 @@ function fitMapView(
     }
   }
 
-  const mapCenter = parseCenter(center) ?? getGeojsonCenter(geojson);
+  const mapCenter = parseCenter(center);
 
   if (!mapCenter) {
     return;
@@ -170,14 +162,14 @@ function fitMapView(
   });
 }
 
-function addBuildingFootprintLayers(map, buildingFootprint) {
-  if (!buildingFootprint) {
+function addGeojsonLayers(map, geojson) {
+  if (!geojson) {
     return;
   }
 
   map.addSource("building", {
     type: "geojson",
-    data: buildingFootprint,
+    data: geojson,
   });
 
   map.addLayer({
@@ -203,12 +195,11 @@ function addBuildingFootprintLayers(map, buildingFootprint) {
 
 export function createOsmMap(
   container,
-  geojson,
   {
     interactive = false,
     center = null,
     zoom = null,
-    buildingFootprint = null,
+    geojson = null,
   } = {}
 ) {
   const map = new MapLibreMap({
@@ -238,11 +229,10 @@ export function createOsmMap(
   resizeObserver.observe(container);
 
   const viewOptions = {
-    geojson,
     center,
     zoom,
     interactive,
-    buildingFootprint,
+    geojson,
   };
 
   const applyView = () => {
@@ -251,7 +241,7 @@ export function createOsmMap(
   };
 
   const onReady = () => {
-    addBuildingFootprintLayers(map, buildingFootprint);
+    addGeojsonLayers(map, geojson);
     applyView();
     map.once("idle", applyView);
   };

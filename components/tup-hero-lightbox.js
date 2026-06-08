@@ -1,9 +1,8 @@
 import {
   createOsmMap,
-  fetchBuildingFootprint,
+  fetchGeojson,
   readPlaceMapConfig,
 } from "./tup-maplibre.js";
-import { fetchOsmGeometry } from "./tup-osm-geometry.js";
 import { HERO_SLIDE_SELECTOR } from "./tup-hero-slide.js";
 
 let lightbox = null;
@@ -260,7 +259,7 @@ function renderLightboxItem() {
       lightboxMapEl.hidden = false;
       lightboxMapEl.replaceChildren();
 
-      const mountLightboxMap = (geojson, mapCenter, buildingFootprint = null) => {
+      const mountLightboxMap = (mapCenter, geojson = null) => {
         if (items[activeIndex] !== item || !lightboxMapEl.isConnected) {
           return;
         }
@@ -273,11 +272,11 @@ function renderLightboxItem() {
               return;
             }
 
-            lightboxMap = createOsmMap(lightboxMapEl, geojson, {
+            lightboxMap = createOsmMap(lightboxMapEl, {
               interactive: true,
               center: mapCenter,
               zoom: item.defaultZoom,
-              buildingFootprint,
+              geojson,
             });
 
             lightboxMap.map.once("idle", () => {
@@ -292,13 +291,13 @@ function renderLightboxItem() {
           lightboxMapEl.textContent = "Ładowanie mapy…";
         }
 
-        fetchBuildingFootprint(item.src)
-          .then((buildingFootprint) => {
-            mountLightboxMap(null, center, buildingFootprint);
+        fetchGeojson(item.src)
+          .then((geojson) => {
+            mountLightboxMap(center, geojson);
           })
           .catch(() => {
             if (center) {
-              mountLightboxMap(null, center);
+              mountLightboxMap(center);
               return;
             }
 
@@ -309,23 +308,9 @@ function renderLightboxItem() {
             lightboxMapEl.textContent = "Nie udało się załadować mapy.";
           });
       } else if (center) {
-        mountLightboxMap(null, center);
+        mountLightboxMap(center);
       } else {
-        lightboxMapEl.textContent = "Ładowanie mapy…";
-      }
-
-      if (item.needsOsmFetch) {
-        fetchOsmGeometry(item.osmType, item.osmId)
-          .then((geojson) => {
-            mountLightboxMap(geojson, center);
-          })
-          .catch(() => {
-            if (center || items[activeIndex] !== item || !lightboxMapEl.isConnected) {
-              return;
-            }
-
-            lightboxMapEl.textContent = "Nie udało się załadować mapy.";
-          });
+        lightboxMapEl.textContent = "Nie udało się załadować mapy.";
       }
     }
   }
