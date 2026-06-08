@@ -1,4 +1,4 @@
-import { Map, setWorkerUrl } from "maplibre-gl";
+import { Map as MapLibreMap, setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker.js?url";
 import { getGeojsonBounds, getGeojsonCenter } from "./tup-osm-geometry.js";
 
@@ -23,24 +23,56 @@ const OSM_STYLE = {
   ],
 };
 
-export function parseBuildingFootprint(value) {
-  const trimmed = value?.trim();
+const footprintCache = new Map();
+const FOOTPRINT_TIMEOUT_MS = 12_000;
 
-  if (!trimmed) {
+function parseDefaultZoom(element) {
+  const raw =
+    element.getAttribute("default-zoom") ?? element.getAttribute("zoom");
+
+  if (!raw?.trim()) {
     return null;
   }
 
-  try {
-    return JSON.parse(trimmed);
-  } catch {
-    return null;
+  const value = Number(raw.trim());
+
+  return Number.isFinite(value) ? value : null;
+}
+
+export function fetchBuildingFootprint(src) {
+  const normalizedSrc = src?.trim();
+
+  if (!normalizedSrc) {
+    return Promise.reject(new Error("Missing footprint source"));
   }
+
+  if (footprintCache.has(normalizedSrc)) {
+    return footprintCache.get(normalizedSrc);
+  }
+
+  const request = fetch(normalizedSrc, {
+    signal: AbortSignal.timeout(FOOTPRINT_TIMEOUT_MS),
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error(`Footprint request failed (${response.status})`);
+      }
+
+      return response.json();
+    })
+    .catch((error) => {
+      footprintCache.delete(normalizedSrc);
+      throw error;
+    });
+
+  footprintCache.set(normalizedSrc, request);
+
+  return request;
 }
 
 export function readPlaceMapConfig(element) {
-  const buildingFootprint = parseBuildingFootprint(
-    element.getAttribute("building-footprint")
-  );
+  const src = element.getAttribute("src")?.trim() ?? "";
+  const defaultZoom = parseDefaultZoom(element);
   const osmType = element.getAttribute("osm-type")?.trim() ?? "";
   const osmId = element.getAttribute("osm-id")?.trim() ?? "";
   const lat = element.getAttribute("lat")?.trim() ?? "";
@@ -48,11 +80,12 @@ export function readPlaceMapConfig(element) {
   const hasOsmRef = Boolean(osmType && osmId);
 
   return {
-    buildingFootprint,
+    src,
+    defaultZoom,
     osmType,
     osmId,
     hasOsmRef,
-    needsOsmFetch: hasOsmRef && !buildingFootprint,
+    needsOsmFetch: hasOsmRef && !src,
     lat,
     lng,
     center: lat && lng ? { lat, lng } : null,
@@ -178,7 +211,7 @@ export function createOsmMap(
     buildingFootprint = null,
   } = {}
 ) {
-  const map = new Map({
+  const map = new MapLibreMap({
     container,
     style: OSM_STYLE,
     interactive,

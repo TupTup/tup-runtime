@@ -1,7 +1,11 @@
 import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 import { renderHeroSlide } from "./tup-hero-slide.js";
-import { createOsmMap, readPlaceMapConfig } from "./tup-maplibre.js";
+import {
+  createOsmMap,
+  fetchBuildingFootprint,
+  readPlaceMapConfig,
+} from "./tup-maplibre.js";
 import { fetchOsmGeometry } from "./tup-osm-geometry.js";
 
 class TupPlaceMap extends HTMLElement {
@@ -9,11 +13,13 @@ class TupPlaceMap extends HTMLElement {
   static observedAttributes = [
     "alt",
     "caption",
+    "src",
+    "default-zoom",
+    "zoom",
     "osm-type",
     "osm-id",
     "lat",
     "lng",
-    "building-footprint",
   ];
 
   #previewMap = null;
@@ -77,7 +83,7 @@ class TupPlaceMap extends HTMLElement {
     this.#visibilityObserver.observe(container);
   }
 
-  #mountPreviewMap(container, geojson, center, buildingFootprint) {
+  #mountPreviewMap(container, geojson, center, buildingFootprint, defaultZoom) {
     if (!container.isConnected) {
       return;
     }
@@ -86,6 +92,7 @@ class TupPlaceMap extends HTMLElement {
     this.#previewMap = createOsmMap(container, geojson, {
       interactive: false,
       center,
+      zoom: defaultZoom,
       buildingFootprint,
     });
     this.#observeMapVisibility(container);
@@ -109,26 +116,41 @@ class TupPlaceMap extends HTMLElement {
       return;
     }
 
-    const { buildingFootprint, center, needsOsmFetch, osmType, osmId } =
+    const { src, defaultZoom, center, needsOsmFetch, osmType, osmId } =
       mapConfig;
 
-    const mountWhenReady = (geojson, mapCenter) => {
+    const mountWhenReady = (geojson, mapCenter, buildingFootprint = null) => {
       requestAnimationFrame(() => {
         this.#mountPreviewMap(
           container,
           geojson,
           mapCenter,
-          buildingFootprint
+          buildingFootprint,
+          defaultZoom
         );
       });
     };
 
-    if (buildingFootprint) {
-      mountWhenReady(null, center);
+    if (src) {
+      fetchBuildingFootprint(src)
+        .then((buildingFootprint) => {
+          mountWhenReady(null, center, buildingFootprint);
+        })
+        .catch(() => {
+          if (center) {
+            mountWhenReady(null, center);
+            return;
+          }
+
+          this.#showMapError(container);
+        });
       return;
     }
 
     if (!needsOsmFetch) {
+      if (center) {
+        mountWhenReady(null, center);
+      }
       return;
     }
 

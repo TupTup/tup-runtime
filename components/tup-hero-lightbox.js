@@ -1,4 +1,8 @@
-import { createOsmMap, readPlaceMapConfig } from "./tup-maplibre.js";
+import {
+  createOsmMap,
+  fetchBuildingFootprint,
+  readPlaceMapConfig,
+} from "./tup-maplibre.js";
 import { fetchOsmGeometry } from "./tup-osm-geometry.js";
 import { HERO_SLIDE_SELECTOR } from "./tup-hero-slide.js";
 
@@ -256,7 +260,7 @@ function renderLightboxItem() {
       lightboxMapEl.hidden = false;
       lightboxMapEl.replaceChildren();
 
-      const mountLightboxMap = (geojson, mapCenter) => {
+      const mountLightboxMap = (geojson, mapCenter, buildingFootprint = null) => {
         if (items[activeIndex] !== item || !lightboxMapEl.isConnected) {
           return;
         }
@@ -272,7 +276,8 @@ function renderLightboxItem() {
             lightboxMap = createOsmMap(lightboxMapEl, geojson, {
               interactive: true,
               center: mapCenter,
-              buildingFootprint: item.buildingFootprint,
+              zoom: item.defaultZoom,
+              buildingFootprint,
             });
 
             lightboxMap.map.once("idle", () => {
@@ -282,7 +287,28 @@ function renderLightboxItem() {
         });
       };
 
-      if (item.buildingFootprint || center) {
+      if (item.src) {
+        if (!center) {
+          lightboxMapEl.textContent = "Ładowanie mapy…";
+        }
+
+        fetchBuildingFootprint(item.src)
+          .then((buildingFootprint) => {
+            mountLightboxMap(null, center, buildingFootprint);
+          })
+          .catch(() => {
+            if (center) {
+              mountLightboxMap(null, center);
+              return;
+            }
+
+            if (items[activeIndex] !== item || !lightboxMapEl.isConnected) {
+              return;
+            }
+
+            lightboxMapEl.textContent = "Nie udało się załadować mapy.";
+          });
+      } else if (center) {
         mountLightboxMap(null, center);
       } else {
         lightboxMapEl.textContent = "Ładowanie mapy…";
