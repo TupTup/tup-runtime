@@ -2,7 +2,7 @@ import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 import { refreshHeroGallery } from "./tup-hero-gallery.js";
 import { bindHeroLightbox } from "./tup-hero-lightbox.js";
-import { createOsmMap } from "./tup-maplibre.js";
+import { createOsmMap, parseBuildingFootprint } from "./tup-maplibre.js";
 import { fetchOsmGeometry } from "./tup-osm-geometry.js";
 
 class TupPlacePhoto extends HTMLElement {
@@ -16,9 +16,11 @@ class TupPlacePhoto extends HTMLElement {
     "osm-id",
     "lat",
     "lng",
+    "building-footprint",
   ];
 
   #previewMap = null;
+  #visibilityObserver = null;
 
   connectedCallback() {
     this.#render();
@@ -142,10 +144,23 @@ class TupPlacePhoto extends HTMLElement {
   }
 
   #destroyPreviewMap() {
+    this.#visibilityObserver?.disconnect();
+    this.#visibilityObserver = null;
+
     if (this.#previewMap) {
       this.#previewMap.destroy();
       this.#previewMap = null;
     }
+  }
+
+  #observeMapVisibility(container) {
+    this.#visibilityObserver?.disconnect();
+    this.#visibilityObserver = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        this.#previewMap?.refit();
+      }
+    });
+    this.#visibilityObserver.observe(container);
   }
 
   #readMapCenter() {
@@ -159,7 +174,7 @@ class TupPlacePhoto extends HTMLElement {
     return { lat, lng };
   }
 
-  #mountPreviewMap(container, geojson, center) {
+  #mountPreviewMap(container, geojson, center, buildingFootprint) {
     if (!container.isConnected) {
       return;
     }
@@ -168,7 +183,9 @@ class TupPlacePhoto extends HTMLElement {
     this.#previewMap = createOsmMap(container, geojson, {
       interactive: false,
       center,
+      buildingFootprint,
     });
+    this.#observeMapVisibility(container);
   }
 
   #loadPreviewMap() {
@@ -180,6 +197,9 @@ class TupPlacePhoto extends HTMLElement {
     const osmType = this.getAttribute("osm-type")?.trim();
     const osmId = this.getAttribute("osm-id")?.trim();
     const center = this.#readMapCenter();
+    const buildingFootprint = parseBuildingFootprint(
+      this.getAttribute("building-footprint")
+    );
 
     if (!container || !osmType || !osmId) {
       return;
@@ -187,7 +207,7 @@ class TupPlacePhoto extends HTMLElement {
 
     const mountWhenReady = (geojson, mapCenter) => {
       requestAnimationFrame(() => {
-        this.#mountPreviewMap(container, geojson, mapCenter);
+        this.#mountPreviewMap(container, geojson, mapCenter, buildingFootprint);
       });
     };
 

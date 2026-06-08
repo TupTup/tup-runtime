@@ -1,4 +1,4 @@
-import { createOsmMap } from "./tup-maplibre.js";
+import { createOsmMap, parseBuildingFootprint } from "./tup-maplibre.js";
 import { fetchOsmGeometry } from "./tup-osm-geometry.js";
 
 let lightbox = null;
@@ -37,6 +37,10 @@ function collectGalleryItems() {
         const lat = host.getAttribute("lat")?.trim() ?? "";
         const lng = host.getAttribute("lng")?.trim() ?? "";
 
+        const buildingFootprint = parseBuildingFootprint(
+          host.getAttribute("building-footprint")
+        );
+
         return {
           type: "map",
           host,
@@ -44,6 +48,7 @@ function collectGalleryItems() {
           osmId,
           lat,
           lng,
+          buildingFootprint,
           caption: host.getAttribute("caption") ?? "",
           hideCaption: host.hasAttribute("hide-caption"),
         };
@@ -276,6 +281,7 @@ function renderLightboxItem() {
             lightboxMap = createOsmMap(lightboxMapEl, geojson, {
               interactive: true,
               center: mapCenter,
+              buildingFootprint: item.buildingFootprint,
             });
 
             lightboxMap.map.once("idle", () => {

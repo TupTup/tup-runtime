@@ -232,7 +232,12 @@ export function getGeojsonBounds(geojson) {
     }
   };
 
-  for (const feature of geojson.features) {
+  const features =
+    geojson?.type === "Feature"
+      ? [geojson]
+      : geojson?.features ?? [];
+
+  for (const feature of features) {
     if (feature.geometry?.coordinates) {
       walkCoords(feature.geometry.coordinates);
     }
