@@ -1,4 +1,4 @@
-import { createOsmMap, parseBuildingFootprint } from "./tup-maplibre.js";
+import { createOsmMap, readMapSlideConfig } from "./tup-maplibre.js";
 import { fetchOsmGeometry } from "./tup-osm-geometry.js";
 
 let lightbox = null;
@@ -30,25 +30,13 @@ export function openHeroLightbox(host) {
 function collectGalleryItems() {
   return [...document.querySelectorAll("tup-place-photo")]
     .map((host) => {
-      const osmType = host.getAttribute("osm-type")?.trim();
-      const osmId = host.getAttribute("osm-id")?.trim();
+      const mapConfig = readMapSlideConfig(host);
 
-      if (osmType && osmId) {
-        const lat = host.getAttribute("lat")?.trim() ?? "";
-        const lng = host.getAttribute("lng")?.trim() ?? "";
-
-        const buildingFootprint = parseBuildingFootprint(
-          host.getAttribute("building-footprint")
-        );
-
+      if (mapConfig.isMap) {
         return {
           type: "map",
           host,
-          osmType,
-          osmId,
-          lat,
-          lng,
-          buildingFootprint,
+          ...mapConfig,
           caption: host.getAttribute("caption") ?? "",
           hideCaption: host.hasAttribute("hide-caption"),
         };
@@ -291,10 +279,14 @@ function renderLightboxItem() {
         });
       };
 
-      if (center) {
+      if (item.buildingFootprint || center) {
         mountLightboxMap(null, center);
       } else {
         lightboxMapEl.textContent = "Ładowanie mapy…";
+      }
+
+      if (!item.needsOsmFetch) {
+        return;
       }
 
       fetchOsmGeometry(item.osmType, item.osmId)

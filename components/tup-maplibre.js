@@ -37,6 +37,29 @@ export function parseBuildingFootprint(value) {
   }
 }
 
+export function readMapSlideConfig(element) {
+  const buildingFootprint = parseBuildingFootprint(
+    element.getAttribute("building-footprint")
+  );
+  const osmType = element.getAttribute("osm-type")?.trim() ?? "";
+  const osmId = element.getAttribute("osm-id")?.trim() ?? "";
+  const lat = element.getAttribute("lat")?.trim() ?? "";
+  const lng = element.getAttribute("lng")?.trim() ?? "";
+  const hasOsmRef = Boolean(osmType && osmId);
+
+  return {
+    isMap: Boolean(buildingFootprint) || hasOsmRef,
+    buildingFootprint,
+    osmType,
+    osmId,
+    hasOsmRef,
+    needsOsmFetch: hasOsmRef && !buildingFootprint,
+    lat,
+    lng,
+    center: lat && lng ? { lat, lng } : null,
+  };
+}
+
 function parseCenter(center) {
   if (!center) {
     return null;

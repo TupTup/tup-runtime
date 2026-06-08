@@ -2,7 +2,7 @@ import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 import { refreshHeroGallery } from "./tup-hero-gallery.js";
 import { bindHeroLightbox } from "./tup-hero-lightbox.js";
-import { createOsmMap, parseBuildingFootprint } from "./tup-maplibre.js";
+import { createOsmMap, readMapSlideConfig } from "./tup-maplibre.js";
 import { fetchOsmGeometry } from "./tup-osm-geometry.js";
 
 class TupPlacePhoto extends HTMLElement {
@@ -50,10 +50,7 @@ class TupPlacePhoto extends HTMLElement {
   }
 
   #isMapMode() {
-    const osmType = this.getAttribute("osm-type")?.trim();
-    const osmId = this.getAttribute("osm-id")?.trim();
-
-    return Boolean(osmType && osmId);
+    return readMapSlideConfig(this).isMap;
   }
 
   #render() {
@@ -163,17 +160,6 @@ class TupPlacePhoto extends HTMLElement {
     this.#visibilityObserver.observe(container);
   }
 
-  #readMapCenter() {
-    const lat = this.getAttribute("lat")?.trim();
-    const lng = this.getAttribute("lng")?.trim();
-
-    if (!lat || !lng) {
-      return null;
-    }
-
-    return { lat, lng };
-  }
-
   #mountPreviewMap(container, geojson, center, buildingFootprint) {
     if (!container.isConnected) {
       return;
@@ -188,28 +174,51 @@ class TupPlacePhoto extends HTMLElement {
     this.#observeMapVisibility(container);
   }
 
+  #showMapError(container) {
+    if (!container.isConnected) {
+      return;
+    }
+
+    container.classList.add("hero-map-preview--error");
+    container.textContent = "Nie udało się załadować mapy";
+    container.setAttribute("aria-label", "Nie udało się załadować mapy");
+  }
+
   #loadPreviewMap() {
-    if (!this.#isMapMode()) {
+    const mapConfig = readMapSlideConfig(this);
+
+    if (!mapConfig.isMap) {
       return;
     }
 
     const container = this.querySelector(".hero-map-preview");
-    const osmType = this.getAttribute("osm-type")?.trim();
-    const osmId = this.getAttribute("osm-id")?.trim();
-    const center = this.#readMapCenter();
-    const buildingFootprint = parseBuildingFootprint(
-      this.getAttribute("building-footprint")
-    );
 
-    if (!container || !osmType || !osmId) {
+    if (!container) {
       return;
     }
 
+    const { buildingFootprint, center, needsOsmFetch, osmType, osmId } =
+      mapConfig;
+
     const mountWhenReady = (geojson, mapCenter) => {
       requestAnimationFrame(() => {
-        this.#mountPreviewMap(container, geojson, mapCenter, buildingFootprint);
+        this.#mountPreviewMap(
+          container,
+          geojson,
+          mapCenter,
+          buildingFootprint
+        );
       });
     };
+
+    if (buildingFootprint) {
+      mountWhenReady(null, center);
+      return;
+    }
+
+    if (!needsOsmFetch) {
+      return;
+    }
 
     if (center) {
       mountWhenReady(null, center);
@@ -224,11 +233,7 @@ class TupPlacePhoto extends HTMLElement {
           return;
         }
 
-        if (container.isConnected) {
-          container.classList.add("hero-map-preview--error");
-          container.textContent = "Nie udało się załadować mapy";
-          container.setAttribute("aria-label", "Nie udało się załadować mapy");
-        }
+        this.#showMapError(container);
       });
   }
 }
