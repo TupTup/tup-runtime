@@ -894,15 +894,15 @@ a.place-summary-item--parking:hover::before {
   display: none !important;
 }
 
-.instruction-steps {
+.route-steps {
   margin: 0;
   padding: 0;
 
   list-style: none;
 }
 
-.instruction-step {
-  --instruction-step-gap: 28px;
+.route-step {
+  --route-step-gap: 28px;
 
   position: relative;
 
@@ -916,24 +916,24 @@ a.place-summary-item--parking:hover::before {
   padding: 0;
 }
 
-.instruction-step:first-child {
+.route-step:first-child {
   padding-top: 14px;
 }
 
-.instruction-step:last-child {
+.route-step:last-child {
   padding-bottom: 14px;
 }
 
-.instruction-step:not(:last-child) {
-  margin-bottom: var(--instruction-step-gap);
+.route-step:not(:last-child) {
+  margin-bottom: var(--route-step-gap);
 }
 
-.instruction-step:not(:last-child)::after {
+.route-step:not(:last-child)::after {
   content: "";
   position: absolute;
   left: 22.5px;
   top: calc(50% + 16px);
-  bottom: calc(-1 * var(--instruction-step-gap) - 50% + 16px);
+  bottom: calc(-1 * var(--route-step-gap) - 50% + 16px);
 
   width: 3px;
   height: 3px;
@@ -946,7 +946,7 @@ a.place-summary-item--parking:hover::before {
     0 26px 0 #d1d5db;
 }
 
-.instruction-step-icon-wrap {
+.route-step-icon-wrap {
   grid-area: icon;
 
   display: grid;
@@ -957,7 +957,7 @@ a.place-summary-item--parking:hover::before {
   flex-shrink: 0;
 }
 
-.instruction-step-icon {
+.route-step-icon {
   display: block;
   flex-shrink: 0;
 
@@ -967,7 +967,45 @@ a.place-summary-item--parking:hover::before {
   max-height: 32px;
 }
 
-.instruction-step-text {
+.route-step-icon::before {
+  content: "";
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  background: url("images/icons/forward.svg") center / contain no-repeat;
+}
+
+.route-step-icon--door::before {
+  background-image: url("images/icons/door.svg");
+}
+
+.route-step-icon--stairs::before {
+  background-image: url("images/icons/stairs.svg");
+}
+
+.route-step-icon--reception::before {
+  background-image: url("images/icons/reception.svg");
+}
+
+.route-step-icon--elevator::before {
+  background-image: url("images/icons/elevator-up.svg");
+}
+
+.route-step-icon--left::before {
+  background-image: url("images/icons/turn-left.svg");
+}
+
+.route-step-icon--right::before {
+  background-image: url("images/icons/turn-right.svg");
+}
+
+.route-step-icon--target::before {
+  background-image: url("images/icons/target.svg");
+}
+
+.route-step-text {
   grid-area: text;
 
   display: flex;
@@ -985,15 +1023,15 @@ a.place-summary-item--parking:hover::before {
   color: #111827;
 }
 
-.instruction-step:last-child .instruction-step-text {
+.route-step:last-child .route-step-text {
   border-bottom: 0;
 }
 
-.instruction-step-bold {
+.route-step-bold {
   font-weight: 700;
 }
 
-.instruction-step-distance {
+.route-step-distance {
   grid-area: distance;
 
   align-self: center;

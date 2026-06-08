@@ -1,18 +1,6 @@
 import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 
-export const ROUTE_ICONS = {
-  door: "door.svg",
-  stairs: "stairs.svg",
-  user: "reception.svg",
-  reception: "reception.svg",
-  elevator: "elevator-up.svg",
-  left: "turn-left.svg",
-  right: "turn-right.svg",
-  forward: "forward.svg",
-  target: "target.svg",
-};
-
 function renderInlineMarkdown(text) {
   const value = String(text ?? "");
   const parts = [];
@@ -26,7 +14,7 @@ function renderInlineMarkdown(text) {
     }
 
     parts.push(
-      `<strong class="instruction-step-bold">${escapeHtml(match[1])}</strong>`
+      `<strong class="route-step-bold">${escapeHtml(match[1])}</strong>`
     );
     lastIndex = match.index + match[0].length;
   }
@@ -43,24 +31,20 @@ export function renderRouteStepMarkup({
   text,
   distance,
 }) {
-  const iconFile = ROUTE_ICONS[type] ?? ROUTE_ICONS.forward;
+  const stepType = escapeHtml(type || "forward");
   const distanceHtml = distance
-    ? `<span class="instruction-step-distance">${escapeHtml(distance)}</span>`
+    ? `<span class="route-step-distance">${escapeHtml(distance)}</span>`
     : "";
 
   const textHtml = renderInlineMarkdown(text);
 
   return `
-    <li class="instruction-step">
-      <div class="instruction-step-icon-wrap" aria-hidden="true">
-        <img
-          class="instruction-step-icon"
-          src="images/icons/${iconFile}"
-          alt=""
-        />
+    <li class="route-step">
+      <div class="route-step-icon-wrap" aria-hidden="true">
+        <span class="route-step-icon route-step-icon--${stepType}"></span>
       </div>
 
-      <span class="instruction-step-text">
+      <span class="route-step-text">
         ${textHtml}
       </span>
 

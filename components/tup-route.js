@@ -27,7 +27,7 @@ export class TupRoute extends HTMLElement {
         </h2>
 
         <div class="route-steps-scroll" tabindex="0">
-          <ol class="instruction-steps">
+          <ol class="route-steps">
             ${stepsHtml}
           </ol>
         </div>

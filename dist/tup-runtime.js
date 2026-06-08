@@ -392,46 +392,31 @@ e("tup-place-header", class extends HTMLElement {
 });
 //#endregion
 //#region components/tup-route-step.js
-var n = {
-	door: "door.svg",
-	stairs: "stairs.svg",
-	user: "reception.svg",
-	reception: "reception.svg",
-	elevator: "elevator-up.svg",
-	left: "turn-left.svg",
-	right: "turn-right.svg",
-	forward: "forward.svg",
-	target: "target.svg"
-};
-function r(e) {
+function n(e) {
 	let n = String(e ?? ""), r = [], i = /\*\*([^*]+)\*\*/g, a = 0, o;
-	for (; (o = i.exec(n)) !== null;) o.index > a && r.push(t(n.slice(a, o.index))), r.push(`<strong class="instruction-step-bold">${t(o[1])}</strong>`), a = o.index + o[0].length;
+	for (; (o = i.exec(n)) !== null;) o.index > a && r.push(t(n.slice(a, o.index))), r.push(`<strong class="route-step-bold">${t(o[1])}</strong>`), a = o.index + o[0].length;
 	return a < n.length && r.push(t(n.slice(a))), r.length ? r.join("") : t(n);
 }
-function i({ type: e, text: i, distance: a }) {
-	let o = n[e] ?? n.forward, s = a ? `<span class="instruction-step-distance">${t(a)}</span>` : "";
+function r({ type: e, text: r, distance: i }) {
+	let a = t(e || "forward"), o = i ? `<span class="route-step-distance">${t(i)}</span>` : "";
 	return `
-    <li class="instruction-step">
-      <div class="instruction-step-icon-wrap" aria-hidden="true">
-        <img
-          class="instruction-step-icon"
-          src="images/icons/${o}"
-          alt=""
-        />
+    <li class="route-step">
+      <div class="route-step-icon-wrap" aria-hidden="true">
+        <span class="route-step-icon route-step-icon--${a}"></span>
       </div>
 
-      <span class="instruction-step-text">
-        ${r(i)}
+      <span class="route-step-text">
+        ${n(r)}
       </span>
 
-      ${s}
+      ${o}
     </li>
   `;
 }
 e("tup-route-step", class extends HTMLElement {});
 //#endregion
 //#region components/tup-route.js
-var a = class extends HTMLElement {
+var i = class extends HTMLElement {
 	connectedCallback() {
 		this.#e();
 	}
@@ -440,7 +425,7 @@ var a = class extends HTMLElement {
 			type: e.getAttribute("type"),
 			text: e.getAttribute("text"),
 			distance: e.getAttribute("distance")
-		})).map((e) => i(e)).join("");
+		})).map((e) => r(e)).join("");
 		this.innerHTML = `
       <section class="place-route-section" aria-labelledby="place-route-heading">
         <h2 id="place-route-heading" class="visually-hidden">
@@ -448,7 +433,7 @@ var a = class extends HTMLElement {
         </h2>
 
         <div class="route-steps-scroll" tabindex="0">
-          <ol class="instruction-steps">
+          <ol class="route-steps">
             ${e}
           </ol>
         </div>
@@ -456,7 +441,7 @@ var a = class extends HTMLElement {
     `;
 	}
 };
-e("tup-route", a), e("tup-route-steps", class extends a {}), e("tup-navigation-button", class extends HTMLElement {
+e("tup-route", i), e("tup-route-steps", class extends i {}), e("tup-navigation-button", class extends HTMLElement {
 	connectedCallback() {
 		if (this.querySelector("button")) return;
 		let e = this.textContent.trim() || "Prowadź";
