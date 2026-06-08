@@ -26,6 +26,28 @@ function renderInlineMarkdown(text) {
   return parts.length ? parts.join("") : escapeHtml(value);
 }
 
+const STEP_TYPE_LABELS = {
+  reception: "Recepcja",
+  stairs: "Schody",
+  door: "Drzwi",
+  forward: "Dalej",
+};
+
+function stepTypeLabel(type) {
+  return STEP_TYPE_LABELS[type] ?? "Krok";
+}
+
+function plainStepText(text) {
+  return String(text ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
+}
+
+function stepAriaLabel(type, text) {
+  const label = stepTypeLabel(type || "forward");
+  const plainText = plainStepText(text).trim();
+
+  return plainText ? `${label}: ${plainText}` : label;
+}
+
 export function renderRouteStepMarkup({
   type,
   text,
@@ -37,9 +59,10 @@ export function renderRouteStepMarkup({
     : "";
 
   const textHtml = renderInlineMarkdown(text);
+  const ariaLabel = escapeHtml(stepAriaLabel(type, text));
 
   return `
-    <li class="route-step">
+    <li class="route-step" aria-label="${ariaLabel}">
       <div class="route-step-icon-wrap" aria-hidden="true">
         <span class="route-step-icon route-step-icon--${stepType}"></span>
       </div>

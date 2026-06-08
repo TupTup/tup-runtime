@@ -3,10 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="TupTup Demo — nawigacja do biura przy ul. Przykładowej 10 w Warszawie, budynek A, piętro 3, lokal 305.">
     <title>Tup Runtime Demo</title>
     <script type="module" src="/index.js"></script>
   </head>
   <body>
+    <noscript>
+      <h1>TupTup Demo</h1>
+      <p>ul. Przykładowa 10, Warszawa</p>
+      <p>Budynek A, piętro 3, lokal 305</p>
+      <ol>
+        <li>Wejdź przez recepcję (20 m)</li>
+        <li>Wejdź na 3 piętro (35 m)</li>
+        <li>Lokal 305 będzie po prawej stronie</li>
+      </ol>
+    </noscript>
+
     <main class="app">
       <div
         class="map"
@@ -14,11 +26,12 @@
         style="background: linear-gradient(135deg, #dbeafe, #f3f4f6 55%, #dcfce7);"
       ></div>
 
-      <section id="place" class="sheet screen active" aria-label="Podglad miejsca">
+      <article id="place" class="sheet screen active" aria-label="Podgląd miejsca">
         <div class="sheet-grabber" aria-hidden="true"></div>
 
         <div class="sheet-content">
           <tup-place-header
+            sync-title
             name="TupTup Demo"
             address="ul. Przykladowa 10, Warszawa"
             lat="52.2297"
@@ -57,7 +70,7 @@
 
           <tup-navigation-button>Prowadz</tup-navigation-button>
         </div>
-      </section>
+      </article>
     </main>
   </body>
 </html>

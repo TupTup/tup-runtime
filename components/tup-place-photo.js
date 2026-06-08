@@ -27,10 +27,16 @@ class TupPlacePhoto extends HTMLElement {
   #render() {
     const src = this.getAttribute("src") ?? "";
     const alt = this.getAttribute("alt") ?? "";
+    const caption = this.getAttribute("caption") ?? "";
+    const showCaption = caption && !this.hasAttribute("hide-caption");
     const parking = this.hasAttribute("parking");
 
     const parkingHtml = parking
       ? `<span class="place-photo-parking" aria-hidden="true">P</span>`
+      : "";
+
+    const figcaptionHtml = showCaption
+      ? `<figcaption class="visually-hidden">${escapeHtml(caption)}</figcaption>`
       : "";
 
     this.innerHTML = `
@@ -52,6 +58,8 @@ class TupPlacePhoto extends HTMLElement {
 
             ${parkingHtml}
           </button>
+
+          ${figcaptionHtml}
         </figure>
       </div>
     `;

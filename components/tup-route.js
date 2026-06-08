@@ -3,7 +3,13 @@ import { renderRouteStepMarkup } from "./tup-route-step.js";
 
 export class TupRoute extends HTMLElement {
 
+  #headingId = null;
+
   connectedCallback() {
+    if (!this.#headingId) {
+      this.#headingId = `place-route-heading-${crypto.randomUUID()}`;
+    }
+
     this.#render();
   }
 
@@ -21,8 +27,8 @@ export class TupRoute extends HTMLElement {
       .join("");
 
     this.innerHTML = `
-      <section class="place-route-section" aria-labelledby="place-route-heading">
-        <h2 id="place-route-heading" class="visually-hidden">
+      <section class="place-route-section" aria-labelledby="${this.#headingId}">
+        <h2 id="${this.#headingId}" class="visually-hidden">
           Trasa
         </h2>
 

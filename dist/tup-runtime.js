@@ -20,16 +20,16 @@ e("tup-place-header", class extends HTMLElement {
 		"preview"
 	];
 	#e = (e) => {
-		e.target.closest("[data-share]") && this.#l();
+		e.target.closest("[data-share]") && this.#u();
 	};
 	connectedCallback() {
-		this.addEventListener("click", this.#e), this.#o();
+		this.addEventListener("click", this.#e), this.#s();
 	}
 	disconnectedCallback() {
 		this.removeEventListener("click", this.#e);
 	}
 	attributeChangedCallback() {
-		this.isConnected && this.#o();
+		this.isConnected && this.#s();
 	}
 	#t() {
 		let e = this.getAttribute("name") ?? "", t = this.getAttribute("address") ?? "", n = this.getAttribute("lat")?.trim() ?? "", r = this.getAttribute("lng")?.trim() ?? "", i = this.getAttribute("plus-code")?.trim() ?? "", a = this.getAttribute("map-href") ?? this.getAttribute("maps");
@@ -38,7 +38,7 @@ e("tup-place-header", class extends HTMLElement {
 			address: t,
 			vcard: this.getAttribute("vcard"),
 			preview: this.getAttribute("preview"),
-			mapsUrl: this.#s({
+			mapsUrl: this.#c({
 				address: t,
 				lat: n,
 				lng: r,
@@ -48,7 +48,7 @@ e("tup-place-header", class extends HTMLElement {
 		};
 	}
 	#n(e) {
-		e && (document.title = e);
+		this.hasAttribute("sync-title") && e && (document.title = e);
 	}
 	#r(e) {
 		return e ? `
@@ -61,22 +61,36 @@ e("tup-place-header", class extends HTMLElement {
     ` : "";
 	}
 	#i(e, n) {
+		return !e || !n ? "" : `
+      <span
+        itemprop="geo"
+        itemscope
+        itemtype="https://schema.org/GeoCoordinates"
+        class="visually-hidden"
+      >
+        <meta itemprop="latitude" content="${t(e)}">
+        <meta itemprop="longitude" content="${t(n)}">
+      </span>
+    `;
+	}
+	#a(e, n) {
 		return e ? n ? `
         <a
           href="${t(n)}"
           class="place-address-link"
           target="_blank"
           rel="noopener noreferrer"
+          itemprop="address"
         >
           <span class="place-address-pin" aria-hidden="true"></span>
           <span class="place-address-text">${t(e)}</span>
         </a>
       ` : `
       <span class="place-address-pin" aria-hidden="true"></span>
-      <span class="place-address-text">${t(e)}</span>
+      <span class="place-address-text" itemprop="address">${t(e)}</span>
     ` : "";
 	}
-	#a(e) {
+	#o(e) {
 		return e ? `
       <a
         href="${t(e)}"
@@ -86,29 +100,35 @@ e("tup-place-header", class extends HTMLElement {
       ></a>
     ` : "";
 	}
-	#o() {
-		let { name: e, address: n, vcard: r, preview: i, mapsUrl: a } = this.#t();
+	#s() {
+		let { name: e, address: n, vcard: r, preview: i, mapsUrl: a } = this.#t(), o = this.getAttribute("lat")?.trim() ?? "", s = this.getAttribute("lng")?.trim() ?? "";
 		this.#n(e);
-		let o = this.#r(i), s = this.#i(n, a), c = this.#a(r);
+		let c = this.#r(i), l = this.#a(n, a), u = this.#o(r), d = this.#i(o, s), f = e ? `<h1 class="place-name" itemprop="name">${t(e)}</h1>` : "";
 		this.innerHTML = `
       <header class="sheet-header">
 
-        <div class="place-header">
-          ${o}
+        <div
+          class="place-header"
+          itemscope
+          itemtype="https://schema.org/Place"
+        >
+          ${c}
 
           <div class="place-header-text">
-            <h1 class="place-name">${t(e)}</h1>
+            ${f}
 
             <div class="place-address-row">
               <address class="place-address">
-                ${s}
+                ${l}
               </address>
             </div>
+
+            ${d}
           </div>
         </div>
 
         <div class="sheet-actions">
-          ${c}
+          ${u}
 
           <button
             type="button"
@@ -121,13 +141,13 @@ e("tup-place-header", class extends HTMLElement {
       </header>
     `;
 	}
-	#s({ address: e, lat: t, lng: n, plusCode: r, mapHref: i }) {
-		return i || (t && n ? this.#c(`${t},${n}`) : r ? this.#c(r) : e ? this.#c(e) : null);
+	#c({ address: e, lat: t, lng: n, plusCode: r, mapHref: i }) {
+		return i || (t && n ? this.#l(`${t},${n}`) : r ? this.#l(r) : e ? this.#l(e) : null);
 	}
-	#c(e) {
+	#l(e) {
 		return `https://maps.google.com/?q=${encodeURIComponent(e)}`;
 	}
-	async #l() {
+	async #u() {
 		let e = this.getAttribute("name") ?? "", t = this.getAttribute("address") ?? "", n = {
 			title: e,
 			text: t ? `${e} — ${t}` : e,
@@ -159,7 +179,7 @@ e("tup-place-header", class extends HTMLElement {
 		this.isConnected && (this.#i(), this.#a(), this.#o());
 	}
 	#i() {
-		let e = this.getAttribute("src") ?? "", n = this.getAttribute("alt") ?? "", r = this.hasAttribute("parking") ? "<span class=\"place-photo-parking\" aria-hidden=\"true\">P</span>" : "";
+		let e = this.getAttribute("src") ?? "", n = this.getAttribute("alt") ?? "", r = this.getAttribute("caption") ?? "", i = r && !this.hasAttribute("hide-caption"), a = this.hasAttribute("parking") ? "<span class=\"place-photo-parking\" aria-hidden=\"true\">P</span>" : "", o = i ? `<figcaption class="visually-hidden">${t(r)}</figcaption>` : "";
 		this.innerHTML = `
       <div class="place-hero-home">
         <figure class="place-hero">
@@ -177,8 +197,10 @@ e("tup-place-header", class extends HTMLElement {
               height="450"
             />
 
-            ${r}
+            ${a}
           </button>
+
+          ${o}
         </figure>
       </div>
     `;
@@ -314,26 +336,34 @@ e("tup-place-header", class extends HTMLElement {
 		] : [];
 	}
 	#n() {
-		let e = this.#e(), n = this.#t(e);
-		if (this.hidden = n.length === 0, n.length === 0) {
+		let e = this.#e(), t = this.#t(e);
+		if (this.hidden = t.length === 0, t.length === 0) {
 			this.innerHTML = "";
 			return;
 		}
 		this.innerHTML = `
       <dl class="place-badge place-badge--${e}" aria-label="Skrót lokalizacji">
-        ${n.map((e, r) => `
-          <div class="${this.#r(e, n[r + 1])}">
-            <dt class="visually-hidden">${t(e.label)}</dt>
-            ${this.#i(e)}
-          </div>
-        `).join("")}
+        ${t.map((e, n) => this.#i(e, t[n + 1])).join("")}
       </dl>
     `;
 	}
 	#r(e, t) {
 		return ["place-badge-item", `place-badge-item--${e.type}`].filter(Boolean).join(" ");
 	}
-	#i(e) {
+	#i(e, n) {
+		let r = this.#r(e, n);
+		return e.type === "chevron" ? `
+        <div class="${r}" aria-hidden="true">
+          ${this.#a(e)}
+        </div>
+      ` : `
+      <div class="${r}">
+        <dt class="visually-hidden">${t(e.label)}</dt>
+        ${this.#a(e)}
+      </div>
+    `;
+	}
+	#a(e) {
 		return e.type === "brand" ? "\n        <dd class=\"place-badge-value place-badge-value--icon\">\n          <span class=\"visually-hidden\">TupTup</span>\n        </dd>\n      " : e.type === "chevron" ? "\n        <dd class=\"place-badge-value place-badge-value--chevron\">\n          <svg\n            class=\"place-badge-chevron\"\n            viewBox=\"0 0 10 18\"\n            aria-hidden=\"true\"\n            focusable=\"false\"\n          >\n            <path\n              d=\"M2 2.5L8 9L2 15.5\"\n              fill=\"none\"\n              stroke=\"currentColor\"\n              stroke-width=\"2.4\"\n              stroke-linecap=\"round\"\n              stroke-linejoin=\"round\"\n            />\n          </svg>\n        </dd>\n      " : e.type === "parking" ? e.href ? `
         <dd class="place-badge-value place-badge-value--icon">
           <a
@@ -346,9 +376,10 @@ e("tup-place-header", class extends HTMLElement {
             <span class="visually-hidden">Parking</span>
           </a>
         </dd>
-      ` : "\n      <dd class=\"place-badge-value place-badge-value--icon\">\n        <span role=\"img\" aria-label=\"Parking\">\n          <span class=\"visually-hidden\">Parking</span>\n        </span>\n      </dd>\n    " : `<dd class="place-badge-value">${t(e.value)}</dd>`;
+      ` : "\n      <dd class=\"place-badge-value place-badge-value--icon\">\n        <span class=\"visually-hidden\">Parking</span>\n      </dd>\n    " : `<dd class="place-badge-value">${t(e.value)}</dd>`;
 	}
 }), e("tup-place-summary", class extends HTMLElement {
+	#e = null;
 	static observedAttributes = [
 		"building",
 		"floor",
@@ -359,12 +390,12 @@ e("tup-place-header", class extends HTMLElement {
 		"navigate"
 	];
 	connectedCallback() {
-		this.#e();
+		this.#e ||= `place-summary-heading-${crypto.randomUUID()}`, this.#t();
 	}
 	attributeChangedCallback() {
-		this.isConnected && this.#e();
+		this.isConnected && this.#t();
 	}
-	#e() {
+	#t() {
 		let e = this.getAttribute("building") ?? "", n = this.getAttribute("floor") ?? "", r = this.getAttribute("room") ?? "", i = this.getAttribute("parking-href"), a = this.hasAttribute("parking") || !!i, o = this.hasAttribute("navigate"), s = e || n || r, c = this.getAttribute("variant") ?? "default", l = s ? `
         <tup-badge
           class="place-summary-badge"
@@ -378,8 +409,8 @@ e("tup-place-header", class extends HTMLElement {
         </tup-badge>
       ` : "";
 		this.innerHTML = `
-      <section class="place-summary-section" aria-labelledby="place-summary-heading">
-        <h2 id="place-summary-heading" class="visually-hidden">
+      <section class="place-summary-section" aria-labelledby="${this.#e}">
+        <h2 id="${this.#e}" class="visually-hidden">
           Lokalizacja
         </h2>
 
@@ -397,38 +428,55 @@ function n(e) {
 	for (; (o = i.exec(n)) !== null;) o.index > a && r.push(t(n.slice(a, o.index))), r.push(`<strong class="route-step-bold">${t(o[1])}</strong>`), a = o.index + o[0].length;
 	return a < n.length && r.push(t(n.slice(a))), r.length ? r.join("") : t(n);
 }
-function r({ type: e, text: r, distance: i }) {
-	let a = t(e || "forward"), o = i ? `<span class="route-step-distance">${t(i)}</span>` : "";
+var r = {
+	reception: "Recepcja",
+	stairs: "Schody",
+	door: "Drzwi",
+	forward: "Dalej"
+};
+function i(e) {
+	return r[e] ?? "Krok";
+}
+function a(e) {
+	return String(e ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
+}
+function o(e, t) {
+	let n = i(e || "forward"), r = a(t).trim();
+	return r ? `${n}: ${r}` : n;
+}
+function s({ type: e, text: r, distance: i }) {
+	let a = t(e || "forward"), s = i ? `<span class="route-step-distance">${t(i)}</span>` : "", c = n(r);
 	return `
-    <li class="route-step">
+    <li class="route-step" aria-label="${t(o(e, r))}">
       <div class="route-step-icon-wrap" aria-hidden="true">
         <span class="route-step-icon route-step-icon--${a}"></span>
       </div>
 
       <span class="route-step-text">
-        ${n(r)}
+        ${c}
       </span>
 
-      ${o}
+      ${s}
     </li>
   `;
 }
 e("tup-route-step", class extends HTMLElement {});
 //#endregion
 //#region components/tup-route.js
-var i = class extends HTMLElement {
+var c = class extends HTMLElement {
+	#e = null;
 	connectedCallback() {
-		this.#e();
+		this.#e ||= `place-route-heading-${crypto.randomUUID()}`, this.#t();
 	}
-	#e() {
+	#t() {
 		let e = [...this.querySelectorAll(":scope > tup-route-step")].map((e) => ({
 			type: e.getAttribute("type"),
 			text: e.getAttribute("text"),
 			distance: e.getAttribute("distance")
-		})).map((e) => r(e)).join("");
+		})).map((e) => s(e)).join("");
 		this.innerHTML = `
-      <section class="place-route-section" aria-labelledby="place-route-heading">
-        <h2 id="place-route-heading" class="visually-hidden">
+      <section class="place-route-section" aria-labelledby="${this.#e}">
+        <h2 id="${this.#e}" class="visually-hidden">
           Trasa
         </h2>
 
@@ -441,7 +489,7 @@ var i = class extends HTMLElement {
     `;
 	}
 };
-e("tup-route", i), e("tup-route-steps", class extends i {}), e("tup-navigation-button", class extends HTMLElement {
+e("tup-route", c), e("tup-route-steps", class extends c {}), e("tup-navigation-button", class extends HTMLElement {
 	connectedCallback() {
 		if (this.querySelector("button")) return;
 		let e = this.textContent.trim() || "Prowadź";

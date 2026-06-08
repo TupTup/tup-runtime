@@ -64,7 +64,7 @@ class TupPlaceHeader extends HTMLElement {
   }
 
   #syncDocumentTitle(name) {
-    if (name) {
+    if (this.hasAttribute("sync-title") && name) {
       document.title = name;
     }
   }
@@ -84,6 +84,24 @@ class TupPlaceHeader extends HTMLElement {
     `;
   }
 
+  #geoMarkup(lat, lng) {
+    if (!lat || !lng) {
+      return "";
+    }
+
+    return `
+      <span
+        itemprop="geo"
+        itemscope
+        itemtype="https://schema.org/GeoCoordinates"
+        class="visually-hidden"
+      >
+        <meta itemprop="latitude" content="${escapeHtml(lat)}">
+        <meta itemprop="longitude" content="${escapeHtml(lng)}">
+      </span>
+    `;
+  }
+
   #addressMarkup(address, mapsUrl) {
     if (!address) {
       return "";
@@ -96,6 +114,7 @@ class TupPlaceHeader extends HTMLElement {
           class="place-address-link"
           target="_blank"
           rel="noopener noreferrer"
+          itemprop="address"
         >
           <span class="place-address-pin" aria-hidden="true"></span>
           <span class="place-address-text">${escapeHtml(address)}</span>
@@ -105,7 +124,7 @@ class TupPlaceHeader extends HTMLElement {
 
     return `
       <span class="place-address-pin" aria-hidden="true"></span>
-      <span class="place-address-text">${escapeHtml(address)}</span>
+      <span class="place-address-text" itemprop="address">${escapeHtml(address)}</span>
     `;
   }
 
@@ -126,27 +145,39 @@ class TupPlaceHeader extends HTMLElement {
 
   #render() {
     const { name, address, vcard, preview, mapsUrl } = this.#readAttrs();
+    const lat = this.getAttribute("lat")?.trim() ?? "";
+    const lng = this.getAttribute("lng")?.trim() ?? "";
 
     this.#syncDocumentTitle(name);
 
     const previewHtml = this.#previewMarkup(preview);
     const addressInner = this.#addressMarkup(address, mapsUrl);
     const bookmarkHtml = this.#bookmarkMarkup(vcard);
+    const geoHtml = this.#geoMarkup(lat, lng);
+    const nameHtml = name
+      ? `<h1 class="place-name" itemprop="name">${escapeHtml(name)}</h1>`
+      : "";
 
     this.innerHTML = `
       <header class="sheet-header">
 
-        <div class="place-header">
+        <div
+          class="place-header"
+          itemscope
+          itemtype="https://schema.org/Place"
+        >
           ${previewHtml}
 
           <div class="place-header-text">
-            <h1 class="place-name">${escapeHtml(name)}</h1>
+            ${nameHtml}
 
             <div class="place-address-row">
               <address class="place-address">
                 ${addressInner}
               </address>
             </div>
+
+            ${geoHtml}
           </div>
         </div>
 

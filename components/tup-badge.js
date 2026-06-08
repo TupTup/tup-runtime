@@ -107,12 +107,7 @@ class TupBadge extends HTMLElement {
 
     this.innerHTML = `
       <dl class="place-badge place-badge--${variant}" aria-label="Skrót lokalizacji">
-        ${items.map((item, index) => `
-          <div class="${this.#itemClass(item, items[index + 1])}">
-            <dt class="visually-hidden">${escapeHtml(item.label)}</dt>
-            ${this.#valueMarkup(item)}
-          </div>
-        `).join("")}
+        ${items.map((item, index) => this.#itemMarkup(item, items[index + 1])).join("")}
       </dl>
     `;
   }
@@ -122,6 +117,25 @@ class TupBadge extends HTMLElement {
       "place-badge-item",
       `place-badge-item--${item.type}`,
     ].filter(Boolean).join(" ");
+  }
+
+  #itemMarkup(item, nextItem) {
+    const itemClass = this.#itemClass(item, nextItem);
+
+    if (item.type === "chevron") {
+      return `
+        <div class="${itemClass}" aria-hidden="true">
+          ${this.#valueMarkup(item)}
+        </div>
+      `;
+    }
+
+    return `
+      <div class="${itemClass}">
+        <dt class="visually-hidden">${escapeHtml(item.label)}</dt>
+        ${this.#valueMarkup(item)}
+      </div>
+    `;
   }
 
   #valueMarkup(item) {
@@ -177,9 +191,7 @@ class TupBadge extends HTMLElement {
 
     return `
       <dd class="place-badge-value place-badge-value--icon">
-        <span role="img" aria-label="Parking">
-          <span class="visually-hidden">Parking</span>
-        </span>
+        <span class="visually-hidden">Parking</span>
       </dd>
     `;
   }

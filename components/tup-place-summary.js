@@ -4,6 +4,8 @@ import "./tup-badge.js";
 
 class TupPlaceSummary extends HTMLElement {
 
+  #headingId = null;
+
   static observedAttributes = [
     "building",
     "floor",
@@ -15,6 +17,10 @@ class TupPlaceSummary extends HTMLElement {
   ];
 
   connectedCallback() {
+    if (!this.#headingId) {
+      this.#headingId = `place-summary-heading-${crypto.randomUUID()}`;
+    }
+
     this.#render();
   }
 
@@ -50,8 +56,8 @@ class TupPlaceSummary extends HTMLElement {
       : "";
 
     this.innerHTML = `
-      <section class="place-summary-section" aria-labelledby="place-summary-heading">
-        <h2 id="place-summary-heading" class="visually-hidden">
+      <section class="place-summary-section" aria-labelledby="${this.#headingId}">
+        <h2 id="${this.#headingId}" class="visually-hidden">
           Lokalizacja
         </h2>
 
