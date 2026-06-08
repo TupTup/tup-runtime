@@ -1,7 +1,7 @@
 import {
   createMap,
   fetchGeojson,
-  readPlaceMapConfig,
+  readMapConfig,
 } from "./tup-maplibre.js";
 import { HERO_SLIDE_SELECTOR } from "./tup-hero-slide.js";
 
@@ -34,11 +34,11 @@ export function openHeroLightbox(gallery, host) {
 function collectGalleryItems(gallery) {
   return [...gallery.querySelectorAll(HERO_SLIDE_SELECTOR)]
     .map((host) => {
-      if (host.matches("tup-place-map")) {
+      if (host.matches("tup-map")) {
         return {
           type: "map",
           host,
-          ...readPlaceMapConfig(host),
+          ...readMapConfig(host),
           caption: host.getAttribute("caption") ?? "",
           hideCaption: host.hasAttribute("hide-caption"),
         };

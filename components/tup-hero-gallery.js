@@ -152,7 +152,7 @@ class TupHeroGallery extends HTMLElement {
         return;
       }
 
-      const host = trigger.closest("tup-place-photo, tup-place-map");
+      const host = trigger.closest("tup-place-photo, tup-map");
 
       if (!host || host.parentElement !== this) {
         return;

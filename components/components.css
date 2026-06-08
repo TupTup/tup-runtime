@@ -2,7 +2,7 @@ tup-place-header,
 tup-badge,
 tup-hero-gallery,
 tup-place-photo,
-tup-place-map,
+tup-map,
 tup-place-summary,
 tup-route,
 tup-navigation-button {
@@ -565,7 +565,7 @@ tup-hero-gallery {
 }
 
 tup-hero-gallery > tup-place-photo,
-tup-hero-gallery > tup-place-map {
+tup-hero-gallery > tup-map {
   flex: 0 0 100%;
 
   min-width: 0;

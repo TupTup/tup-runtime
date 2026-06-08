@@ -167,7 +167,7 @@ t("tup-place-header", class extends HTMLElement {
 });
 //#endregion
 //#region components/tup-hero-slide.js
-var r = ":scope > tup-place-photo, :scope > tup-place-map";
+var r = ":scope > tup-place-photo, :scope > tup-map";
 function i({ mediaHtml: e, ariaLabel: t, caption: r = "", hideCaption: i = !1, parking: a = !1 }) {
 	let o = a ? "<span class=\"place-photo-parking\" aria-hidden=\"true\">P</span>" : "", s = r && !i ? `<figcaption class="visually-hidden">${n(r)}</figcaption>` : "";
 	return `
@@ -33963,7 +33963,7 @@ function w(e, t) {
 }
 function T(e) {
 	return [...e.querySelectorAll(r)].map((e) => {
-		if (e.matches("tup-place-map")) return {
+		if (e.matches("tup-map")) return {
 			type: "map",
 			host: e,
 			...p(e),
@@ -34140,7 +34140,7 @@ t("tup-hero-gallery", class extends HTMLElement {
 		this.dataset.lightboxBound !== "true" && (this.dataset.lightboxBound = "true", this.addEventListener("click", (e) => {
 			let t = e.target.closest("[data-lightbox]");
 			if (!t || !this.contains(t)) return;
-			let n = t.closest("tup-place-photo, tup-place-map");
+			let n = t.closest("tup-place-photo, tup-map");
 			!n || n.parentElement !== this || w(this, n);
 		}));
 	}
@@ -34184,7 +34184,7 @@ t("tup-hero-gallery", class extends HTMLElement {
 			e.dataset.fallbackApplied !== "true" && (e.dataset.fallbackApplied = "true", e.src = t);
 		}), e.complete && e.naturalWidth === 0 && (e.dataset.fallbackApplied = "true", e.src = t));
 	}
-}), t("tup-place-map", class extends HTMLElement {
+}), t("tup-map", class extends HTMLElement {
 	static observedAttributes = [
 		"alt",
 		"caption",

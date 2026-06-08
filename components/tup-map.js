@@ -4,10 +4,10 @@ import { renderHeroSlide } from "./tup-hero-slide.js";
 import {
   createMap,
   fetchGeojson,
-  readPlaceMapConfig,
+  readMapConfig,
 } from "./tup-maplibre.js";
 
-class TupPlaceMap extends HTMLElement {
+class TupMap extends HTMLElement {
 
   static observedAttributes = [
     "alt",
@@ -106,7 +106,7 @@ class TupPlaceMap extends HTMLElement {
   }
 
   #loadPreviewMap() {
-    const { src, defaultZoom, center } = readPlaceMapConfig(this);
+    const { src, defaultZoom, center } = readMapConfig(this);
     const container = this.querySelector(".hero-map-preview");
 
     if (!container) {
@@ -142,6 +142,6 @@ class TupPlaceMap extends HTMLElement {
 }
 
 defineCustomElement(
-  "tup-place-map",
-  TupPlaceMap
+  "tup-map",
+  TupMap
 );

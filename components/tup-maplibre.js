@@ -129,7 +129,7 @@ export function fetchGeojson(src) {
   return request;
 }
 
-export function readPlaceMapConfig(element) {
+export function readMapConfig(element) {
   const src = element.getAttribute("src")?.trim() ?? "";
   const defaultZoom = parseDefaultZoom(element);
   const lat = element.getAttribute("lat")?.trim() ?? "";
