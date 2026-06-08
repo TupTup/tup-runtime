@@ -1,5 +1,6 @@
-import { createOsmMap, readMapSlideConfig } from "./tup-maplibre.js";
+import { createOsmMap, readPlaceMapConfig } from "./tup-maplibre.js";
 import { fetchOsmGeometry } from "./tup-osm-geometry.js";
+import { HERO_SLIDE_SELECTOR } from "./tup-hero-slide.js";
 
 let lightbox = null;
 let items = [];
@@ -7,8 +8,8 @@ let activeIndex = 0;
 let gesture = null;
 let lightboxMap = null;
 
-export function openHeroLightbox(host) {
-  const galleryItems = collectGalleryItems();
+export function openHeroLightbox(gallery, host) {
+  const galleryItems = collectGalleryItems(gallery);
   const index = galleryItems.findIndex((item) => item.host === host);
 
   if (index === -1) {
@@ -27,35 +28,37 @@ export function openHeroLightbox(host) {
   renderLightboxItem();
 }
 
-function collectGalleryItems() {
-  return [...document.querySelectorAll("tup-place-photo")]
+function collectGalleryItems(gallery) {
+  return [...gallery.querySelectorAll(HERO_SLIDE_SELECTOR)]
     .map((host) => {
-      const mapConfig = readMapSlideConfig(host);
-
-      if (mapConfig.isMap) {
+      if (host.matches("tup-place-map")) {
         return {
           type: "map",
           host,
-          ...mapConfig,
+          ...readPlaceMapConfig(host),
           caption: host.getAttribute("caption") ?? "",
           hideCaption: host.hasAttribute("hide-caption"),
         };
       }
 
-      const img = host.querySelector(".hero-image-img");
+      if (host.matches("tup-place-photo")) {
+        const img = host.querySelector(".hero-image-img");
 
-      if (!img?.src) {
-        return null;
+        if (!img?.src) {
+          return null;
+        }
+
+        return {
+          type: "photo",
+          host,
+          src: img.src,
+          alt: img.alt,
+          caption: host.getAttribute("caption") ?? "",
+          hideCaption: host.hasAttribute("hide-caption"),
+        };
       }
 
-      return {
-        type: "photo",
-        host,
-        src: img.src,
-        alt: img.alt,
-        caption: host.getAttribute("caption") ?? "",
-        hideCaption: host.hasAttribute("hide-caption"),
-      };
+      return null;
     })
     .filter(Boolean);
 }
@@ -285,21 +288,19 @@ function renderLightboxItem() {
         lightboxMapEl.textContent = "Ładowanie mapy…";
       }
 
-      if (!item.needsOsmFetch) {
-        return;
+      if (item.needsOsmFetch) {
+        fetchOsmGeometry(item.osmType, item.osmId)
+          .then((geojson) => {
+            mountLightboxMap(geojson, center);
+          })
+          .catch(() => {
+            if (center || items[activeIndex] !== item || !lightboxMapEl.isConnected) {
+              return;
+            }
+
+            lightboxMapEl.textContent = "Nie udało się załadować mapy.";
+          });
       }
-
-      fetchOsmGeometry(item.osmType, item.osmId)
-        .then((geojson) => {
-          mountLightboxMap(geojson, center);
-        })
-        .catch(() => {
-          if (center || items[activeIndex] !== item || !lightboxMapEl.isConnected) {
-            return;
-          }
-
-          lightboxMapEl.textContent = "Nie udało się załadować mapy.";
-        });
     }
   }
 
@@ -322,16 +323,4 @@ function renderLightboxItem() {
   }
 
   dialog.classList.toggle("hero-lightbox--map", item.type === "map");
-}
-
-export function bindHeroLightbox(trigger, host) {
-  if (!trigger || trigger.dataset.bound === "true") {
-    return;
-  }
-
-  trigger.dataset.bound = "true";
-
-  trigger.addEventListener("click", () => {
-    openHeroLightbox(host);
-  });
 }

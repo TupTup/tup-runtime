@@ -1,8 +1,9 @@
-const GALLERY_SELECTOR = ".place-hero-gallery";
-const ITEM_SELECTOR = ":scope > tup-place-photo";
+import { defineCustomElement } from "./define-custom-element.js";
+import { HERO_SLIDE_SELECTOR } from "./tup-hero-slide.js";
+import { openHeroLightbox } from "./tup-hero-lightbox.js";
 
 function getGalleryItems(gallery) {
-  return [...gallery.querySelectorAll(ITEM_SELECTOR)];
+  return [...gallery.querySelectorAll(HERO_SLIDE_SELECTOR)];
 }
 
 function getActiveIndex(gallery, items) {
@@ -114,16 +115,59 @@ function ensureGalleryNav(gallery) {
   shell.append(prevButton, nextButton);
 }
 
-export function refreshHeroGallery(gallery) {
-  if (!gallery?.matches(GALLERY_SELECTOR)) {
-    return;
+class TupHeroGallery extends HTMLElement {
+
+  #childObserver = null;
+
+  connectedCallback() {
+    this.#bindLightbox();
+    this.#refreshNav();
+    this.#observeChildren();
   }
 
-  ensureGalleryNav(gallery);
-}
+  disconnectedCallback() {
+    this.#childObserver?.disconnect();
+    this.#childObserver = null;
+  }
 
-export function refreshHeroGalleries() {
-  for (const gallery of document.querySelectorAll(GALLERY_SELECTOR)) {
-    refreshHeroGallery(gallery);
+  #observeChildren() {
+    this.#childObserver?.disconnect();
+    this.#childObserver = new MutationObserver(() => {
+      this.#refreshNav();
+    });
+    this.#childObserver.observe(this, { childList: true });
+  }
+
+  #bindLightbox() {
+    if (this.dataset.lightboxBound === "true") {
+      return;
+    }
+
+    this.dataset.lightboxBound = "true";
+
+    this.addEventListener("click", (event) => {
+      const trigger = event.target.closest("[data-lightbox]");
+
+      if (!trigger || !this.contains(trigger)) {
+        return;
+      }
+
+      const host = trigger.closest("tup-place-photo, tup-place-map");
+
+      if (!host || host.parentElement !== this) {
+        return;
+      }
+
+      openHeroLightbox(this, host);
+    });
+  }
+
+  #refreshNav() {
+    ensureGalleryNav(this);
   }
 }
+
+defineCustomElement(
+  "tup-hero-gallery",
+  TupHeroGallery
+);

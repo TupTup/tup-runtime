@@ -1,6 +1,8 @@
 tup-place-header,
 tup-badge,
+tup-hero-gallery,
 tup-place-photo,
+tup-place-map,
 tup-place-summary,
 tup-route,
 tup-navigation-button {
@@ -497,7 +499,7 @@ a.place-summary-item--parking:hover::before {
   flex-shrink: 0;
 }
 
-.place-hero-gallery {
+tup-hero-gallery {
   display: flex;
   gap: 8px;
 
@@ -562,7 +564,8 @@ a.place-summary-item--parking:hover::before {
   transform: scaleX(-1);
 }
 
-.place-hero-gallery > tup-place-photo {
+tup-hero-gallery > tup-place-photo,
+tup-hero-gallery > tup-place-map {
   flex: 0 0 100%;
 
   min-width: 0;

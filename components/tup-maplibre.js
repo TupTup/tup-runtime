@@ -37,7 +37,7 @@ export function parseBuildingFootprint(value) {
   }
 }
 
-export function readMapSlideConfig(element) {
+export function readPlaceMapConfig(element) {
   const buildingFootprint = parseBuildingFootprint(
     element.getAttribute("building-footprint")
   );
@@ -48,7 +48,6 @@ export function readMapSlideConfig(element) {
   const hasOsmRef = Boolean(osmType && osmId);
 
   return {
-    isMap: Boolean(buildingFootprint) || hasOsmRef,
     buildingFootprint,
     osmType,
     osmId,
