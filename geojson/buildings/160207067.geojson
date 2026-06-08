@@ -4,7 +4,7 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "C10"
+        "osm_id": 160207067
       },
       "geometry": {
         "type": "Polygon",
