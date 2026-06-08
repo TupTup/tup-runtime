@@ -1,0 +1,24 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 425805002,
+        "amenity": "parking"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [20.9454139, 52.2416672],
+            [20.9454629, 52.2417245],
+            [20.9456239, 52.2414259],
+            [20.9455655, 52.2413747],
+            [20.9454139, 52.2416672]
+          ]
+        ]
+      }
+    }
+  ]
+}

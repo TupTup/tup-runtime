@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <!-- Meta: podstawowe -->
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+
+  <!-- Meta: PWA / iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Tup" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <title>{{ header.title }}</title>
+
+  <!-- Open Graph (podgląd linku) -->
+  <meta property="og:title" content="{{ header.title }}" />
+  <meta property="og:description" content="{{ seo.description }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ seo.url }}" />
+  <meta property="og:site_name" content="TupTup" />
+  <meta property="og:image" content="https://go.tuptup.app/images/place.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://go.tuptup.app/images/place.png" />
+
+  <!-- Zasoby: manifest, ikony, style -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/images/tuptup.svg" />
+  <link rel="stylesheet" href="https://cdn.tuptup.app/tup-runtime.css" />
+
+  <script type="module" src="https://cdn.tuptup.app/tup-runtime.js"></script>
+</head>
+
+<body>
+  <main class="app">
+    <section id="place" class="screen active">
+      <article class="sheet-content">
+
+        <tup-place-header
+          sync-title
+          name="{{ header.title }}"
+          address="{{ header.address }}"
+          lat="{{ header.lat }}"
+          lng="{{ header.lng }}"
+          map-href="{{ header.map_href }}"
+          vcard="{{ header.vcard_href }}">
+        </tup-place-header>
+
+        <tup-hero-gallery>
+          <tup-landmark
+            src="{{ landmark.src }}"
+            alt="{{ landmark.alt }}"
+            caption="{{ landmark.caption }}"
+            fallback-src="{{ landmark.fallback_src }}">
+          </tup-landmark>
+
+          <tup-map src="/geojson/buildings/{{ map.building_id }}.geojson"></tup-map>
+        </tup-hero-gallery>
+
+        <tup-place-summary
+          building="{{ summary.building }}"
+          floor="{{ summary.floor }}"
+          room="{{ summary.room }}"{{ if summary.parking }}
+          parking{{ end }}{{ if summary.parking_href }}
+          parking-href="{{ summary.parking_href }}"{{ end }}
+          navigate>
+        </tup-place-summary>
+
+        <tup-route>
+{{- for step in route }}
+          <tup-route-step
+            type="{{ step.type }}"
+            text="{{ step.text }}"{{ if step.distance }}
+            distance="{{ step.distance }}"{{ end }}>
+          </tup-route-step>
+{{- end }}
+        </tup-route>
+
+        <tup-navigation-button>{{ navigation.label }}</tup-navigation-button>
+
+      </article>
+    </section>
+  </main>
+</body>
+</html>
