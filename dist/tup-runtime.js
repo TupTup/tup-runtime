@@ -11,13 +11,16 @@ e("tup-place-header", class extends HTMLElement {
 	static observedAttributes = [
 		"name",
 		"address",
+		"lat",
+		"lng",
+		"plus-code",
 		"map-href",
 		"maps",
 		"vcard",
 		"preview"
 	];
 	#e = (e) => {
-		e.target.closest("[data-share]") && this.#c();
+		e.target.closest("[data-share]") && this.#l();
 	};
 	connectedCallback() {
 		this.addEventListener("click", this.#e), this.#o();
@@ -29,13 +32,19 @@ e("tup-place-header", class extends HTMLElement {
 		this.isConnected && this.#o();
 	}
 	#t() {
-		let e = this.getAttribute("name") ?? "", t = this.getAttribute("address") ?? "", n = this.getAttribute("map-href") ?? this.getAttribute("maps");
+		let e = this.getAttribute("name") ?? "", t = this.getAttribute("address") ?? "", n = this.getAttribute("lat")?.trim() ?? "", r = this.getAttribute("lng")?.trim() ?? "", i = this.getAttribute("plus-code")?.trim() ?? "", a = this.getAttribute("map-href") ?? this.getAttribute("maps");
 		return {
 			name: e,
 			address: t,
 			vcard: this.getAttribute("vcard"),
 			preview: this.getAttribute("preview"),
-			mapsUrl: this.#s(t, n)
+			mapsUrl: this.#s({
+				address: t,
+				lat: n,
+				lng: r,
+				plusCode: i,
+				mapHref: a
+			})
 		};
 	}
 	#n(e) {
@@ -112,10 +121,13 @@ e("tup-place-header", class extends HTMLElement {
       </header>
     `;
 	}
-	#s(e, t) {
-		return t || (e ? `https://maps.google.com/?q=${encodeURIComponent(e)}` : null);
+	#s({ address: e, lat: t, lng: n, plusCode: r, mapHref: i }) {
+		return i || (t && n ? this.#c(`${t},${n}`) : r ? this.#c(r) : e ? this.#c(e) : null);
 	}
-	async #c() {
+	#c(e) {
+		return `https://maps.google.com/?q=${encodeURIComponent(e)}`;
+	}
+	async #l() {
 		let e = this.getAttribute("name") ?? "", t = this.getAttribute("address") ?? "", n = {
 			title: e,
 			text: t ? `${e} — ${t}` : e,

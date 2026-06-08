@@ -6,6 +6,9 @@ class TupPlaceHeader extends HTMLElement {
   static observedAttributes = [
     "name",
     "address",
+    "lat",
+    "lng",
+    "plus-code",
     "map-href",
     "maps",
     "vcard",
@@ -38,6 +41,9 @@ class TupPlaceHeader extends HTMLElement {
   #readAttrs() {
     const name = this.getAttribute("name") ?? "";
     const address = this.getAttribute("address") ?? "";
+    const lat = this.getAttribute("lat")?.trim() ?? "";
+    const lng = this.getAttribute("lng")?.trim() ?? "";
+    const plusCode = this.getAttribute("plus-code")?.trim() ?? "";
     const mapHref = this.getAttribute("map-href") ?? this.getAttribute("maps");
     const vcard = this.getAttribute("vcard");
     const preview = this.getAttribute("preview");
@@ -47,7 +53,13 @@ class TupPlaceHeader extends HTMLElement {
       address,
       vcard,
       preview,
-      mapsUrl: this.#mapsUrl(address, mapHref),
+      mapsUrl: this.#mapsUrl({
+        address,
+        lat,
+        lng,
+        plusCode,
+        mapHref,
+      }),
     };
   }
 
@@ -153,16 +165,28 @@ class TupPlaceHeader extends HTMLElement {
     `;
   }
 
-  #mapsUrl(address, mapHref) {
+  #mapsUrl({ address, lat, lng, plusCode, mapHref }) {
     if (mapHref) {
       return mapHref;
+    }
+
+    if (lat && lng) {
+      return this.#mapsQueryUrl(`${lat},${lng}`);
+    }
+
+    if (plusCode) {
+      return this.#mapsQueryUrl(plusCode);
     }
 
     if (!address) {
       return null;
     }
 
-    return `https://maps.google.com/?q=${encodeURIComponent(address)}`;
+    return this.#mapsQueryUrl(address);
+  }
+
+  #mapsQueryUrl(query) {
+    return `https://maps.google.com/?q=${encodeURIComponent(query)}`;
   }
 
   async #sharePlace() {
