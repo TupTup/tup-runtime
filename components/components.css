@@ -390,6 +390,14 @@ tup-navigation-button {
   display: none;
 }
 
+@media (max-width: 480px) {
+  .place-badge-item--building::before,
+  .place-badge-item--stairs::before,
+  .place-badge-item--door::before {
+    display: none;
+  }
+}
+
 .place-summary-section {
   margin-top: 8px;
 }

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tup Runtime Demo</title>
+    <script type="module" src="/index.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <div
+        class="map"
+        aria-hidden="true"
+        style="background: linear-gradient(135deg, #dbeafe, #f3f4f6 55%, #dcfce7);"
+      ></div>
+
+      <section id="place" class="sheet screen active" aria-label="Podglad miejsca">
+        <div class="sheet-grabber" aria-hidden="true"></div>
+
+        <div class="sheet-content">
+          <tup-place-header
+            name="TupTup Demo"
+            address="ul. Przykladowa 10, Warszawa"
+          ></tup-place-header>
+
+          <tup-place-photo
+            src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80"
+            alt="Przykladowe biuro"
+            fallback-src="https://placehold.co/1200x675/e5e7eb/111827?text=TupTup"
+          ></tup-place-photo>
+
+          <tup-place-summary
+            building="A"
+            floor="3"
+            room="305"
+            navigate
+          ></tup-place-summary>
+
+          <tup-route>
+            <tup-route-step
+              type="reception"
+              text="Wejdz przez **recepcje**"
+              distance="20 m"
+            ></tup-route-step>
+            <tup-route-step
+              type="stairs"
+              text="Wejdz na **3 pietro**"
+              distance="35 m"
+            ></tup-route-step>
+            <tup-route-step
+              type="door"
+              text="Lokal **305** bedzie po prawej stronie"
+            ></tup-route-step>
+          </tup-route>
+
+          <tup-navigation-button>Prowadz</tup-navigation-button>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
