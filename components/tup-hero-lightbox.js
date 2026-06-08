@@ -44,7 +44,7 @@ function collectGalleryItems(gallery) {
         };
       }
 
-      if (host.matches("tup-place-photo")) {
+      if (host.matches("tup-landmark")) {
         const img = host.querySelector(".hero-image-img");
 
         if (!img?.src) {

@@ -1,7 +1,7 @@
 import { escapeHtml } from "./tup-html.js";
 
 export const HERO_SLIDE_SELECTOR =
-  ":scope > tup-place-photo, :scope > tup-map";
+  ":scope > tup-landmark, :scope > tup-map";
 
 export function renderHeroSlide({
   mediaHtml,
@@ -11,7 +11,7 @@ export function renderHeroSlide({
   parking = false,
 }) {
   const parkingHtml = parking
-    ? `<span class="place-photo-parking" aria-hidden="true">P</span>`
+    ? `<span class="landmark-parking" aria-hidden="true">P</span>`
     : "";
 
   const figcaptionHtml =

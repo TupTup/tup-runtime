@@ -1,7 +1,7 @@
 tup-place-header,
 tup-badge,
 tup-hero-gallery,
-tup-place-photo,
+tup-landmark,
 tup-map,
 tup-place-summary,
 tup-route,
@@ -564,7 +564,7 @@ tup-hero-gallery {
   transform: scaleX(-1);
 }
 
-tup-hero-gallery > tup-place-photo,
+tup-hero-gallery > tup-landmark,
 tup-hero-gallery > tup-map {
   flex: 0 0 100%;
 
@@ -632,7 +632,7 @@ tup-hero-gallery > tup-map {
   cursor: pointer;
 }
 
-.place-photo-parking {
+.landmark-parking {
   position: absolute;
   top: 10px;
   right: 10px;

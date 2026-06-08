@@ -167,9 +167,9 @@ t("tup-place-header", class extends HTMLElement {
 });
 //#endregion
 //#region components/tup-hero-slide.js
-var r = ":scope > tup-place-photo, :scope > tup-map";
+var r = ":scope > tup-landmark, :scope > tup-map";
 function i({ mediaHtml: e, ariaLabel: t, caption: r = "", hideCaption: i = !1, parking: a = !1 }) {
-	let o = a ? "<span class=\"place-photo-parking\" aria-hidden=\"true\">P</span>" : "", s = r && !i ? `<figcaption class="visually-hidden">${n(r)}</figcaption>` : "";
+	let o = a ? "<span class=\"landmark-parking\" aria-hidden=\"true\">P</span>" : "", s = r && !i ? `<figcaption class="visually-hidden">${n(r)}</figcaption>` : "";
 	return `
     <div class="place-hero-home">
       <figure class="place-hero">
@@ -33970,7 +33970,7 @@ function T(e) {
 			caption: e.getAttribute("caption") ?? "",
 			hideCaption: e.hasAttribute("hide-caption")
 		};
-		if (e.matches("tup-place-photo")) {
+		if (e.matches("tup-landmark")) {
 			let t = e.querySelector(".hero-image-img");
 			return t?.src ? {
 				type: "photo",
@@ -34140,14 +34140,14 @@ t("tup-hero-gallery", class extends HTMLElement {
 		this.dataset.lightboxBound !== "true" && (this.dataset.lightboxBound = "true", this.addEventListener("click", (e) => {
 			let t = e.target.closest("[data-lightbox]");
 			if (!t || !this.contains(t)) return;
-			let n = t.closest("tup-place-photo, tup-map");
+			let n = t.closest("tup-landmark, tup-map");
 			!n || n.parentElement !== this || w(this, n);
 		}));
 	}
 	#r() {
 		se(this);
 	}
-}), t("tup-place-photo", class extends HTMLElement {
+}), t("tup-landmark", class extends HTMLElement {
 	static observedAttributes = [
 		"src",
 		"alt",
