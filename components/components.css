@@ -491,12 +491,91 @@ a.place-summary-item--parking:hover::before {
   color: #3b82f6;
 }
 
+.place-hero-gallery-shell {
+  position: relative;
+
+  flex-shrink: 0;
+}
+
+.place-hero-gallery {
+  display: flex;
+  gap: 8px;
+
+  margin-top: 16px;
+
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  touch-action: pan-x pan-y;
+}
+
+.hero-gallery-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+
+  display: grid;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.16);
+
+  cursor: pointer;
+
+  transform: translateY(-50%);
+
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero-gallery-nav::before {
+  content: "";
+
+  display: block;
+
+  width: 20px;
+  height: 20px;
+
+  background: url("images/icons/chevron-left.svg") no-repeat center / contain;
+}
+
+.hero-gallery-nav--prev {
+  left: 8px;
+}
+
+.hero-gallery-nav--next {
+  right: 8px;
+}
+
+.hero-gallery-nav--next::before {
+  transform: scaleX(-1);
+}
+
+.place-hero-gallery > tup-place-photo {
+  flex: 0 0 100%;
+
+  min-width: 0;
+
+  scroll-snap-align: start;
+}
+
 .place-hero-home {
   display: contents;
 }
 
 .place-hero {
-  margin: 16px 0 0;
+  margin: 0;
   padding: 0;
 
   touch-action: pan-y;
@@ -586,6 +665,38 @@ a.place-summary-item--parking:hover::before {
 
 .hero-image-img {
   transition: opacity 200ms ease;
+}
+
+.hero-map-preview {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  background: #e5e7eb;
+}
+
+.hero-map-preview .maplibregl-map {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+}
+
+.hero-map-preview--error {
+  display: grid;
+  place-items: center;
+
+  font-size: 14px;
+  color: #6b7280;
 }
 
 .hero-lightbox:not([open]) {
@@ -706,6 +817,7 @@ a.place-summary-item--parking:hover::before {
   flex-direction: column;
   align-items: center;
 
+  width: 100%;
   max-width: 100%;
   max-height: 100%;
 }
@@ -723,6 +835,50 @@ a.place-summary-item--parking:hover::before {
   border-radius: 8px;
 
   touch-action: pan-y;
+}
+
+.hero-lightbox-img[hidden] {
+  display: none;
+}
+
+.hero-lightbox-map {
+  position: relative;
+
+  flex-shrink: 0;
+
+  width: min(100%, calc(100vw - 32px));
+  height: min(calc(100dvh - 120px), calc(100vh - 120px));
+
+  border-radius: 8px;
+
+  overflow: hidden;
+
+  background: #e5e7eb;
+
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.hero-lightbox-map[hidden] {
+  display: none;
+}
+
+.hero-lightbox-map .maplibregl-map {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+}
+
+.hero-lightbox-map .maplibregl-canvas {
+  border-radius: 8px;
+}
+
+.hero-lightbox--map .hero-lightbox-map {
+  touch-action: none;
 }
 
 .hero-lightbox-caption {

@@ -1,5 +1,6 @@
 import './components/components.css';
 import './css/app.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 import './components/tup-place-header.js';
 import './components/tup-place-photo.js';

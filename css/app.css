@@ -160,13 +160,15 @@ body {
 }
 
 #place tup-place-header,
-#place tup-place-photo,
+#place .place-hero-gallery-shell,
+#place .place-hero-gallery,
 #place tup-place-summary,
 #place tup-navigation-button {
   flex-shrink: 0;
 }
 
-#place .hero-image-trigger {
+#place .place-hero-gallery .hero-image-trigger,
+#place > .sheet-content > tup-place-photo .hero-image-trigger {
   height: 33dvh;
 }
 
@@ -176,6 +178,12 @@ body {
   max-height: none;
 
   object-fit: cover;
+}
+
+#place .hero-map-preview {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 }
 
 #place > .sheet-content {
