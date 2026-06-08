@@ -1,5 +1,5 @@
 import {
-  createOsmMap,
+  createMap,
   fetchGeojson,
   readPlaceMapConfig,
 } from "./tup-maplibre.js";
@@ -272,7 +272,7 @@ function renderLightboxItem() {
               return;
             }
 
-            lightboxMap = createOsmMap(lightboxMapEl, {
+            lightboxMap = createMap(lightboxMapEl, {
               interactive: true,
               center: mapCenter,
               zoom: item.defaultZoom,

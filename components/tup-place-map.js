@@ -2,7 +2,7 @@ import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 import { renderHeroSlide } from "./tup-hero-slide.js";
 import {
-  createOsmMap,
+  createMap,
   fetchGeojson,
   readPlaceMapConfig,
 } from "./tup-maplibre.js";
@@ -86,7 +86,7 @@ class TupPlaceMap extends HTMLElement {
     }
 
     this.#destroyPreviewMap();
-    this.#previewMap = createOsmMap(container, {
+    this.#previewMap = createMap(container, {
       interactive: false,
       center,
       zoom: defaultZoom,

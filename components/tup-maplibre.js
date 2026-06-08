@@ -1,13 +1,12 @@
 import { Map as MapLibreMap, setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker.js?url";
-import { getGeojsonBounds, getGeojsonCenter } from "./tup-osm-geometry.js";
 
 setWorkerUrl(workerUrl);
 
-const OSM_STYLE = {
+const MAP_STYLE = {
   version: 8,
   sources: {
-    osm: {
+    tiles: {
       type: "raster",
       tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
       tileSize: 256,
@@ -16,12 +15,72 @@ const OSM_STYLE = {
   },
   layers: [
     {
-      id: "osm",
+      id: "tiles",
       type: "raster",
-      source: "osm",
+      source: "tiles",
     },
   ],
 };
+
+function getGeojsonCenter(geojson) {
+  const bounds = getGeojsonBounds(geojson);
+
+  if (!bounds) {
+    return null;
+  }
+
+  return [
+    (bounds[0][0] + bounds[1][0]) / 2,
+    (bounds[0][1] + bounds[1][1]) / 2,
+  ];
+}
+
+function getGeojsonBounds(geojson) {
+  const bounds = {
+    minLng: Infinity,
+    minLat: Infinity,
+    maxLng: -Infinity,
+    maxLat: -Infinity,
+  };
+
+  const extend = (lng, lat) => {
+    bounds.minLng = Math.min(bounds.minLng, lng);
+    bounds.minLat = Math.min(bounds.minLat, lat);
+    bounds.maxLat = Math.max(bounds.maxLat, lat);
+    bounds.maxLng = Math.max(bounds.maxLng, lng);
+  };
+
+  const walkCoords = (coords) => {
+    if (typeof coords[0] === "number") {
+      extend(coords[0], coords[1]);
+      return;
+    }
+
+    for (const part of coords) {
+      walkCoords(part);
+    }
+  };
+
+  const features =
+    geojson?.type === "Feature"
+      ? [geojson]
+      : geojson?.features ?? [];
+
+  for (const feature of features) {
+    if (feature.geometry?.coordinates) {
+      walkCoords(feature.geometry.coordinates);
+    }
+  }
+
+  if (!Number.isFinite(bounds.minLng)) {
+    return null;
+  }
+
+  return [
+    [bounds.minLng, bounds.minLat],
+    [bounds.maxLng, bounds.maxLat],
+  ];
+}
 
 const geojsonCache = new Map();
 const GEOJSON_TIMEOUT_MS = 12_000;
@@ -193,7 +252,7 @@ function addGeojsonLayers(map, geojson) {
   });
 }
 
-export function createOsmMap(
+export function createMap(
   container,
   {
     interactive = false,
@@ -204,7 +263,7 @@ export function createOsmMap(
 ) {
   const map = new MapLibreMap({
     container,
-    style: OSM_STYLE,
+    style: MAP_STYLE,
     interactive,
     attributionControl: interactive,
     dragPan: interactive,
