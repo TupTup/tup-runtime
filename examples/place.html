@@ -52,12 +52,12 @@
         </tup-place-header>
 
         <tup-hero-gallery>
-          <tup-landmark
+          <tup-photo
             src="{{ landmark.src }}"
             alt="{{ landmark.alt }}"
             caption="{{ landmark.caption }}"
             fallback-src="{{ landmark.fallback_src }}">
-          </tup-landmark>
+          </tup-photo>
 
           <tup-map src="/geojson/buildings/{{ map.building_id }}.geojson"></tup-map>
         </tup-hero-gallery>

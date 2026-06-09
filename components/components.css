@@ -1,7 +1,7 @@
 tup-place-header,
 tup-badge,
 tup-hero-gallery,
-tup-landmark,
+tup-photo,
 tup-map,
 tup-place-summary,
 tup-route,
@@ -420,7 +420,7 @@ tup-hero-gallery {
   transform: scaleX(-1);
 }
 
-tup-hero-gallery > tup-landmark,
+tup-hero-gallery > tup-photo,
 tup-hero-gallery > tup-map {
   flex: 0 0 100%;
 

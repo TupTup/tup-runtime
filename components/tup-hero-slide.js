@@ -1,7 +1,7 @@
 import { escapeHtml } from "./tup-html.js";
 
 export const HERO_SLIDE_SELECTOR =
-  ":scope > tup-landmark, :scope > tup-map";
+  ":scope > tup-photo, :scope > tup-map";
 
 export function renderHeroSlide({
   mediaHtml,

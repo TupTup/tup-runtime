@@ -2,7 +2,7 @@ import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 import { renderHeroSlide } from "./tup-hero-slide.js";
 
-class TupLandmark extends HTMLElement {
+class TupPhoto extends HTMLElement {
 
   static observedAttributes = [
     "src",
@@ -63,6 +63,6 @@ class TupLandmark extends HTMLElement {
 }
 
 defineCustomElement(
-  "tup-landmark",
-  TupLandmark
+  "tup-photo",
+  TupPhoto
 );
