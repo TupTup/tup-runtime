@@ -236,8 +236,8 @@ function addGeojsonLayers(map, geojson) {
     type: "fill",
     source: "building",
     paint: {
-      "fill-color": "#ff0000",
-      "fill-opacity": 0.3,
+      "fill-color": "#3b82f6",
+      "fill-opacity": 0.2,
     },
   });
 
@@ -246,7 +246,7 @@ function addGeojsonLayers(map, geojson) {
     type: "line",
     source: "building",
     paint: {
-      "line-color": "#ff0000",
+      "line-color": "#1d4ed8",
       "line-width": 2,
     },
   });
