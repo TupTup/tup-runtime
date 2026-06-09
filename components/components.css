@@ -350,17 +350,15 @@ tup-navigation-button {
   margin: 0;
 }
 
-.place-hero-gallery-shell {
+tup-place-overview {
   position: relative;
 
-  flex-shrink: 0;
+  margin-top: 16px;
 }
 
-tup-place-overview {
+.place-overview-scroll {
   display: flex;
   gap: 8px;
-
-  margin-top: 16px;
 
   overflow-x: auto;
   overscroll-behavior-x: contain;
@@ -420,8 +418,8 @@ tup-place-overview {
   transform: scaleX(-1);
 }
 
-tup-place-overview > tup-photo,
-tup-place-overview > tup-map {
+.place-overview-scroll > tup-photo,
+.place-overview-scroll > tup-map {
   flex: 0 0 100%;
 
   min-width: 0;

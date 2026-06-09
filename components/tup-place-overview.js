@@ -2,12 +2,12 @@ import { defineCustomElement } from "./define-custom-element.js";
 import { HERO_SLIDE_SELECTOR } from "./tup-hero-slide.js";
 import { openHeroLightbox } from "./tup-hero-lightbox.js";
 
-function getGalleryItems(gallery) {
-  return [...gallery.querySelectorAll(HERO_SLIDE_SELECTOR)];
+function getGalleryItems(scroll) {
+  return [...scroll.querySelectorAll(HERO_SLIDE_SELECTOR)];
 }
 
-function getActiveIndex(gallery, items) {
-  const center = gallery.scrollLeft + gallery.clientWidth / 2;
+function getActiveIndex(scroll, items) {
+  const center = scroll.scrollLeft + scroll.clientWidth / 2;
 
   let closest = 0;
   let minDistance = Infinity;
@@ -25,65 +25,40 @@ function getActiveIndex(gallery, items) {
   return closest;
 }
 
-function scrollToIndex(gallery, items, index) {
+function scrollToIndex(scroll, items, index) {
   const item = items[index];
 
   if (!item) {
     return;
   }
 
-  gallery.scrollTo({
+  scroll.scrollTo({
     left: item.offsetLeft,
     behavior: "smooth",
   });
 }
 
-function getGalleryShell(gallery) {
-  const parent = gallery.parentElement;
+function removeGalleryNav(host) {
+  delete host.dataset.galleryBound;
 
-  if (parent?.classList.contains("place-hero-gallery-shell")) {
-    return parent;
-  }
-
-  const shell = document.createElement("div");
-  shell.className = "place-hero-gallery-shell";
-  gallery.parentNode.insertBefore(shell, gallery);
-  shell.appendChild(gallery);
-
-  return shell;
-}
-
-function removeGalleryNav(gallery) {
-  const shell = gallery.parentElement;
-  gallery.classList.remove("place-hero-gallery--navigable");
-
-  if (!shell?.classList.contains("place-hero-gallery-shell")) {
-    return;
-  }
-
-  delete shell.dataset.galleryBound;
-
-  for (const button of shell.querySelectorAll(".hero-gallery-nav")) {
+  for (const button of host.querySelectorAll(".hero-gallery-nav")) {
     button.remove();
   }
 }
 
-function ensureGalleryNav(gallery) {
-  const items = getGalleryItems(gallery);
+function ensureGalleryNav(host, scroll) {
+  const items = getGalleryItems(scroll);
 
   if (items.length < 2) {
-    removeGalleryNav(gallery);
+    removeGalleryNav(host);
     return;
   }
 
-  const shell = getGalleryShell(gallery);
-
-  if (shell.dataset.galleryBound === "true") {
+  if (host.dataset.galleryBound === "true") {
     return;
   }
 
-  shell.dataset.galleryBound = "true";
-  gallery.classList.add("place-hero-gallery--navigable");
+  host.dataset.galleryBound = "true";
 
   const prevButton = document.createElement("button");
   prevButton.type = "button";
@@ -96,30 +71,32 @@ function ensureGalleryNav(gallery) {
   nextButton.setAttribute("aria-label", "Następny podgląd");
 
   prevButton.addEventListener("click", () => {
-    const galleryItems = getGalleryItems(gallery);
-    const activeIndex = getActiveIndex(gallery, galleryItems);
+    const galleryItems = getGalleryItems(scroll);
+    const activeIndex = getActiveIndex(scroll, galleryItems);
     const nextIndex =
       (activeIndex - 1 + galleryItems.length) % galleryItems.length;
 
-    scrollToIndex(gallery, galleryItems, nextIndex);
+    scrollToIndex(scroll, galleryItems, nextIndex);
   });
 
   nextButton.addEventListener("click", () => {
-    const galleryItems = getGalleryItems(gallery);
-    const activeIndex = getActiveIndex(gallery, galleryItems);
+    const galleryItems = getGalleryItems(scroll);
+    const activeIndex = getActiveIndex(scroll, galleryItems);
     const nextIndex = (activeIndex + 1) % galleryItems.length;
 
-    scrollToIndex(gallery, galleryItems, nextIndex);
+    scrollToIndex(scroll, galleryItems, nextIndex);
   });
 
-  shell.append(prevButton, nextButton);
+  host.append(prevButton, nextButton);
 }
 
 class TupPlaceOverview extends HTMLElement {
 
   #childObserver = null;
+  #scroll = null;
 
   connectedCallback() {
+    this.#buildScroll();
     this.#bindLightbox();
     this.#refreshNav();
     this.#observeChildren();
@@ -130,12 +107,28 @@ class TupPlaceOverview extends HTMLElement {
     this.#childObserver = null;
   }
 
+  #buildScroll() {
+    if (this.#scroll) {
+      return;
+    }
+
+    const scroll = document.createElement("div");
+    scroll.className = "place-overview-scroll";
+
+    for (const child of [...this.querySelectorAll(HERO_SLIDE_SELECTOR)]) {
+      scroll.appendChild(child);
+    }
+
+    this.insertBefore(scroll, this.firstChild);
+    this.#scroll = scroll;
+  }
+
   #observeChildren() {
     this.#childObserver?.disconnect();
     this.#childObserver = new MutationObserver(() => {
       this.#refreshNav();
     });
-    this.#childObserver.observe(this, { childList: true });
+    this.#childObserver.observe(this.#scroll, { childList: true });
   }
 
   #bindLightbox() {
@@ -154,16 +147,16 @@ class TupPlaceOverview extends HTMLElement {
 
       const host = trigger.closest("tup-photo, tup-map");
 
-      if (!host || host.parentElement !== this) {
+      if (!host || host.parentElement !== this.#scroll) {
         return;
       }
 
-      openHeroLightbox(this, host);
+      openHeroLightbox(this.#scroll, host);
     });
   }
 
   #refreshNav() {
-    ensureGalleryNav(this);
+    ensureGalleryNav(this, this.#scroll);
   }
 }
 
