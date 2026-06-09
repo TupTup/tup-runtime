@@ -281,9 +281,7 @@ export function createMap(
     }
   };
 
-  const resizeObserver = new ResizeObserver(() => {
-    resize();
-  });
+  const resizeObserver = new ResizeObserver(resize);
 
   resizeObserver.observe(container);
 
@@ -309,7 +307,6 @@ export function createMap(
   map.once("idle", resize);
 
   requestAnimationFrame(resize);
-  setTimeout(resize, 50);
 
   const refit = () => {
     if (!map.isStyleLoaded()) {
