@@ -286,10 +286,6 @@ tup-navigation-button {
   gap: 0;
 }
 
-.place-badge-item--chevron::before {
-  display: none;
-}
-
 .place-badge-item--brand:not(:last-child)::after {
   width: 1px;
   height: 20px;
@@ -304,12 +300,6 @@ tup-navigation-button {
   height: 22px;
 
   background-image: url("images/tuptup.svg");
-}
-
-.place-badge-item--chevron {
-  display: none;
-
-  padding-left: 4px;
 }
 
 .place-badge-value {
@@ -330,17 +320,6 @@ tup-navigation-button {
 
 .place-badge-value--icon {
   width: 0;
-}
-
-.place-badge-value--chevron {
-  color: #6f6f6f;
-}
-
-.place-badge-chevron {
-  display: block;
-
-  width: 10px;
-  height: 18px;
 }
 
 .place-badge--compact .place-badge-item:not(.place-badge-item--brand)::before,

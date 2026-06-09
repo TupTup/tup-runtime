@@ -13,7 +13,6 @@ class TupPlaceSummary extends HTMLElement {
     "parking",
     "parking-href",
     "variant",
-    "navigate",
   ];
 
   connectedCallback() {
@@ -36,7 +35,6 @@ class TupPlaceSummary extends HTMLElement {
     const room = this.getAttribute("room") ?? "";
     const parkingHref = this.getAttribute("parking-href");
     const hasParking = this.hasAttribute("parking") || Boolean(parkingHref);
-    const hasNavigate = this.hasAttribute("navigate");
     const hasBadge = building || floor || room;
     const variant = this.getAttribute("variant") ?? "default";
 
@@ -49,8 +47,7 @@ class TupPlaceSummary extends HTMLElement {
           room="${escapeHtml(room)}"
           variant="${escapeHtml(variant)}"
           ${hasParking ? "parking" : ""}
-          ${parkingHref ? `parking-href="${escapeHtml(parkingHref)}"` : ""}
-          ${hasNavigate ? "navigate" : ""}>
+          ${parkingHref ? `parking-href="${escapeHtml(parkingHref)}"` : ""}>
         </tup-badge>
       `
       : "";
