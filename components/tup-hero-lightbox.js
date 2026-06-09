@@ -1,6 +1,7 @@
 import {
   createMap,
   fetchGeojson,
+  filterGeojson,
   readMapConfig,
 } from "./tup-maplibre.js";
 import { HERO_SLIDE_SELECTOR } from "./tup-hero-slide.js";
@@ -287,7 +288,7 @@ function renderLightboxItem() {
 
         fetchGeojson(item.src)
           .then((geojson) => {
-            mountLightboxMap(center, geojson);
+            mountLightboxMap(center, filterGeojson(geojson, item.feature));
           })
           .catch(() => {
             if (center) {

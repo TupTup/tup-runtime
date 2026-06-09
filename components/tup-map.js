@@ -4,6 +4,7 @@ import { renderHeroSlide } from "./tup-hero-slide.js";
 import {
   createMap,
   fetchGeojson,
+  filterGeojson,
   readMapConfig,
 } from "./tup-maplibre.js";
 
@@ -13,6 +14,7 @@ class TupMap extends HTMLElement {
     "alt",
     "caption",
     "src",
+    "feature",
     "default-zoom",
     "zoom",
     "lat",
@@ -106,7 +108,7 @@ class TupMap extends HTMLElement {
   }
 
   #loadPreviewMap() {
-    const { src, defaultZoom, center } = readMapConfig(this);
+    const { src, defaultZoom, center, feature } = readMapConfig(this);
     const container = this.querySelector(".hero-map-preview");
 
     if (!container) {
@@ -122,7 +124,7 @@ class TupMap extends HTMLElement {
     if (src) {
       fetchGeojson(src)
         .then((geojson) => {
-          mount(geojson);
+          mount(filterGeojson(geojson, feature));
         })
         .catch(() => {
           if (center) {

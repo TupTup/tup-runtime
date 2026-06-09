@@ -134,13 +134,28 @@ export function readMapConfig(element) {
   const defaultZoom = parseDefaultZoom(element);
   const lat = element.getAttribute("lat")?.trim() ?? "";
   const lng = element.getAttribute("lng")?.trim() ?? "";
+  const feature = element.getAttribute("feature")?.trim() ?? "";
 
   return {
     src,
     defaultZoom,
     lat,
     lng,
+    feature,
     center: lat && lng ? { lat, lng } : null,
+  };
+}
+
+export function filterGeojson(geojson, featureType) {
+  if (!featureType || !geojson) {
+    return geojson;
+  }
+
+  return {
+    ...geojson,
+    features: (geojson.features ?? []).filter(
+      (f) => f.properties?.featureType === featureType
+    ),
   };
 }
 
