@@ -51,6 +51,8 @@ class TupPlaceHeader extends HTMLElement {
     return {
       name,
       address,
+      lat,
+      lng,
       vcard,
       preview,
       mapsUrl: this.#mapsUrl({
@@ -144,9 +146,7 @@ class TupPlaceHeader extends HTMLElement {
   }
 
   #render() {
-    const { name, address, vcard, preview, mapsUrl } = this.#readAttrs();
-    const lat = this.getAttribute("lat")?.trim() ?? "";
-    const lng = this.getAttribute("lng")?.trim() ?? "";
+    const { name, address, lat, lng, vcard, preview, mapsUrl } = this.#readAttrs();
 
     this.#syncDocumentTitle(name);
 
