@@ -267,21 +267,15 @@ function renderLightboxItem() {
         lightboxMapEl.replaceChildren();
 
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            if (items[activeIndex] !== item || !lightboxMapEl.isConnected) {
-              return;
-            }
+          if (items[activeIndex] !== item || !lightboxMapEl.isConnected) {
+            return;
+          }
 
-            lightboxMap = createMap(lightboxMapEl, {
-              interactive: true,
-              center: mapCenter,
-              zoom: item.defaultZoom,
-              geojson,
-            });
-
-            lightboxMap.map.once("idle", () => {
-              lightboxMap?.map.resize();
-            });
+          lightboxMap = createMap(lightboxMapEl, {
+            interactive: true,
+            center: mapCenter,
+            zoom: item.defaultZoom,
+            geojson,
           });
         });
       };
