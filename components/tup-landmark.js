@@ -13,19 +13,18 @@ class TupLandmark extends HTMLElement {
 
   connectedCallback() {
     this.#render();
-    this.#bindFallback();
   }
 
   attributeChangedCallback() {
     if (this.isConnected) {
       this.#render();
-      this.#bindFallback();
     }
   }
 
   #render() {
     const alt = this.getAttribute("alt") ?? "";
     const caption = this.getAttribute("caption") ?? "";
+    const fallbackSrc = this.getAttribute("fallback-src");
     const ariaLabel = alt ? `Powiększ: ${alt}` : "Powiększ zdjęcie";
 
     const mediaHtml = `
@@ -45,29 +44,21 @@ class TupLandmark extends HTMLElement {
       hideCaption: this.hasAttribute("hide-caption"),
       parking: this.hasAttribute("parking"),
     });
-  }
 
-  #bindFallback() {
+    if (!fallbackSrc) {
+      return;
+    }
+
     const img = this.querySelector(".hero-image-img");
-    const fallbackSrc = this.getAttribute("fallback-src");
 
-    if (!img || !fallbackSrc) {
+    if (img.complete && img.naturalWidth === 0) {
+      img.src = fallbackSrc;
       return;
     }
 
     img.addEventListener("error", () => {
-      if (img.dataset.fallbackApplied === "true") {
-        return;
-      }
-
-      img.dataset.fallbackApplied = "true";
       img.src = fallbackSrc;
-    });
-
-    if (img.complete && img.naturalWidth === 0) {
-      img.dataset.fallbackApplied = "true";
-      img.src = fallbackSrc;
-    }
+    }, { once: true });
   }
 }
 
