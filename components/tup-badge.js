@@ -1,16 +1,12 @@
 import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 
-const SHOW_PARKING_BADGE = false;
-
 class TupBadge extends HTMLElement {
 
   static observedAttributes = [
     "building",
     "floor",
     "room",
-    "parking",
-    "parking-href",
     "variant",
     "navigate",
   ];
@@ -35,23 +31,8 @@ class TupBadge extends HTMLElement {
       : "default";
   }
 
-  #items(variant) {
-    const parkingHref = this.getAttribute("parking-href");
-    const hasParking = SHOW_PARKING_BADGE
-      && variant !== "minimal"
-      && (this.hasAttribute("parking") || Boolean(parkingHref));
-
-    const parkingItem = hasParking
-      ? [{
-        type: "parking",
-        label: "Parking",
-        value: "",
-        href: parkingHref,
-      }]
-      : [];
-
+  #items() {
     const locationItems = [
-      ...parkingItem,
       {
         type: "building",
         label: "Budynek",
@@ -67,7 +48,7 @@ class TupBadge extends HTMLElement {
         label: "Lokal",
         value: this.getAttribute("room") ?? "",
       },
-    ].filter((item) => item.type === "parking" || item.value);
+    ].filter((item) => item.value);
 
     const brandItem = {
       type: "brand",
@@ -96,7 +77,7 @@ class TupBadge extends HTMLElement {
 
   #render() {
     const variant = this.#variant();
-    const items = this.#items(variant);
+    const items = this.#items();
 
     this.hidden = items.length === 0;
 
@@ -107,20 +88,17 @@ class TupBadge extends HTMLElement {
 
     this.innerHTML = `
       <dl class="place-badge place-badge--${variant}" aria-label="Skrót lokalizacji">
-        ${items.map((item, index) => this.#itemMarkup(item, items[index + 1])).join("")}
+        ${items.map((item) => this.#itemMarkup(item)).join("")}
       </dl>
     `;
   }
 
-  #itemClass(item, nextItem) {
-    return [
-      "place-badge-item",
-      `place-badge-item--${item.type}`,
-    ].filter(Boolean).join(" ");
+  #itemClass(item) {
+    return `place-badge-item place-badge-item--${item.type}`;
   }
 
-  #itemMarkup(item, nextItem) {
-    const itemClass = this.#itemClass(item, nextItem);
+  #itemMarkup(item) {
+    const itemClass = this.#itemClass(item);
 
     if (item.type === "chevron") {
       return `
@@ -169,31 +147,7 @@ class TupBadge extends HTMLElement {
       `;
     }
 
-    if (item.type !== "parking") {
-      return `<dd class="place-badge-value">${escapeHtml(item.value)}</dd>`;
-    }
-
-    if (item.href) {
-      return `
-        <dd class="place-badge-value place-badge-value--icon">
-          <a
-            class="place-badge-link"
-            href="${escapeHtml(item.href)}"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Przejdź do parkingu"
-          >
-            <span class="visually-hidden">Parking</span>
-          </a>
-        </dd>
-      `;
-    }
-
-    return `
-      <dd class="place-badge-value place-badge-value--icon">
-        <span class="visually-hidden">Parking</span>
-      </dd>
-    `;
+    return `<dd class="place-badge-value">${escapeHtml(item.value)}</dd>`;
   }
 }
 
