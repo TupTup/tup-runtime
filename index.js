@@ -3,7 +3,7 @@ import './css/app.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import './components/tup-place-header.js';
-import './components/tup-hero-gallery.js';
+import './components/tup-place-overview.js';
 import './components/tup-photo.js';
 import './components/tup-map.js';
 import './components/tup-place-summary.js';

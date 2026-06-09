@@ -161,13 +161,13 @@ body {
 
 #place tup-place-header,
 #place .place-hero-gallery-shell,
-#place tup-hero-gallery,
+#place tup-place-overview,
 #place tup-place-summary,
 #place tup-navigation-button {
   flex-shrink: 0;
 }
 
-#place tup-hero-gallery .hero-image-trigger {
+#place tup-place-overview .hero-image-trigger {
   height: 33dvh;
 }
 

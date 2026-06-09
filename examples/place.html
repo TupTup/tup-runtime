@@ -51,7 +51,7 @@
           vcard="{{ header.vcard_href }}">
         </tup-place-header>
 
-        <tup-hero-gallery>
+        <tup-place-overview>
           <tup-photo
             src="{{ landmark.src }}"
             alt="{{ landmark.alt }}"
@@ -60,7 +60,7 @@
           </tup-photo>
 
           <tup-map src="/geojson/buildings/{{ map.building_id }}.geojson"></tup-map>
-        </tup-hero-gallery>
+        </tup-place-overview>
 
         <tup-place-summary
           building="{{ summary.building }}"

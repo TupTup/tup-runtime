@@ -115,7 +115,7 @@ function ensureGalleryNav(gallery) {
   shell.append(prevButton, nextButton);
 }
 
-class TupHeroGallery extends HTMLElement {
+class TupPlaceOverview extends HTMLElement {
 
   #childObserver = null;
 
@@ -168,6 +168,6 @@ class TupHeroGallery extends HTMLElement {
 }
 
 defineCustomElement(
-  "tup-hero-gallery",
-  TupHeroGallery
+  "tup-place-overview",
+  TupPlaceOverview
 );
