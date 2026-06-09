@@ -342,6 +342,8 @@ tup-navigation-button {
 }
 
 .place-badge-item--chevron {
+  display: none;
+
   padding-left: 4px;
 }
 
