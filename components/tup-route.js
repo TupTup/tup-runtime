@@ -42,7 +42,5 @@ export class TupRoute extends HTMLElement {
   }
 }
 
-defineCustomElement(
-  "tup-route",
-  TupRoute
-);
+defineCustomElement("tup-route", TupRoute);
+defineCustomElement("tup-route-steps", TupRoute);

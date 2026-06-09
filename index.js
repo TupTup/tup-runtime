@@ -7,5 +7,5 @@ import './components/tup-hero-gallery.js';
 import './components/tup-landmark.js';
 import './components/tup-map.js';
 import './components/tup-place-summary.js';
-import './components/tup-route-steps.js';
+import './components/tup-route.js';
 import './components/tup-navigation-button.js';
