@@ -164,7 +164,7 @@ function A({ mode: e = "view", draft: t = !1 } = {}) {
 }
 async function j() {
 	if (k() !== "edit") return;
-	let { initPlaceEditorUi: e } = await import("./place-editor-DvccjOmO.js");
+	let { initPlaceEditorUi: e } = await import("./place-editor-D5sw1G4e.js");
 	e();
 }
 //#endregion

@@ -392,38 +392,9 @@ tup-navigation-button {
   opacity: 1;
 }
 
-[data-mode="edit"] .app {
-  display: block;
-
-  overflow: hidden;
-}
-
-[data-mode="edit"] .map {
+[data-mode="edit"] tup-route,
+[data-mode="edit"] tup-navigation-button {
   display: none;
-}
-
-[data-mode="edit"] #place.sheet {
-  position: absolute;
-  inset:
-    var(--place-float-inset, 8px)
-    var(--place-float-inset, 8px)
-    var(--place-float-inset, 8px)
-    var(--place-float-inset, 8px);
-
-  width: auto;
-  max-width: none;
-  height: auto;
-
-  margin: 0;
-
-  pointer-events: auto;
-}
-
-[data-mode="edit"] #place:not(.sheet) {
-  position: relative;
-
-  height: 100%;
-  margin: 0;
 }
 
 [data-mode="edit"] tup-place-header .place-header-text::before {
@@ -437,15 +408,6 @@ tup-navigation-button {
   font-weight: 500;
   line-height: 1.2;
   color: #9ca3af;
-}
-
-@media (min-width: 768px) {
-  [data-mode="edit"] #place {
-    width: auto;
-    max-width: none;
-
-    box-shadow: none;
-  }
 }
 
 .place-route-compose {

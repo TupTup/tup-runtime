@@ -78,18 +78,17 @@ export function initPlaceEditorUi() {
 
   const route = content.querySelector("tup-route");
   const navigation = content.querySelector("tup-navigation-button");
-  const footer = content.querySelector("tup-footer");
 
   if (route) {
-    route.hidden = !model.steps?.length;
+    route.hidden = true;
+
+    if (typeof route.setSteps === "function") {
+      route.setSteps([]);
+    }
   }
 
   if (navigation) {
     navigation.hidden = true;
-  }
-
-  if (footer) {
-    footer.hidden = true;
   }
 
   const compose = document.createElement("section");
@@ -169,10 +168,6 @@ export function initPlaceEditorUi() {
     model.steps = generateStepsFromDescription(description);
     applyPlaceToDom(placeRoot, model);
     saveDraft(slug, model);
-
-    if (route) {
-      route.hidden = false;
-    }
 
     status.textContent =
       model.steps.length > 0
