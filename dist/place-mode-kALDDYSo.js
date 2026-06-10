@@ -109,9 +109,9 @@ function y(e, t) {
 		e.innerHTML = t.map(v).join("");
 	}
 }
-function b(e, t) {
-	let n = l(e);
-	!n || !t || (g(n.querySelector("tup-place-header"), t.header), _(n.querySelector("tup-place-photo"), t.photo), y(n.querySelector("tup-route"), t.steps));
+function b(e, t, { includeRoute: n = !0 } = {}) {
+	let r = l(e);
+	!r || !t || (g(r.querySelector("tup-place-header"), t.header), _(r.querySelector("tup-place-photo"), t.photo), n && y(r.querySelector("tup-route"), t.steps));
 }
 function x(e) {
 	return `${o}${e}`;
@@ -177,7 +177,7 @@ function F() {
 	let n = u(t);
 	if (document.documentElement.dataset.placeId = n, j = P(e, A, n), j) {
 		let r = C(n);
-		r && b(t, r), A === "view" && e.get("draft") === "1" && (document.documentElement.dataset.draftPreview = "true");
+		r && b(t, r, { includeRoute: A !== "edit" }), A === "view" && e.get("draft") === "1" && (document.documentElement.dataset.draftPreview = "true");
 	} else if (A === "view") {
 		let e = T(n);
 		e && b(t, e);
@@ -197,13 +197,13 @@ function R({ mode: e = "view", draft: t = !1, fresh: n = !1 } = {}) {
 }
 async function z() {
 	if (I() !== "edit") return;
-	let { initPlaceEditorUi: e } = await import("./place-editor-BcEMgjWM.js");
+	let { initPlaceEditorUi: e } = await import("./place-editor-CUui_f2J.js");
 	e();
 }
 async function B() {
 	if (I() !== "view") return;
-	let { initPlaceViewUi: e } = await import("./place-view-BlWMVTkm.js");
+	let { initPlaceViewUi: e } = await import("./place-view-DIuE_oCC.js");
 	e();
 }
 //#endregion
-export { b as a, c, D as d, m as f, a as h, L as i, u as l, i as m, z as n, k as o, w as p, B as r, l as s, R as t, C as u };
+export { k as a, u as c, m as d, w as f, L as i, C as l, a as m, z as n, l as o, i as p, B as r, c as s, R as t, D as u };
