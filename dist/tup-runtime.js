@@ -433,11 +433,15 @@ var r = {
 	"floor-down": "Piętro niżej",
 	elevator: "Piętro",
 	key: "Kod"
-}, i = "****";
-function a(e) {
+}, i = "****", a = 15;
+function o(e) {
+	let t = Number.parseInt(String(e ?? "").trim(), 10);
+	return !Number.isFinite(t) || t <= 0 ? a : t;
+}
+function s(e) {
 	return r[e] ?? "Krok";
 }
-var o = {
+var c = {
 	right: {
 		position: "after",
 		symbol: "→",
@@ -459,24 +463,24 @@ var o = {
 		label: "niżej"
 	}
 };
-function s(e) {
-	return o[String(e ?? "").trim().toLowerCase()] ?? null;
+function l(e) {
+	return c[String(e ?? "").trim().toLowerCase()] ?? null;
 }
-function c(e) {
+function u(e) {
 	return String(e ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
 }
-function l(e, r) {
-	let i = s(r);
+function d(e, r) {
+	let i = l(r);
 	if (!i) return n(e);
 	let a = n(e), o = `<span class="route-step-direction" aria-hidden="true">${t(i.symbol)}</span>`;
 	return i.position === "before" ? `${o}<span class="route-step-value-text">${a}</span>` : `<span class="route-step-value-text">${a}</span>${o}`;
 }
-function u(e, t, n, r) {
-	let i = a(e || "forward"), o = String(t ?? "").trim(), l = c(n).trim(), u = s(r), d = [o, u && l ? `${l} ${u.label}` : l].filter(Boolean);
+function f(e, t, n, r) {
+	let i = s(e || "forward"), a = String(t ?? "").trim(), o = u(n).trim(), c = l(r), d = [a, c && o ? `${o} ${c.label}` : o].filter(Boolean);
 	return d.length ? d.join(": ") : i;
 }
-function d(e, n, r) {
-	let i = l(n, r);
+function p(e, n, r) {
+	let i = d(n, r);
 	return `
     <span class="route-step-text">
       ${String(e ?? "").trim() ? `<span class="route-step-label">${t(e)}</span>` : ""}
@@ -484,17 +488,22 @@ function d(e, n, r) {
     </span>
   `;
 }
-function f({ type: e, text: n, code: r }) {
-	let a = t(e || "key"), o = String(n ?? "").trim() || "Wprowadź kod";
+function m({ type: e, text: n, code: r, codeHideAfter: a }) {
+	let s = t(e || "key"), c = String(n ?? "").trim() || "Wprowadź kod";
 	return `
-    <li class="route-step route-step--secret" data-code="${t(r)}" aria-label="${t(`${o}: kod ukryty`)}">
+    <li
+      class="route-step route-step--secret"
+      data-code="${t(r)}"
+      data-hide-after="${o(a)}"
+      aria-label="${t(`${c}: kod ukryty`)}"
+    >
       <div class="route-step-icon-wrap" aria-hidden="true">
-        <span class="route-step-icon route-step-icon--${a}"></span>
+        <span class="route-step-icon route-step-icon--${s}"></span>
       </div>
 
       <span class="route-step-text route-step-text--secret">
         <span class="route-step-value">
-          ${t(o)}
+          ${t(c)}
           <span class="route-step-code" aria-live="polite">${t(i)}</span>
         </span>
 
@@ -508,38 +517,52 @@ function f({ type: e, text: n, code: r }) {
     </li>
   `;
 }
-function p(e) {
+function h(e) {
 	e.querySelectorAll(".route-step--secret").forEach((e) => {
 		let t = e.dataset.code ?? "", n = e.querySelector(".route-step-code"), r = e.querySelector(".route-step-reveal");
 		if (!t || !n || !r || r.dataset.bound === "true") return;
 		r.dataset.bound = "true";
-		let a = (e.getAttribute("aria-label") ?? "Wprowadź kod: kod ukryty").replace(/: kod ukryty$/, "").trim() || "Wprowadź kod";
+		let a = (e.getAttribute("aria-label") ?? "Wprowadź kod: kod ukryty").replace(/: kod ukryty$/, "").trim() || "Wprowadź kod", s = o(e.dataset.hideAfter) * 1e3, c = null;
+		function l() {
+			c !== null && (clearTimeout(c), c = null);
+		}
+		function u() {
+			l(), n.textContent = i, r.setAttribute("aria-pressed", "false"), r.setAttribute("aria-label", "Pokaż kod"), r.classList.remove("route-step-reveal--visible"), e.setAttribute("aria-label", `${a}: kod ukryty`);
+		}
+		function d() {
+			l(), n.textContent = t, r.setAttribute("aria-pressed", "true"), r.setAttribute("aria-label", "Ukryj kod"), r.classList.add("route-step-reveal--visible"), e.setAttribute("aria-label", `${a}: ${t}`), c = setTimeout(u, s);
+		}
 		r.addEventListener("click", () => {
-			r.getAttribute("aria-pressed") === "true" ? (n.textContent = i, r.setAttribute("aria-pressed", "false"), r.setAttribute("aria-label", "Pokaż kod"), r.classList.remove("route-step-reveal--visible"), e.setAttribute("aria-label", `${a}: kod ukryty`)) : (n.textContent = t, r.setAttribute("aria-pressed", "true"), r.setAttribute("aria-label", "Ukryj kod"), r.classList.add("route-step-reveal--visible"), e.setAttribute("aria-label", `${a}: ${t}`));
+			if (r.getAttribute("aria-pressed") === "true") {
+				u();
+				return;
+			}
+			d();
 		});
 	});
 }
-function m({ type: e, label: n, text: r, tone: i, emphasis: a, direction: o, code: s }) {
-	if (s) return f({
+function g({ type: e, label: n, text: r, tone: i, emphasis: a, direction: o, code: s, codeHideAfter: c }) {
+	if (s) return m({
 		type: e,
 		text: r,
-		code: s
+		code: s,
+		codeHideAfter: c
 	});
-	let c = t(e || "forward"), l = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", p = a === "primary" ? " route-step--primary" : "", m = e === "target" ? " route-step--target" : "", h = d(n, r, o);
+	let l = t(e || "forward"), u = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", d = a === "primary" ? " route-step--primary" : "", h = e === "target" ? " route-step--target" : "", g = p(n, r, o);
 	return `
-    <li class="route-step${l}${p}${m}" aria-label="${t(u(e, n, r, o))}">
+    <li class="route-step${u}${d}${h}" aria-label="${t(f(e, n, r, o))}">
       <div class="route-step-icon-wrap" aria-hidden="true">
-        <span class="route-step-icon route-step-icon--${c}"></span>
+        <span class="route-step-icon route-step-icon--${l}"></span>
       </div>
 
-      ${h}
+      ${g}
     </li>
   `;
 }
 e("tup-route-step", class extends HTMLElement {});
 //#endregion
 //#region components/tup-route.js
-var h = class extends HTMLElement {
+var _ = class extends HTMLElement {
 	#e = null;
 	connectedCallback() {
 		this.#e ||= `place-route-heading-${crypto.randomUUID()}`, this.#t();
@@ -552,8 +575,9 @@ var h = class extends HTMLElement {
 			tone: e.getAttribute("tone"),
 			emphasis: e.getAttribute("emphasis"),
 			direction: e.getAttribute("direction"),
-			code: e.getAttribute("code")
-		})).map((e) => m(e)).join("");
+			code: e.getAttribute("code"),
+			codeHideAfter: e.getAttribute("code-hide-after")
+		})).map((e) => g(e)).join("");
 		this.innerHTML = `
       <section class="place-route-section" aria-labelledby="${this.#e}">
         <h2 id="${this.#e}" class="visually-hidden">
@@ -566,10 +590,10 @@ var h = class extends HTMLElement {
           </ol>
         </div>
       </section>
-    `, p(this);
+    `, h(this);
 	}
 };
-e("tup-route", h), e("tup-route-steps", class extends h {}), e("tup-navigation-button", class extends HTMLElement {
+e("tup-route", _), e("tup-route-steps", class extends _ {}), e("tup-navigation-button", class extends HTMLElement {
 	connectedCallback() {
 		if (this.querySelector("button")) return;
 		let e = this.textContent.trim() || "Prowadź";
