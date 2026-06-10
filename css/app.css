@@ -81,38 +81,6 @@ body {
   pointer-events: auto;
 }
 
-.sheet-grabber {
-  position: relative;
-
-  width: 44px;
-  height: 5px;
-
-  margin: 0 auto 16px;
-
-  border-radius: 999px;
-
-  background: #9ca3af;
-
-  cursor: grab;
-
-  touch-action: none;
-
-  flex-shrink: 0;
-}
-
-.sheet-grabber::before {
-  content: "";
-
-  position: absolute;
-  left: 50%;
-  top: 50%;
-
-  width: 80px;
-  height: 44px;
-
-  transform: translate(-50%, -50%);
-}
-
 .sheet-content {
   flex: 1;
 
@@ -374,10 +342,6 @@ tup-navigation-button {
 
     box-shadow:
       -10px 0 40px rgba(0, 0, 0, 0.18);
-  }
-
-  .sheet-grabber {
-    display: none;
   }
 
   .sheet-content {
