@@ -23,6 +23,7 @@ export class TupRoute extends HTMLElement {
         emphasis: step.getAttribute("emphasis"),
         direction: step.getAttribute("direction"),
         code: step.getAttribute("code"),
+        codeHideAfter: step.getAttribute("code-hide-after"),
       })
     );
 
