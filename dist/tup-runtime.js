@@ -524,5 +524,9 @@ e("tup-route", f), e("tup-route-steps", class extends f {}), e("tup-navigation-b
 			}));
 		}), this.append(t);
 	}
+}), e("tup-footer", class extends HTMLElement {
+	connectedCallback() {
+		this.querySelector(".place-footer") || (this.innerHTML = "\n      <footer class=\"place-footer\">\n        <span class=\"place-footer-logo\" role=\"img\" aria-label=\"TupTup\"></span>\n      </footer>\n    ");
+	}
 });
 //#endregion
