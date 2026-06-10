@@ -122,12 +122,15 @@ export function renderRouteStepMarkup({
   const emphasisClass = emphasis === "primary"
     ? " route-step--primary"
     : "";
+  const targetClass = type === "target"
+    ? " route-step--target"
+    : "";
 
   const textHtml = renderStepText(label, text, direction);
   const ariaLabel = escapeHtml(stepAriaLabel(type, label, text, direction));
 
   return `
-    <li class="route-step${toneClass}${emphasisClass}" aria-label="${ariaLabel}">
+    <li class="route-step${toneClass}${emphasisClass}${targetClass}" aria-label="${ariaLabel}">
       <div class="route-step-icon-wrap" aria-hidden="true">
         <span class="route-step-icon route-step-icon--${stepType}"></span>
       </div>

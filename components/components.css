@@ -880,6 +880,37 @@ a.place-summary-item--parking:hover::before {
   margin-bottom: var(--route-step-gap);
 }
 
+.route-step:has(+ .route-step--target) {
+  margin-bottom: 0;
+}
+
+.route-step:has(+ .route-step--target) .route-step-icon-wrap::after {
+  display: none;
+}
+
+.route-step:has(+ .route-step--target) .route-step-text {
+  padding-bottom: 4px;
+
+  border-bottom: 0;
+}
+
+.route-step--target:not(:first-child) {
+  grid-template-areas:
+    ". tear"
+    "icon text";
+  row-gap: 16px;
+
+  margin-top: 16px;
+}
+
+.route-step--target:not(:first-child)::before {
+  content: "";
+  grid-area: tear;
+
+  border: 0;
+  border-top: 1px dashed #b0b8c3;
+}
+
 .route-step-icon-wrap {
   grid-area: icon;
 
@@ -979,14 +1010,14 @@ a.place-summary-item--parking:hover::before {
   background-image: url("images/icons/pushpin.svg");
 }
 
-.route-step:last-child .route-step-icon {
-  width: 42px;
-  height: 42px;
-  max-width: 42px;
-  max-height: 42px;
+.route-step--target .route-step-icon {
+  width: 46px;
+  height: 46px;
+  max-width: 46px;
+  max-height: 46px;
 }
 
-.route-step:last-child .route-step-icon::before {
+.route-step--target .route-step-icon::before {
   background: url("images/icons/pushpin-filled.svg") center / contain no-repeat;
 
   filter: drop-shadow(0 1px 2px rgba(59, 130, 246, 0.28));
