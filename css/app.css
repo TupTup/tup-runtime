@@ -30,6 +30,7 @@ body {
   inset: 0;
 
   padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 
   overflow: hidden;
 }
@@ -50,7 +51,7 @@ body {
   inset:
     var(--place-float-inset, 8px)
     var(--place-float-inset, 8px)
-    calc(var(--place-float-inset-bottom, 16px) + env(safe-area-inset-bottom, 0px))
+    var(--place-float-inset, 8px)
     var(--place-float-inset, 8px);
 
   z-index: 10;
@@ -113,11 +114,13 @@ body {
 }
 
 #place {
-  height: 100%;
-
   touch-action: pan-y;
 
   background: #f3f4f6;
+}
+
+#place.sheet {
+  height: auto;
 }
 
 @media (min-width: 768px) {
@@ -323,7 +326,7 @@ tup-navigation-button {
 @media (min-width: 768px) {
   .sheet {
     top: var(--place-float-inset, 8px);
-    bottom: calc(var(--place-float-inset-bottom, 16px) + env(safe-area-inset-bottom, 0px));
+    bottom: var(--place-float-inset, 8px);
     left: auto;
     right: var(--place-float-inset, 8px);
 

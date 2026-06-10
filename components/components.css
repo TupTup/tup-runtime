@@ -1,6 +1,5 @@
 :root {
   --place-float-inset: 8px;
-  --place-float-inset-bottom: 16px;
 }
 
 tup-place-header,
@@ -32,7 +31,7 @@ tup-footer {
   clip-path: inset(50%);
 }
 
-#place {
+#place:not(.sheet) {
   height: 100%;
 
   background: #f3f4f6;
@@ -46,14 +45,14 @@ article.sheet-content {
   height: calc(
     100%
     - var(--place-float-inset)
-    - var(--place-float-inset-bottom)
+    - var(--place-float-inset)
     - env(safe-area-inset-bottom, 0px)
   );
   min-height: 0;
   margin:
     var(--place-float-inset)
     var(--place-float-inset)
-    calc(var(--place-float-inset-bottom) + env(safe-area-inset-bottom, 0px));
+    calc(var(--place-float-inset) + env(safe-area-inset-bottom, 0px));
 
   overflow: hidden;
 
@@ -1455,6 +1454,9 @@ tup-footer {
 }
 
 tup-footer {
+  padding-top: 10px;
+  padding-bottom: 22px;
+
   border-radius: 0 0 20px 20px;
 
   background: #fff;
@@ -1507,7 +1509,9 @@ tup-footer {
   display: flex;
   justify-content: center;
 
-  padding: 10px 0 14px;
+  padding: 0;
+
+  transform: translateY(-6px);
 }
 
 .place-footer-logo {
