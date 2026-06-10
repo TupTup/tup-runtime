@@ -468,14 +468,14 @@ function u(e, n, r) {
   `;
 }
 function d({ type: e, label: n, text: r, tone: i, emphasis: a, direction: o }) {
-	let s = t(e || "forward"), c = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", d = a === "primary" ? " route-step--primary" : "", f = u(n, r, o);
+	let s = t(e || "forward"), c = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", d = a === "primary" ? " route-step--primary" : "", f = e === "target" ? " route-step--target" : "", p = u(n, r, o);
 	return `
-    <li class="route-step${c}${d}" aria-label="${t(l(e, n, r, o))}">
+    <li class="route-step${c}${d}${f}" aria-label="${t(l(e, n, r, o))}">
       <div class="route-step-icon-wrap" aria-hidden="true">
         <span class="route-step-icon route-step-icon--${s}"></span>
       </div>
 
-      ${f}
+      ${p}
     </li>
   `;
 }
