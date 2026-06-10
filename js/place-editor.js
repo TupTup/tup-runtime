@@ -10,13 +10,15 @@ import {
 } from "./place-model.js";
 import { buildPlaceUrl } from "./place-mode.js";
 import {
+  createActionButton,
+  simulateActionProgress,
+} from "./place-action-progress.js";
+import {
   generateStepsFromDescription,
   stepsToDescription,
 } from "./place-route-generator.js";
 
 const DESCRIPTION_LIMIT = 500;
-
-const GENERATE_SIMULATION_MS = 2800;
 
 const EXAMPLE_ROUTE_DESCRIPTION =
   "Wejdź do budynku C10. Poproś ochronę o aktywację windy. Wjedź na 2 piętro. Wprowadź kod 1234. Skręć w lewo. Idź prosto do końca korytarza. Lokal 229 po prawej stronie.";
@@ -57,55 +59,6 @@ function createMicButton(onResult) {
   }
 
   return button;
-}
-
-function createGenerateButton() {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "place-route-compose-generate";
-
-  const fill = document.createElement("span");
-  fill.className = "place-route-compose-generate-fill";
-  fill.setAttribute("aria-hidden", "true");
-
-  const inner = document.createElement("span");
-  inner.className = "place-route-compose-generate-inner";
-
-  const icon = document.createElement("span");
-  icon.className = "place-route-compose-generate-icon";
-  icon.setAttribute("aria-hidden", "true");
-
-  const label = document.createElement("span");
-  label.className = "place-route-compose-generate-label";
-  label.textContent = "Generuj kroki";
-
-  inner.append(icon, label);
-  button.append(fill, inner);
-
-  return { button, fill, label };
-}
-
-function simulateGenerateProgress(onProgress) {
-  const start = performance.now();
-
-  return new Promise((resolve) => {
-    const tick = (now) => {
-      const elapsed = now - start;
-      const ratio = Math.min(1, elapsed / GENERATE_SIMULATION_MS);
-      const eased = 1 - (1 - ratio) ** 2;
-
-      onProgress(Math.round(eased * 100));
-
-      if (ratio >= 1) {
-        resolve();
-        return;
-      }
-
-      requestAnimationFrame(tick);
-    };
-
-    requestAnimationFrame(tick);
-  });
 }
 
 export function initPlaceEditorUi() {
@@ -192,7 +145,7 @@ export function initPlaceEditorUi() {
   field.append(textarea, fieldFooter);
 
   const { button: generateButton, fill: progressFill, label: generateLabel } =
-    createGenerateButton();
+    createActionButton("Generuj kroki");
 
   const hint = document.createElement("p");
   hint.className = "place-route-compose-hint";
@@ -241,7 +194,7 @@ export function initPlaceEditorUi() {
     saveDraft(slug, model);
     previewLink.hidden = true;
 
-    await simulateGenerateProgress((value) => {
+    await simulateActionProgress((value) => {
       progressFill.style.width = `${value}%`;
       generateButton.setAttribute("aria-valuenow", String(value));
     });

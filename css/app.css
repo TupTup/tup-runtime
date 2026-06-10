@@ -534,7 +534,7 @@ tup-navigation-button {
   background: #6b7280;
 }
 
-.place-route-compose-generate {
+.place-action-button {
   position: relative;
 
   box-sizing: border-box;
@@ -561,9 +561,12 @@ tup-navigation-button {
   color: #fff;
 
   cursor: pointer;
+
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.place-route-compose-generate-fill {
+.place-action-button-fill {
   position: absolute;
   inset: 0 auto 0 0;
   z-index: 0;
@@ -578,7 +581,7 @@ tup-navigation-button {
   transition: width 80ms linear;
 }
 
-.place-route-compose-generate-inner {
+.place-action-button-inner {
   position: relative;
   z-index: 1;
 
@@ -588,36 +591,52 @@ tup-navigation-button {
   gap: 10px;
 }
 
-.place-route-compose-generate.is-generating {
+.place-action-button.is-generating {
   background: #dbeafe;
 
   cursor: wait;
 }
 
-.place-route-compose-generate.is-generating .place-route-compose-generate-label {
+.place-action-button.is-generating .place-action-button-label {
   color: #fff;
   text-shadow: 0 1px 2px rgba(17, 24, 39, 0.18);
 }
 
-.place-route-compose-generate-icon {
+.place-action-button-icon {
   flex-shrink: 0;
 
   width: 20px;
   height: 20px;
+}
 
+.place-action-button-icon--sparkle {
   background:
     radial-gradient(circle at 30% 35%, #fff 0 1.5px, transparent 2px),
     radial-gradient(circle at 70% 30%, #fff 0 1.5px, transparent 2px),
     radial-gradient(circle at 50% 70%, #fff 0 2px, transparent 2.5px);
 }
 
-.place-route-compose-generate.is-generating .place-route-compose-generate-icon {
-  filter: drop-shadow(0 0 1px rgba(37, 99, 235, 0.85));
+.place-action-button-icon--send {
+  display: grid;
+  place-items: center;
 
-  animation: place-route-compose-icon-spin 1.1s linear infinite;
+  color: #fff;
 }
 
-.place-route-compose-generate:disabled:not(.is-generating) {
+.place-action-button-svg {
+  display: block;
+
+  width: 18px;
+  height: 18px;
+}
+
+.place-action-button.is-generating .place-action-button-icon--sparkle {
+  filter: drop-shadow(0 0 1px rgba(37, 99, 235, 0.85));
+
+  animation: place-action-button-icon-spin 1.1s linear infinite;
+}
+
+.place-action-button:disabled:not(.is-generating) {
   cursor: not-allowed;
 
   opacity: 0.72;
@@ -627,7 +646,7 @@ tup-navigation-button {
   opacity: 0.72;
 }
 
-@keyframes place-route-compose-icon-spin {
+@keyframes place-action-button-icon-spin {
   to {
     transform: rotate(360deg);
   }
@@ -685,39 +704,10 @@ tup-navigation-button {
   margin-top: 12px;
 }
 
-.place-view-publish {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.place-view-actions:has(.place-view-publish.is-generating) .place-route-compose-preview {
+  pointer-events: none;
 
-  width: 100%;
-
-  padding: 16px 24px;
-
-  border: 0;
-  border-radius: 14px;
-
-  background: #2563eb;
-
-  font: inherit;
-  font-size: 17px;
-  font-weight: 700;
-  color: #fff;
-
-  cursor: pointer;
-
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.place-view-publish:active:not(:disabled) {
-  background: #1d4ed8;
-}
-
-.place-view-publish:disabled {
-  cursor: not-allowed;
-
-  opacity: 0.45;
+  opacity: 0.72;
 }
 
 .place-photo-edit-button {
