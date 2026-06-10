@@ -1,5 +1,4 @@
 import {
-  applyPlaceToDom,
   clonePlaceModel,
   findPlaceContent,
   findPlaceRoot,
@@ -87,11 +86,7 @@ export function initPlaceEditorUi() {
   const navigation = content.querySelector("tup-navigation-button");
 
   if (route) {
-    route.hidden = true;
-
-    if (typeof route.setSteps === "function") {
-      route.setSteps([]);
-    }
+    route.remove();
   }
 
   if (navigation) {
@@ -190,7 +185,6 @@ export function initPlaceEditorUi() {
     compose.dataset.generating = "true";
 
     model.steps = [];
-    applyPlaceToDom(placeRoot, model);
     saveDraft(slug, model);
     previewLink.hidden = true;
 
@@ -201,7 +195,6 @@ export function initPlaceEditorUi() {
 
     model.routeDescription = description;
     model.steps = generateStepsFromDescription(description);
-    applyPlaceToDom(placeRoot, model);
     saveDraft(slug, model);
 
     if (model.steps.length > 0) {
@@ -231,8 +224,10 @@ export function initPlaceEditorUi() {
 
   compose.append(heading, field, generateButton, hint, status, previewLink);
 
-  if (route) {
-    route.insertAdjacentElement("beforebegin", compose);
+  const photo = content.querySelector("tup-place-photo");
+
+  if (photo) {
+    photo.insertAdjacentElement("afterend", compose);
   } else {
     content.append(compose);
   }

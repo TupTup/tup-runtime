@@ -50,7 +50,9 @@ function bootstrapPlaceMode() {
     const draft = loadDraft(slug);
 
     if (draft) {
-      applyPlaceToDom(placeRoot, draft);
+      applyPlaceToDom(placeRoot, draft, {
+        includeRoute: currentMode !== "edit",
+      });
     }
 
     if (currentMode === "view" && params.get("draft") === "1") {

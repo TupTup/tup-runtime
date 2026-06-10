@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Sulmar — nawigacja do lokalu 229 przy ul. Erazma Ciołka 10 w Warszawie, piętro 2.">
     <title>Sulmar</title>
+    <script>
+      (function () {
+        if (new URLSearchParams(location.search).get("mode") === "edit") {
+          document.documentElement.dataset.mode = "edit";
+        }
+      })();
+    </script>
     <script type="module" src="/index.js"></script>
   </head>
   <body>

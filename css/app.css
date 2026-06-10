@@ -398,7 +398,7 @@ tup-navigation-button {
 }
 
 [data-mode="edit"] tup-place-header .place-header-text::before {
-  content: "Nowa trasa";
+  content: "Nowa droga";
 
   display: block;
 

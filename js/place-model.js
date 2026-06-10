@@ -193,7 +193,7 @@ function applyStepsModel(route, steps) {
   route.innerHTML = steps.map(renderStepMarker).join("");
 }
 
-export function applyPlaceToDom(placeRoot, model) {
+export function applyPlaceToDom(placeRoot, model, { includeRoute = true } = {}) {
   const content = findPlaceContent(placeRoot);
 
   if (!content || !model) {
@@ -202,7 +202,10 @@ export function applyPlaceToDom(placeRoot, model) {
 
   applyHeaderModel(content.querySelector("tup-place-header"), model.header);
   applyPhotoModel(content.querySelector("tup-place-photo"), model.photo);
-  applyStepsModel(content.querySelector("tup-route"), model.steps);
+
+  if (includeRoute) {
+    applyStepsModel(content.querySelector("tup-route"), model.steps);
+  }
 }
 
 export function draftStorageKey(slug) {
