@@ -93,18 +93,15 @@ function stepAriaLabel(type, label, text, direction) {
 
 function renderStepText(label, text, direction) {
   const valueHtml = renderDirectedValue(text, direction);
-
-  if (!label) {
-    return `
-      <span class="route-step-text">
-        <span class="route-step-value${direction ? " route-step-value--directed" : ""}">${valueHtml}</span>
-      </span>
-    `;
-  }
+  const hasLabel = Boolean(String(label ?? "").trim());
+  const labelHtml = hasLabel ? escapeHtml(label) : "";
+  const labelClass = hasLabel
+    ? "route-step-label"
+    : "route-step-label route-step-label--placeholder";
 
   return `
     <span class="route-step-text">
-      <span class="route-step-label">${escapeHtml(label)}</span>
+      <span class="${labelClass}"${hasLabel ? "" : " aria-hidden=\"true\""}>${labelHtml}</span>
       <span class="route-step-value${direction ? " route-step-value--directed" : ""}">${valueHtml}</span>
     </span>
   `;
