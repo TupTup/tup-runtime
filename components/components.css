@@ -1035,6 +1035,16 @@ a.place-summary-item--parking:hover::before {
   color: #111827;
 }
 
+.route-step-value--directed {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
+}
+
+.route-step-direction {
+  font-weight: 700;
+}
+
 .route-step--primary .route-step-text {
   gap: 4px;
 }

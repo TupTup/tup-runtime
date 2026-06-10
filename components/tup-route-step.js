@@ -40,15 +40,49 @@ function stepTypeLabel(type) {
   return STEP_TYPE_LABELS[type] ?? "Krok";
 }
 
+const DIRECTION_MARKERS = {
+  right: { position: "after", symbol: "→", label: "po prawej" },
+  left: { position: "before", symbol: "←", label: "po lewej" },
+  up: { position: "after", symbol: "↑", label: "naprzeciwko" },
+  down: { position: "after", symbol: "↓", label: "niżej" },
+};
+
+function directionMarker(direction) {
+  const key = String(direction ?? "").trim().toLowerCase();
+
+  return DIRECTION_MARKERS[key] ?? null;
+}
+
 function plainStepText(text) {
   return String(text ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
 }
 
-function stepAriaLabel(type, label, text) {
+function renderDirectedValue(text, direction) {
+  const marker = directionMarker(direction);
+
+  if (!marker) {
+    return renderInlineMarkdown(text);
+  }
+
+  const valueHtml = renderInlineMarkdown(text);
+  const arrowHtml = `<span class="route-step-direction" aria-hidden="true">${escapeHtml(marker.symbol)}</span>`;
+
+  if (marker.position === "before") {
+    return `${arrowHtml}<span class="route-step-value-text">${valueHtml}</span>`;
+  }
+
+  return `<span class="route-step-value-text">${valueHtml}</span>${arrowHtml}`;
+}
+
+function stepAriaLabel(type, label, text, direction) {
   const typeLabel = stepTypeLabel(type || "forward");
   const plainLabel = String(label ?? "").trim();
   const plainText = plainStepText(text).trim();
-  const parts = [plainLabel, plainText].filter(Boolean);
+  const marker = directionMarker(direction);
+  const valueLabel = marker && plainText
+    ? `${plainText} ${marker.label}`
+    : plainText;
+  const parts = [plainLabel, valueLabel].filter(Boolean);
 
   if (parts.length) {
     return parts.join(": ");
@@ -57,13 +91,13 @@ function stepAriaLabel(type, label, text) {
   return typeLabel;
 }
 
-function renderStepText(label, text) {
-  const textHtml = renderInlineMarkdown(text);
+function renderStepText(label, text, direction) {
+  const valueHtml = renderDirectedValue(text, direction);
 
   if (!label) {
     return `
       <span class="route-step-text">
-        <span class="route-step-value">${textHtml}</span>
+        <span class="route-step-value${direction ? " route-step-value--directed" : ""}">${valueHtml}</span>
       </span>
     `;
   }
@@ -71,7 +105,7 @@ function renderStepText(label, text) {
   return `
     <span class="route-step-text">
       <span class="route-step-label">${escapeHtml(label)}</span>
-      <span class="route-step-value">${textHtml}</span>
+      <span class="route-step-value${direction ? " route-step-value--directed" : ""}">${valueHtml}</span>
     </span>
   `;
 }
@@ -82,6 +116,7 @@ export function renderRouteStepMarkup({
   text,
   tone,
   emphasis,
+  direction,
 }) {
   const stepType = escapeHtml(type || "forward");
   const toneClass = tone === "warning" || tone === "secondary"
@@ -91,8 +126,8 @@ export function renderRouteStepMarkup({
     ? " route-step--primary"
     : "";
 
-  const textHtml = renderStepText(label, text);
-  const ariaLabel = escapeHtml(stepAriaLabel(type, label, text));
+  const textHtml = renderStepText(label, text, direction);
+  const ariaLabel = escapeHtml(stepAriaLabel(type, label, text, direction));
 
   return `
     <li class="route-step${toneClass}${emphasisClass}" aria-label="${ariaLabel}">
