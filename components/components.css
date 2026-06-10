@@ -1022,12 +1022,45 @@ a.place-summary-item--parking:hover::before {
   background-image: url("images/icons/elevator-up.svg");
 }
 
-.route-step-icon--left::before {
-  background-image: url("images/icons/turn-left.svg");
+.route-step .route-step-icon--left::before,
+.route-step .route-step-icon--right::before,
+.route-step .route-step-icon--forward::before,
+.route-step .route-step-icon--straight::before,
+.route-step .route-step-icon--floor-up::before,
+.route-step .route-step-icon--floor-down::before {
+  display: grid;
+  place-items: center;
+
+  background: none;
+  background-image: none;
+
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1;
+  color: #8a929c;
+
+  filter: none;
 }
 
-.route-step-icon--right::before {
-  background-image: url("images/icons/turn-right.svg");
+.route-step .route-step-icon--left::before {
+  content: "←";
+}
+
+.route-step .route-step-icon--right::before {
+  content: "→";
+}
+
+.route-step .route-step-icon--forward::before,
+.route-step .route-step-icon--straight::before {
+  content: "↑";
+}
+
+.route-step .route-step-icon--floor-up::before {
+  content: "⇡";
+}
+
+.route-step .route-step-icon--floor-down::before {
+  content: "⇣";
 }
 
 .route-step-icon--target::before {

@@ -33,7 +33,13 @@ const STEP_TYPE_LABELS = {
   reception: "Recepcja",
   stairs: "Schody",
   door: "Drzwi",
-  forward: "Dalej",
+  left: "Skręć w lewo",
+  right: "Skręć w prawo",
+  forward: "Idź prosto",
+  straight: "Idź prosto",
+  "floor-up": "Piętro wyżej",
+  "floor-down": "Piętro niżej",
+  elevator: "Piętro",
 };
 
 function stepTypeLabel(type) {
