@@ -248,6 +248,10 @@ body {
   );
 }
 
+#place tup-footer {
+  flex-shrink: 0;
+}
+
 tup-navigation-button {
   position: sticky;
   bottom: 0;

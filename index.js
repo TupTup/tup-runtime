@@ -6,3 +6,4 @@ import './components/tup-place-photo.js';
 import './components/tup-place-summary.js';
 import './components/tup-route-steps.js';
 import './components/tup-navigation-button.js';
+import './components/tup-footer.js';

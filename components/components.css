@@ -3,7 +3,8 @@ tup-badge,
 tup-place-photo,
 tup-place-summary,
 tup-route,
-tup-navigation-button {
+tup-navigation-button,
+tup-footer {
   display: block;
 }
 
@@ -1166,4 +1167,22 @@ a.place-summary-item--parking:hover::before {
 
 .navigation-button:active {
   background: #030712;
+}
+
+.place-footer {
+  display: flex;
+  justify-content: center;
+
+  padding: 10px 0 2px;
+}
+
+.place-footer-logo {
+  display: block;
+
+  width: 34px;
+  height: 26px;
+
+  opacity: 0.32;
+
+  background: url("images/tuptup.svg") center / contain no-repeat;
 }
