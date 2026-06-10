@@ -1,3 +1,5 @@
+import { stepsToDescription } from "./place-route-generator.js";
+
 const DRAFT_PREFIX = "tuptup:place:";
 
 function escapeAttr(value) {
@@ -81,6 +83,7 @@ export function readPlaceFromDom(placeRoot = findPlaceRoot()) {
   const header = content.querySelector("tup-place-header");
   const photo = content.querySelector("tup-place-photo");
   const route = content.querySelector("tup-route");
+  const steps = readSteps(route);
 
   return {
     id: getPlaceSlug(placeRoot),
@@ -103,7 +106,8 @@ export function readPlaceFromDom(placeRoot = findPlaceRoot()) {
       caption: readOptionalAttr(photo, "caption"),
       fallbackSrc: readOptionalAttr(photo, "fallback-src"),
     },
-    steps: readSteps(route),
+    routeDescription: stepsToDescription(steps),
+    steps,
   };
 }
 

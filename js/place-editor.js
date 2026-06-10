@@ -1,7 +1,7 @@
 import {
   applyPlaceToDom,
-  clearDraft,
   clonePlaceModel,
+  findPlaceContent,
   findPlaceRoot,
   getPlaceSlug,
   loadDraft,
@@ -9,377 +9,214 @@ import {
   saveDraft,
 } from "./place-model.js";
 import { buildPlaceUrl } from "./place-mode.js";
+import {
+  generateStepsFromDescription,
+  stepsToDescription,
+} from "./place-route-generator.js";
 
-const STEP_TYPES = [
-  "start",
-  "hand",
-  "floor-up",
-  "floor-down",
-  "key",
-  "left",
-  "right",
-  "straight",
-  "forward",
-  "target",
-  "building",
-  "entrance",
-  "door",
-  "stairs",
-  "elevator",
-  "reception",
-];
+const DESCRIPTION_LIMIT = 500;
 
-const STEP_TONES = ["", "warning", "secondary"];
-const STEP_EMPHASIS = ["", "primary"];
-
-function createField(labelText, control) {
-  const field = document.createElement("label");
-  field.className = "place-editor-field";
-
-  const label = document.createElement("span");
-  label.className = "place-editor-field-label";
-  label.textContent = labelText;
-
-  field.append(label, control);
-
-  return field;
-}
-
-function createInput(value, onInput) {
-  const input = document.createElement("input");
-  input.className = "place-editor-input";
-  input.type = "text";
-  input.value = value ?? "";
-  input.addEventListener("input", () => onInput(input.value));
-
-  return input;
-}
-
-function createTextarea(value, onInput) {
-  const textarea = document.createElement("textarea");
-  textarea.className = "place-editor-textarea";
-  textarea.rows = 2;
-  textarea.value = value ?? "";
-  textarea.addEventListener("input", () => onInput(textarea.value));
-
-  return textarea;
-}
-
-function createSelect(value, options, onChange) {
-  const select = document.createElement("select");
-  select.className = "place-editor-select";
-
-  for (const optionValue of options) {
-    const option = document.createElement("option");
-    option.value = optionValue;
-    option.textContent = optionValue || "—";
-    select.appendChild(option);
-  }
-
-  select.value = value ?? "";
-  select.addEventListener("change", () => onChange(select.value));
-
-  return select;
-}
-
-function createButton(label, className, onClick) {
+function createMicButton(onResult) {
   const button = document.createElement("button");
   button.type = "button";
-  button.className = className;
-  button.textContent = label;
-  button.addEventListener("click", onClick);
+  button.className = "place-route-compose-mic";
+  button.setAttribute("aria-label", "Nagraj opis trasy");
+  button.innerHTML = `<span class="place-route-compose-mic-icon" aria-hidden="true"></span>`;
+
+  button.addEventListener("click", () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "pl-PL";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.addEventListener("result", (event) => {
+      const transcript = event.results[0]?.[0]?.transcript?.trim();
+
+      if (transcript) {
+        onResult(transcript);
+      }
+    });
+
+    recognition.start();
+  });
+
+  if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+    button.hidden = true;
+  }
 
   return button;
 }
 
 export function initPlaceEditorUi() {
-  const app = document.querySelector(".app") || findPlaceRoot()?.parentElement;
   const placeRoot = findPlaceRoot();
+  const content = findPlaceContent(placeRoot);
 
-  if (!app || !placeRoot) {
+  if (!placeRoot || !content) {
     return;
   }
 
   const slug = getPlaceSlug(placeRoot);
-  const model = loadDraft(slug) || readPlaceFromDom(placeRoot) || {
+  const loaded = loadDraft(slug) || readPlaceFromDom(placeRoot);
+  const model = clonePlaceModel(loaded || {
     id: slug,
     header: {},
     photo: {},
+    routeDescription: "",
     steps: [],
-  };
-
-  const editor = document.createElement("section");
-  editor.className = "place-editor";
-  editor.setAttribute("aria-label", "Edytor miejsca");
-
-  const state = {
-    model: clonePlaceModel(model),
-    slug,
-    placeRoot,
-    statusEl: null,
-  };
-
-  const persist = () => {
-    applyPlaceToDom(state.placeRoot, state.model);
-    saveDraft(state.slug, state.model);
-
-    if (state.statusEl) {
-      state.statusEl.textContent = "Szkic zapisany lokalnie w tej przeglądarce.";
-    }
-  };
-
-  const toolbar = document.createElement("div");
-  toolbar.className = "place-editor-toolbar";
-
-  const title = document.createElement("p");
-  title.className = "place-editor-title";
-  title.textContent = `Edycja: ${slug}`;
-
-  const actions = document.createElement("div");
-  actions.className = "place-editor-actions";
-
-  actions.append(
-    createButton("Zapisz szkic", "place-editor-button", persist),
-    createButton("Podgląd", "place-editor-button place-editor-button--primary", () => {
-      persist();
-      window.location.href = buildPlaceUrl({ mode: "view", draft: true });
-    }),
-    createButton("Odrzuć szkic", "place-editor-button", () => {
-      clearDraft(state.slug);
-      window.location.href = buildPlaceUrl({ mode: "view", draft: false });
-    }),
-    createButton("Przywróć HTML", "place-editor-button", () => {
-      clearDraft(state.slug);
-      window.location.href = buildPlaceUrl({ mode: "view", draft: false });
-    })
-  );
-
-  toolbar.append(title, actions);
-
-  const notice = document.createElement("p");
-  notice.className = "place-editor-notice";
-  notice.textContent =
-    "Szkic jest zapisywany tylko lokalnie w tej przeglądarce (localStorage).";
-
-  state.statusEl = document.createElement("p");
-  state.statusEl.className = "place-editor-status";
-  state.statusEl.setAttribute("aria-live", "polite");
-
-  const forms = document.createElement("div");
-  forms.className = "place-editor-forms";
-
-  forms.append(
-    buildHeaderSection(state, persist),
-    buildPhotoSection(state, persist),
-    buildStepsSection(state, persist)
-  );
-
-  editor.append(toolbar, notice, state.statusEl, forms);
-  app.insertBefore(editor, app.firstChild);
-}
-
-function buildHeaderSection(state, persist) {
-  const section = document.createElement("section");
-  section.className = "place-editor-section";
-  section.innerHTML = `<h2 class="place-editor-section-title">Nagłówek</h2>`;
-
-  const grid = document.createElement("div");
-  grid.className = "place-editor-grid";
-
-  grid.append(
-    createField(
-      "Nazwa",
-      createInput(state.model.header.name, (value) => {
-        state.model.header.name = value;
-        persist();
-      })
-    ),
-    createField(
-      "Summary",
-      createInput(state.model.header.summary, (value) => {
-        state.model.header.summary = value;
-        persist();
-      })
-    ),
-    createField(
-      "Adres",
-      createInput(state.model.header.address, (value) => {
-        state.model.header.address = value;
-        persist();
-      })
-    )
-  );
-
-  section.append(grid);
-
-  return section;
-}
-
-function buildPhotoSection(state, persist) {
-  const section = document.createElement("section");
-  section.className = "place-editor-section";
-  section.innerHTML = `<h2 class="place-editor-section-title">Zdjęcie</h2>`;
-
-  const grid = document.createElement("div");
-  grid.className = "place-editor-grid";
-
-  grid.append(
-    createField(
-      "URL",
-      createInput(state.model.photo.src, (value) => {
-        state.model.photo.src = value;
-        persist();
-      })
-    ),
-    createField(
-      "Alt",
-      createInput(state.model.photo.alt, (value) => {
-        state.model.photo.alt = value;
-        persist();
-      })
-    )
-  );
-
-  section.append(grid);
-
-  return section;
-}
-
-function buildStepsSection(state, persist) {
-  const section = document.createElement("section");
-  section.className = "place-editor-section";
-
-  const header = document.createElement("div");
-  header.className = "place-editor-section-header";
-
-  const title = document.createElement("h2");
-  title.className = "place-editor-section-title";
-  title.textContent = "Kroki trasy";
-
-  const addButton = createButton("Dodaj krok", "place-editor-button", () => {
-    state.model.steps.push({
-      type: "forward",
-      text: "",
-    });
-    rerenderSteps();
-    persist();
   });
 
-  header.append(title, addButton);
+  if (!model.routeDescription && model.steps?.length) {
+    model.routeDescription = stepsToDescription(model.steps);
+  }
 
-  const list = document.createElement("div");
-  list.className = "place-editor-steps";
+  const route = content.querySelector("tup-route");
+  const navigation = content.querySelector("tup-navigation-button");
+  const footer = content.querySelector("tup-footer");
 
-  const rerenderSteps = () => {
-    list.replaceChildren();
+  if (route) {
+    route.hidden = !model.steps?.length;
+  }
 
-    state.model.steps.forEach((step, index) => {
-      list.appendChild(buildStepEditor(state, step, index, rerenderSteps, persist));
-    });
+  if (navigation) {
+    navigation.hidden = true;
+  }
+
+  if (footer) {
+    footer.hidden = true;
+  }
+
+  const compose = document.createElement("section");
+  compose.className = "place-route-compose";
+  compose.setAttribute("aria-label", "Opis trasy");
+
+  const heading = document.createElement("h2");
+  heading.className = "place-route-compose-heading";
+  heading.textContent = "Opisz drogę";
+
+  const field = document.createElement("div");
+  field.className = "place-route-compose-field";
+
+  const textarea = document.createElement("textarea");
+  textarea.className = "place-route-compose-textarea";
+  textarea.maxLength = DESCRIPTION_LIMIT;
+  textarea.value = model.routeDescription || "";
+  textarea.placeholder =
+    "Napisz lub nagraj opis trasy… Np. Wejdź przez główne drzwi C10, poproś ochronę o windę, jedź na 2 piętro, wprowadź kod i skręć w lewo.";
+
+  const fieldFooter = document.createElement("div");
+  fieldFooter.className = "place-route-compose-field-footer";
+
+  const counter = document.createElement("span");
+  counter.className = "place-route-compose-counter";
+  counter.textContent = `${textarea.value.length} / ${DESCRIPTION_LIMIT}`;
+
+  const updateCounter = () => {
+    counter.textContent = `${textarea.value.length} / ${DESCRIPTION_LIMIT}`;
+    model.routeDescription = textarea.value;
+    saveDraft(slug, model);
   };
 
-  rerenderSteps();
+  textarea.addEventListener("input", updateCounter);
 
-  section.append(header, list);
+  const micButton = createMicButton((transcript) => {
+    const nextValue = [textarea.value.trim(), transcript]
+      .filter(Boolean)
+      .join(" ")
+      .slice(0, DESCRIPTION_LIMIT);
 
-  return section;
+    textarea.value = nextValue;
+    updateCounter();
+  });
+
+  fieldFooter.append(counter, micButton);
+  field.append(textarea, fieldFooter);
+
+  const generateButton = document.createElement("button");
+  generateButton.type = "button";
+  generateButton.className = "place-route-compose-generate";
+  generateButton.innerHTML =
+    `<span class="place-route-compose-generate-icon" aria-hidden="true"></span><span>Generuj kroki</span>`;
+
+  const hint = document.createElement("p");
+  hint.className = "place-route-compose-hint";
+  hint.textContent = "Im więcej szczegółów, tym lepsze wskazówki.";
+
+  const status = document.createElement("p");
+  status.className = "place-route-compose-status";
+  status.setAttribute("aria-live", "polite");
+
+  const previewLink = document.createElement("a");
+  previewLink.className = "place-route-compose-preview";
+  previewLink.href = buildPlaceUrl({ mode: "view", draft: true });
+  previewLink.textContent = "Podgląd szkicu";
+
+  generateButton.addEventListener("click", () => {
+    const description = textarea.value.trim();
+
+    if (!description) {
+      status.textContent = "Wpisz opis trasy, zanim wygenerujesz kroki.";
+      return;
+    }
+
+    model.routeDescription = description;
+    model.steps = generateStepsFromDescription(description);
+    applyPlaceToDom(placeRoot, model);
+    saveDraft(slug, model);
+
+    if (route) {
+      route.hidden = false;
+    }
+
+    status.textContent =
+      model.steps.length > 0
+        ? `Wygenerowano ${model.steps.length} kroków.`
+        : "Nie udało się wygenerować kroków z tego opisu.";
+  });
+
+  compose.append(heading, field, generateButton, hint, status, previewLink);
+
+  if (route) {
+    route.insertAdjacentElement("beforebegin", compose);
+  } else {
+    content.append(compose);
+  }
+
+  addPhotoEditButton(content.querySelector("tup-place-photo"));
 }
 
-function buildStepEditor(state, step, index, rerenderSteps, persist) {
-  const item = document.createElement("article");
-  item.className = "place-editor-step";
+function addPhotoEditButton(photo) {
+  if (!photo || photo.querySelector(".place-photo-edit-button")) {
+    return;
+  }
 
-  const heading = document.createElement("h3");
-  heading.className = "place-editor-step-title";
-  heading.textContent = `Krok ${index + 1}`;
+  const hero = photo.querySelector(".place-hero, .hero-image-trigger");
 
-  const controls = document.createElement("div");
-  controls.className = "place-editor-step-controls";
+  if (!hero) {
+    return;
+  }
 
-  controls.append(
-    createButton("↑", "place-editor-icon-button", () => {
-      if (index === 0) {
-        return;
-      }
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "place-photo-edit-button";
+  button.innerHTML =
+    `<span class="place-photo-edit-button-icon" aria-hidden="true"></span><span>Zmień zdjęcie</span>`;
 
-      const steps = state.model.steps;
-      [steps[index - 1], steps[index]] = [steps[index], steps[index - 1]];
-      rerenderSteps();
-      persist();
-    }),
-    createButton("↓", "place-editor-icon-button", () => {
-      if (index >= state.model.steps.length - 1) {
-        return;
-      }
+  button.addEventListener("click", () => {
+    const nextSrc = window.prompt("Adres URL zdjęcia:", photo.getAttribute("src") || "");
 
-      const steps = state.model.steps;
-      [steps[index + 1], steps[index]] = [steps[index], steps[index + 1]];
-      rerenderSteps();
-      persist();
-    }),
-    createButton("Usuń", "place-editor-icon-button place-editor-icon-button--danger", () => {
-      state.model.steps.splice(index, 1);
-      rerenderSteps();
-      persist();
-    })
-  );
+    if (nextSrc === null) {
+      return;
+    }
 
-  const grid = document.createElement("div");
-  grid.className = "place-editor-grid";
+    photo.setAttribute("src", nextSrc.trim());
+  });
 
-  grid.append(
-    createField(
-      "Typ",
-      createSelect(step.type, STEP_TYPES, (value) => {
-        step.type = value;
-        persist();
-      })
-    ),
-    createField(
-      "Tekst",
-      createTextarea(step.text, (value) => {
-        step.text = value;
-        persist();
-      })
-    ),
-    createField(
-      "Label",
-      createInput(step.label, (value) => {
-        step.label = value || undefined;
-        persist();
-      })
-    ),
-    createField(
-      "Tone",
-      createSelect(step.tone ?? "", STEP_TONES, (value) => {
-        step.tone = value || undefined;
-        persist();
-      })
-    ),
-    createField(
-      "Emphasis",
-      createSelect(step.emphasis ?? "", STEP_EMPHASIS, (value) => {
-        step.emphasis = value || undefined;
-        persist();
-      })
-    ),
-    createField(
-      "Kod",
-      createInput(step.code, (value) => {
-        step.code = value || undefined;
-        persist();
-      })
-    ),
-    createField(
-      "Ukryj kod po (s)",
-      createInput(step.codeHideAfter, (value) => {
-        step.codeHideAfter = value || undefined;
-        persist();
-      })
-    )
-  );
-
-  item.append(heading, controls, grid);
-
-  return item;
+  hero.append(button);
 }
