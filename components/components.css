@@ -886,7 +886,7 @@ a.place-summary-item--parking:hover::before {
   grid-template-columns: 48px minmax(0, 1fr);
   grid-template-areas: "icon text";
   column-gap: 16px;
-  align-items: start;
+  align-items: stretch;
 
   margin: 0;
   padding: 0;
@@ -917,11 +917,9 @@ a.place-summary-item--parking:hover::before {
 
   display: grid;
   place-items: center;
-  align-self: start;
   justify-self: center;
 
   width: 48px;
-  padding-top: 2px;
 
   flex-shrink: 0;
 }
