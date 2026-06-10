@@ -146,6 +146,50 @@ class TupPlaceHeader extends HTMLElement {
     `;
   }
 
+  #summaryItems(summary) {
+    return String(summary ?? "")
+      .split(/\s*[·•|]\s*/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  #summaryMarkup(summary) {
+    const items = this.#summaryItems(summary);
+
+    if (!items.length) {
+      return "";
+    }
+
+    const badgesHtml = items
+      .map((item, index) => {
+        const badge = `
+          <span class="place-header-summary-badge">${escapeHtml(item)}</span>
+        `;
+
+        if (index === items.length - 1) {
+          return badge;
+        }
+
+        return `
+          ${badge}
+          <span class="place-header-summary-sep" aria-hidden="true">·</span>
+        `;
+      })
+      .join("");
+
+    return `
+      <div class="place-header-summary-row">
+        <span class="place-address-pin place-address-pin--spacer" aria-hidden="true"></span>
+        <div
+          class="place-header-summary"
+          aria-label="${escapeHtml(items.join(" · "))}"
+        >
+          ${badgesHtml}
+        </div>
+      </div>
+    `;
+  }
+
   #render() {
     const { name, summary, address, vcard, preview, mapsUrl } = this.#readAttrs();
     const lat = this.getAttribute("lat")?.trim() ?? "";
@@ -160,14 +204,7 @@ class TupPlaceHeader extends HTMLElement {
     const nameHtml = name
       ? `<h1 class="place-name" itemprop="name">${escapeHtml(name)}</h1>`
       : "";
-    const summaryHtml = summary
-      ? `
-        <div class="place-header-summary-row">
-          <span class="place-address-pin place-address-pin--spacer" aria-hidden="true"></span>
-          <p class="place-header-summary">${escapeHtml(summary)}</p>
-        </div>
-      `
-      : "";
+    const summaryHtml = this.#summaryMarkup(summary);
 
     this.innerHTML = `
       <header class="sheet-header">

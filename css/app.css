@@ -206,6 +206,12 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+#place > .sheet-content > tup-place-header .sheet-header {
+  margin-inline: -20px;
+  margin-top: -12px;
+  padding-top: calc(16px + env(safe-area-inset-top, 0px) + 12px);
+}
+
 .sheet-content:has(tup-navigation-button) {
   display: flex;
   flex-direction: column;
@@ -311,11 +317,11 @@ tup-navigation-button {
   top: 0;
   z-index: 2;
 
-  padding-bottom: 8px;
+  padding-bottom: 14px;
 
-  background: rgba(255, 255, 255, 0.96);
+  background: #16181c;
 
-  backdrop-filter: blur(24px);
+  backdrop-filter: none;
 }
 
 @media (min-width: 768px) {

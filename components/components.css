@@ -31,6 +31,16 @@ tup-footer {
   display: flex;
   align-items: flex-start;
   gap: 8px;
+
+  padding:
+    calc(16px + env(safe-area-inset-top, 0px))
+    20px
+    14px;
+
+  border-radius: 28px 28px 0 0;
+
+  background: #16181c;
+  color: #f9fafb;
 }
 
 .place-header {
@@ -79,6 +89,18 @@ tup-footer {
   background: rgba(0, 0, 0, 0.06);
 }
 
+.sheet-header .icon-button {
+  color: #f9fafb;
+}
+
+.sheet-header .icon-button:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sheet-header .icon-button::before {
+  filter: brightness(0) invert(1);
+}
+
 .icon-button::before {
   content: "";
 
@@ -120,10 +142,10 @@ tup-footer {
 
   overflow: hidden;
 
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  line-height: 1.2;
-  color: #111827;
+  line-height: 1.15;
+  color: inherit;
 
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -131,10 +153,10 @@ tup-footer {
 
 .place-header-summary-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 6px;
 
-  margin-top: 4px;
+  margin-top: 8px;
 
   min-width: 0;
 }
@@ -144,12 +166,38 @@ tup-footer {
 }
 
 .place-header-summary {
-  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+
+  min-width: 0;
+}
+
+.place-header-summary-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.1);
 
   font-size: 11px;
-  font-weight: 400;
-  line-height: 1.35;
-  color: #878f99;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #f3f4f6;
+  white-space: nowrap;
+}
+
+.place-header-summary-sep {
+  flex-shrink: 0;
+
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.42);
 }
 
 .place-address-row {
@@ -171,10 +219,10 @@ tup-footer {
 
   overflow: hidden;
 
-  font-size: 15px;
+  font-size: 14px;
   font-style: normal;
   line-height: 1.35;
-  color: #374151;
+  color: rgba(255, 255, 255, 0.88);
 
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -196,7 +244,11 @@ tup-footer {
 }
 
 .place-address-link .place-address-text {
-  border-bottom: 1px solid currentColor;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.36);
+}
+
+.sheet-header .place-address-link:active .place-address-text {
+  border-bottom-color: rgba(255, 255, 255, 0.72);
 }
 
 .place-address-pin {
@@ -206,6 +258,11 @@ tup-footer {
   height: 18px;
 
   background: url("images/icons/pushpin.svg") center / contain no-repeat;
+}
+
+.sheet-header .place-address-pin {
+  filter: brightness(0) invert(1);
+  opacity: 0.92;
 }
 
 .place-address-text {

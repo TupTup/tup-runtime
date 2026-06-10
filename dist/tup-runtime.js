@@ -21,16 +21,16 @@ e("tup-place-header", class extends HTMLElement {
 		"preview"
 	];
 	#e = (e) => {
-		e.target.closest("[data-share]") && this.#u();
+		e.target.closest("[data-share]") && this.#f();
 	};
 	connectedCallback() {
-		this.addEventListener("click", this.#e), this.#s();
+		this.addEventListener("click", this.#e), this.#l();
 	}
 	disconnectedCallback() {
 		this.removeEventListener("click", this.#e);
 	}
 	attributeChangedCallback() {
-		this.isConnected && this.#s();
+		this.isConnected && this.#l();
 	}
 	#t() {
 		let e = this.getAttribute("name") ?? "", t = this.getAttribute("summary") ?? "", n = this.getAttribute("address") ?? "", r = this.getAttribute("lat")?.trim() ?? "", i = this.getAttribute("lng")?.trim() ?? "", a = this.getAttribute("plus-code")?.trim() ?? "", o = this.getAttribute("map-href") ?? this.getAttribute("maps");
@@ -40,7 +40,7 @@ e("tup-place-header", class extends HTMLElement {
 			address: n,
 			vcard: this.getAttribute("vcard"),
 			preview: this.getAttribute("preview"),
-			mapsUrl: this.#c({
+			mapsUrl: this.#u({
 				address: n,
 				lat: r,
 				lng: i,
@@ -102,15 +102,37 @@ e("tup-place-header", class extends HTMLElement {
       ></a>
     ` : "";
 	}
-	#s() {
+	#s(e) {
+		return String(e ?? "").split(/\s*[·•|]\s*/).map((e) => e.trim()).filter(Boolean);
+	}
+	#c(e) {
+		let n = this.#s(e);
+		if (!n.length) return "";
+		let r = n.map((e, r) => {
+			let i = `
+          <span class="place-header-summary-badge">${t(e)}</span>
+        `;
+			return r === n.length - 1 ? i : `
+          ${i}
+          <span class="place-header-summary-sep" aria-hidden="true">·</span>
+        `;
+		}).join("");
+		return `
+      <div class="place-header-summary-row">
+        <span class="place-address-pin place-address-pin--spacer" aria-hidden="true"></span>
+        <div
+          class="place-header-summary"
+          aria-label="${t(n.join(" · "))}"
+        >
+          ${r}
+        </div>
+      </div>
+    `;
+	}
+	#l() {
 		let { name: e, summary: n, address: r, vcard: i, preview: a, mapsUrl: o } = this.#t(), s = this.getAttribute("lat")?.trim() ?? "", c = this.getAttribute("lng")?.trim() ?? "";
 		this.#n(e);
-		let l = this.#r(a), u = this.#a(r, o), d = this.#o(i), f = this.#i(s, c), p = e ? `<h1 class="place-name" itemprop="name">${t(e)}</h1>` : "", m = n ? `
-        <div class="place-header-summary-row">
-          <span class="place-address-pin place-address-pin--spacer" aria-hidden="true"></span>
-          <p class="place-header-summary">${t(n)}</p>
-        </div>
-      ` : "";
+		let l = this.#r(a), u = this.#a(r, o), d = this.#o(i), f = this.#i(s, c), p = e ? `<h1 class="place-name" itemprop="name">${t(e)}</h1>` : "", m = this.#c(n);
 		this.innerHTML = `
       <header class="sheet-header">
 
@@ -150,13 +172,13 @@ e("tup-place-header", class extends HTMLElement {
       </header>
     `;
 	}
-	#c({ address: e, lat: t, lng: n, plusCode: r, mapHref: i }) {
-		return i || (t && n ? this.#l(`${t},${n}`) : r ? this.#l(r) : e ? this.#l(e) : null);
+	#u({ address: e, lat: t, lng: n, plusCode: r, mapHref: i }) {
+		return i || (t && n ? this.#d(`${t},${n}`) : r ? this.#d(r) : e ? this.#d(e) : null);
 	}
-	#l(e) {
+	#d(e) {
 		return `https://maps.google.com/?q=${encodeURIComponent(e)}`;
 	}
-	async #u() {
+	async #f() {
 		let e = this.getAttribute("name") ?? "", t = this.getAttribute("address") ?? "", n = {
 			title: e,
 			text: t ? `${e} — ${t}` : e,
