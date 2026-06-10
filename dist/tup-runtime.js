@@ -439,15 +439,15 @@ function s(e, r) {
       </span>
     `;
 }
-function c({ type: e, label: n, text: r, tone: i }) {
-	let a = t(e || "forward"), c = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", l = s(n, r);
+function c({ type: e, label: n, text: r, tone: i, emphasis: a }) {
+	let c = t(e || "forward"), l = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", u = a === "primary" ? " route-step--primary" : "", d = s(n, r);
 	return `
-    <li class="route-step${c}" aria-label="${t(o(e, n, r))}">
+    <li class="route-step${l}${u}" aria-label="${t(o(e, n, r))}">
       <div class="route-step-icon-wrap" aria-hidden="true">
-        <span class="route-step-icon route-step-icon--${a}"></span>
+        <span class="route-step-icon route-step-icon--${c}"></span>
       </div>
 
-      ${l}
+      ${d}
     </li>
   `;
 }
@@ -464,7 +464,8 @@ var l = class extends HTMLElement {
 			type: e.getAttribute("type"),
 			label: e.getAttribute("label"),
 			text: e.getAttribute("text"),
-			tone: e.getAttribute("tone")
+			tone: e.getAttribute("tone"),
+			emphasis: e.getAttribute("emphasis")
 		})).map((e) => c(e)).join("");
 		this.innerHTML = `
       <section class="place-route-section" aria-labelledby="${this.#e}">
