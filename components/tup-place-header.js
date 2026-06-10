@@ -5,6 +5,7 @@ class TupPlaceHeader extends HTMLElement {
 
   static observedAttributes = [
     "name",
+    "summary",
     "address",
     "lat",
     "lng",
@@ -40,6 +41,7 @@ class TupPlaceHeader extends HTMLElement {
 
   #readAttrs() {
     const name = this.getAttribute("name") ?? "";
+    const summary = this.getAttribute("summary") ?? "";
     const address = this.getAttribute("address") ?? "";
     const lat = this.getAttribute("lat")?.trim() ?? "";
     const lng = this.getAttribute("lng")?.trim() ?? "";
@@ -50,6 +52,7 @@ class TupPlaceHeader extends HTMLElement {
 
     return {
       name,
+      summary,
       address,
       vcard,
       preview,
@@ -144,7 +147,7 @@ class TupPlaceHeader extends HTMLElement {
   }
 
   #render() {
-    const { name, address, vcard, preview, mapsUrl } = this.#readAttrs();
+    const { name, summary, address, vcard, preview, mapsUrl } = this.#readAttrs();
     const lat = this.getAttribute("lat")?.trim() ?? "";
     const lng = this.getAttribute("lng")?.trim() ?? "";
 
@@ -156,6 +159,14 @@ class TupPlaceHeader extends HTMLElement {
     const geoHtml = this.#geoMarkup(lat, lng);
     const nameHtml = name
       ? `<h1 class="place-name" itemprop="name">${escapeHtml(name)}</h1>`
+      : "";
+    const summaryHtml = summary
+      ? `
+        <div class="place-header-summary-row">
+          <span class="place-address-pin place-address-pin--spacer" aria-hidden="true"></span>
+          <p class="place-header-summary">${escapeHtml(summary)}</p>
+        </div>
+      `
       : "";
 
     this.innerHTML = `
@@ -176,6 +187,8 @@ class TupPlaceHeader extends HTMLElement {
                 ${addressInner}
               </address>
             </div>
+
+            ${summaryHtml}
 
             ${geoHtml}
           </div>
