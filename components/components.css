@@ -904,35 +904,10 @@ a.place-summary-item--parking:hover::before {
   margin-bottom: var(--route-step-gap);
 }
 
-.route-step:has(+ .route-step--target) {
-  margin-bottom: 0;
-}
+.route-step--target {
+  padding-bottom: 16px;
 
-.route-step:has(+ .route-step--target) .route-step-icon-wrap::after {
-  display: none;
-}
-
-.route-step:has(+ .route-step--target) .route-step-text {
-  padding-bottom: 4px;
-
-  border-bottom: 0;
-}
-
-.route-step--target:not(:first-child) {
-  grid-template-areas:
-    ". tear"
-    "icon text";
-  row-gap: 16px;
-
-  margin-top: 16px;
-}
-
-.route-step--target:not(:first-child)::before {
-  content: "";
-  grid-area: tear;
-
-  border: 0;
-  border-top: 1px dashed #b0b8c3;
+  border-bottom: 1px dashed #b0b8c3;
 }
 
 .route-step-icon-wrap {
