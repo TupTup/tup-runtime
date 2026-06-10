@@ -1,33 +1,64 @@
 import { defineCustomElement } from "./define-custom-element.js";
 import { renderRouteStepMarkup, bindSecretRouteSteps } from "./tup-route-step.js";
 
+function readStepFromElement(step) {
+  return {
+    type: step.getAttribute("type"),
+    label: step.getAttribute("label") || undefined,
+    text: step.getAttribute("text"),
+    tone: step.getAttribute("tone") || undefined,
+    emphasis: step.getAttribute("emphasis") || undefined,
+    direction: step.getAttribute("direction") || undefined,
+    code: step.getAttribute("code") || undefined,
+    codeHideAfter: step.getAttribute("code-hide-after") || undefined,
+  };
+}
+
 export class TupRoute extends HTMLElement {
 
   #headingId = null;
+  #steps = [];
+  #initialized = false;
 
   connectedCallback() {
     if (!this.#headingId) {
       this.#headingId = `place-route-heading-${crypto.randomUUID()}`;
     }
 
+    if (!this.#initialized) {
+      this.#steps = this.#readStepsFromDom();
+      this.#initialized = true;
+    }
+
     this.#render();
   }
 
-  #render() {
-    const steps = [...this.querySelectorAll(":scope > tup-route-step")].map(
-      (step) => ({
-        type: step.getAttribute("type"),
-        label: step.getAttribute("label"),
-        text: step.getAttribute("text"),
-        tone: step.getAttribute("tone"),
-        emphasis: step.getAttribute("emphasis"),
-        direction: step.getAttribute("direction"),
-        code: step.getAttribute("code"),
-        codeHideAfter: step.getAttribute("code-hide-after"),
-      })
+  #readStepsFromDom() {
+    return [...this.querySelectorAll(":scope > tup-route-step")].map(
+      readStepFromElement
     );
+  }
 
-    const stepsHtml = steps
+  getSteps() {
+    return this.#steps.map((step) => ({ ...step }));
+  }
+
+  setSteps(steps) {
+    this.#steps = steps.map((step) => ({ ...step }));
+
+    if (this.isConnected) {
+      this.#render();
+    }
+  }
+
+  refresh() {
+    if (this.isConnected) {
+      this.#render();
+    }
+  }
+
+  #render() {
+    const stepsHtml = this.#steps
       .map((step) => renderRouteStepMarkup(step))
       .join("");
 
