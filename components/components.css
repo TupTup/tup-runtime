@@ -552,7 +552,7 @@ a.place-summary-item--parking:hover::before {
 
   cursor: zoom-in;
 
-  border-radius: 0;
+  border-radius: 0 0 12px 12px;
 
   overflow: hidden;
 
@@ -616,7 +616,7 @@ a.place-summary-item--parking:hover::before {
 
   object-fit: cover;
 
-  border-radius: 0;
+  border-radius: 0 0 12px 12px;
 }
 
 .hero-image-img {
