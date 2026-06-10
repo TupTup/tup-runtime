@@ -167,7 +167,9 @@ body {
 }
 
 #place .hero-image-trigger {
-  height: 33dvh;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
 }
 
 #place .hero-image-img {
