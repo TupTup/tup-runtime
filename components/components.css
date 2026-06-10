@@ -901,10 +901,10 @@ a.place-summary-item--parking:hover::before {
   display: block;
   flex-shrink: 0;
 
-  width: 32px;
-  height: 32px;
-  max-width: 32px;
-  max-height: 32px;
+  width: 34px;
+  height: 34px;
+  max-width: 34px;
+  max-height: 34px;
 }
 
 .route-step-icon::before {
@@ -918,7 +918,7 @@ a.place-summary-item--parking:hover::before {
 }
 
 .route-step:not(:last-child) .route-step-icon::before {
-  filter: brightness(0) saturate(100%) invert(64%) sepia(8%) saturate(352%) hue-rotate(182deg) brightness(94%) contrast(86%);
+  filter: brightness(0) saturate(100%) invert(46%) sepia(8%) saturate(420%) hue-rotate(182deg) brightness(92%) contrast(98%);
 }
 
 .route-step-icon--entrance::before {
@@ -958,7 +958,7 @@ a.place-summary-item--parking:hover::before {
 }
 
 .route-step:last-child .route-step-icon::before {
-  background-color: #60a5fa;
+  background-color: #3b82f6;
   background-image: none;
 
   -webkit-mask-image: url("images/icons/pushpin.svg");
@@ -1003,10 +1003,22 @@ a.place-summary-item--parking:hover::before {
 }
 
 .route-step-value {
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #374151;
+}
+
+.route-step--primary .route-step-value {
+  font-size: 22px;
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
   color: #111827;
+}
+
+.route-step--primary .route-step-text {
+  gap: 4px;
 }
 
 .route-step--warning {

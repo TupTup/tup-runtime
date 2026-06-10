@@ -17,7 +17,7 @@
         <li>Ochrona — Poproś o aktywację windy</li>
         <li>Piętro — 2</li>
         <li>Korytarz — W lewo, do końca</li>
-        <li>Miejsce docelowe — po prawej — Lokal 229</li>
+        <li>Cel — po prawej — 229</li>
       </ol>
     </noscript>
 
@@ -46,17 +46,12 @@
             fallback-src="https://placehold.co/1200x675/e5e7eb/111827?text=TupTup"
           ></tup-place-photo>
 
-          <tup-place-summary
-            building="C10"
-            floor="2"
-            room="229"
-          ></tup-place-summary>
-
           <tup-route>
             <tup-route-step
               type="entrance"
               label="Wejście"
               text="C10"
+              emphasis="primary"
             ></tup-route-step>
             <tup-route-step
               type="hand"
@@ -68,6 +63,7 @@
               type="elevator"
               label="Piętro"
               text="2"
+              emphasis="primary"
             ></tup-route-step>
             <tup-route-step
               type="left"
@@ -76,8 +72,9 @@
             ></tup-route-step>
             <tup-route-step
               type="target"
-              label="Miejsce docelowe — po prawej"
-              text="Lokal 229"
+              label="Cel — po prawej"
+              text="229"
+              emphasis="primary"
             ></tup-route-step>
           </tup-route>
 

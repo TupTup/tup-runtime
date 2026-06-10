@@ -20,6 +20,7 @@ export class TupRoute extends HTMLElement {
         label: step.getAttribute("label"),
         text: step.getAttribute("text"),
         tone: step.getAttribute("tone"),
+        emphasis: step.getAttribute("emphasis"),
       })
     );
 
