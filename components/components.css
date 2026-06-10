@@ -1,3 +1,8 @@
+:root {
+  --place-float-inset: 8px;
+  --place-float-inset-bottom: 16px;
+}
+
 tup-place-header,
 tup-badge,
 tup-place-photo,
@@ -27,6 +32,37 @@ tup-footer {
   clip-path: inset(50%);
 }
 
+#place {
+  height: 100%;
+
+  background: #f3f4f6;
+}
+
+article.sheet-content {
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  height: calc(
+    100%
+    - var(--place-float-inset)
+    - var(--place-float-inset-bottom)
+    - env(safe-area-inset-bottom, 0px)
+  );
+  min-height: 0;
+  margin:
+    var(--place-float-inset)
+    var(--place-float-inset)
+    calc(var(--place-float-inset-bottom) + env(safe-area-inset-bottom, 0px));
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background: #fff;
+  box-shadow: 0 8px 32px rgba(17, 24, 39, 0.12);
+}
+
 .sheet-header {
   display: flex;
   align-items: flex-start;
@@ -37,7 +73,7 @@ tup-footer {
     16px
     28px;
 
-  border-radius: 0;
+  border-radius: 20px 20px 0 0;
 
   background: #16181c;
   color: #f9fafb;
@@ -169,25 +205,16 @@ tup-footer {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 
   min-width: 0;
 }
 
 .place-header-summary-badge {
-  display: inline-flex;
-  align-items: center;
-
-  padding: 4px 10px;
-
-  border-radius: 999px;
-
-  background: rgba(255, 255, 255, 0.1);
-
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.2;
-  color: #f3f4f6;
+  color: #d1d5db;
   white-space: nowrap;
 }
 
@@ -195,9 +222,9 @@ tup-footer {
   flex-shrink: 0;
 
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.42);
+  color: #6b7280;
 }
 
 .place-address-row {
@@ -1409,6 +1436,12 @@ tup-footer {
   padding-inline: 20px;
 }
 
+tup-footer {
+  border-radius: 0 0 20px 20px;
+
+  background: #fff;
+}
+
 .navigation-button {
   display: flex;
   align-items: center;
@@ -1456,7 +1489,7 @@ tup-footer {
   display: flex;
   justify-content: center;
 
-  padding: 10px 0 2px;
+  padding: 10px 0 14px;
 }
 
 .place-footer-logo {
