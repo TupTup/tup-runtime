@@ -191,19 +191,30 @@ function L() {
 	let e = M();
 	return A === "view" && e.get("draft") === "1" && e.get("fresh") === "1";
 }
-function R({ mode: e = "view", draft: t = !1, fresh: n = !1 } = {}) {
-	let r = new URL(window.location.href);
-	return e === "edit" ? (r.searchParams.set("mode", "edit"), r.searchParams.delete("draft"), r.searchParams.delete("fresh")) : (r.searchParams.delete("mode"), t ? r.searchParams.set("draft", "1") : r.searchParams.delete("draft"), n && t ? r.searchParams.set("fresh", "1") : r.searchParams.delete("fresh")), `${r.pathname}${r.search}${r.hash}`;
+function R({ mode: e = "view", draft: t = !1, fresh: n = !1, published: r = !1 } = {}) {
+	let i = new URL(window.location.href);
+	return e === "edit" ? (i.searchParams.set("mode", "edit"), i.searchParams.delete("draft"), i.searchParams.delete("fresh"), i.searchParams.delete("published")) : (i.searchParams.delete("mode"), t ? i.searchParams.set("draft", "1") : i.searchParams.delete("draft"), n && t ? i.searchParams.set("fresh", "1") : i.searchParams.delete("fresh"), r ? i.searchParams.set("published", "1") : i.searchParams.delete("published")), `${i.pathname}${i.search}${i.hash}`;
 }
-async function z() {
+function z() {
+	let e = new URL(window.location.href);
+	e.searchParams.has("published") && (e.searchParams.delete("published"), window.history.replaceState({}, "", `${e.pathname}${e.search}${e.hash}`));
+}
+function B() {
+	return M().get("published") === "1";
+}
+async function V() {
 	if (I() !== "edit") return;
-	let { initPlaceEditorUi: e } = await import("./place-editor-CUui_f2J.js");
+	let { initPlaceEditorUi: e } = await import("./place-editor-B97hkAT9.js");
 	e();
 }
-async function B() {
+async function H() {
 	if (I() !== "view") return;
-	let { initPlaceViewUi: e } = await import("./place-view-DIuE_oCC.js");
-	e();
+	let { initPlaceViewUi: e } = await import("./place-view-CM7X04TG.js");
+	if (e(), B()) {
+		z();
+		let { firePublishConfetti: e } = await import("./place-confetti-DYzU4ojq.js");
+		e();
+	}
 }
 //#endregion
-export { k as a, u as c, m as d, w as f, L as i, C as l, a as m, z as n, l as o, i as p, B as r, c as s, R as t, D as u };
+export { k as a, u as c, m as d, w as f, L as i, C as l, a as m, V as n, l as o, i as p, H as r, c as s, R as t, D as u };

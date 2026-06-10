@@ -1,4 +1,4 @@
-import { c as e, i as t, l as n, o as r, s as i, t as a, u as o } from "./place-mode-kALDDYSo.js";
+import { c as e, i as t, l as n, o as r, s as i, t as a, u as o } from "./place-mode-Cc9vhLLr.js";
 import { n as s, r as c, t as l } from "./place-action-progress-Bj517IQQ.js";
 //#region js/place-view.js
 function u(e, t, n) {
@@ -27,7 +27,8 @@ function d() {
 				}
 				window.location.assign(a({
 					mode: "view",
-					draft: !1
+					draft: !1,
+					published: !0
 				}));
 			}
 		}), g.append(e);

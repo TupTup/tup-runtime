@@ -88,7 +88,9 @@ export function initPlaceViewUi() {
         return;
       }
 
-      window.location.assign(buildPlaceUrl({ mode: "view", draft: false }));
+      window.location.assign(
+        buildPlaceUrl({ mode: "view", draft: false, published: true }),
+      );
     });
 
     actions.append(publishButton);

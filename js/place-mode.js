@@ -91,13 +91,19 @@ export function isFreshDraftPreview() {
   );
 }
 
-export function buildPlaceUrl({ mode = "view", draft = false, fresh = false } = {}) {
+export function buildPlaceUrl({
+  mode = "view",
+  draft = false,
+  fresh = false,
+  published = false,
+} = {}) {
   const url = new URL(window.location.href);
 
   if (mode === "edit") {
     url.searchParams.set("mode", "edit");
     url.searchParams.delete("draft");
     url.searchParams.delete("fresh");
+    url.searchParams.delete("published");
   } else {
     url.searchParams.delete("mode");
 
@@ -112,9 +118,34 @@ export function buildPlaceUrl({ mode = "view", draft = false, fresh = false } = 
     } else {
       url.searchParams.delete("fresh");
     }
+
+    if (published) {
+      url.searchParams.set("published", "1");
+    } else {
+      url.searchParams.delete("published");
+    }
   }
 
   return `${url.pathname}${url.search}${url.hash}`;
+}
+
+export function clearPublishedCelebrationParam() {
+  const url = new URL(window.location.href);
+
+  if (!url.searchParams.has("published")) {
+    return;
+  }
+
+  url.searchParams.delete("published");
+  window.history.replaceState(
+    {},
+    "",
+    `${url.pathname}${url.search}${url.hash}`,
+  );
+}
+
+export function isPublishedCelebration() {
+  return readSearchParams().get("published") === "1";
 }
 
 export async function initPlaceEditor() {
@@ -135,4 +166,12 @@ export async function initPlaceView() {
   const { initPlaceViewUi } = await import("./place-view.js");
 
   initPlaceViewUi();
+
+  if (isPublishedCelebration()) {
+    clearPublishedCelebrationParam();
+
+    const { firePublishConfetti } = await import("./place-confetti.js");
+
+    firePublishConfetti();
+  }
 }

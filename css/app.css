@@ -772,3 +772,10 @@ tup-navigation-button {
     linear-gradient(#111827, #111827) 50% 78%/8px 1.5px no-repeat;
   border-radius: 3px;
 }
+
+.place-publish-confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+}
