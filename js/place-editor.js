@@ -251,6 +251,11 @@ export function initPlaceEditorUi() {
     applyPlaceToDom(placeRoot, model);
     saveDraft(slug, model);
 
+    if (model.steps.length > 0) {
+      window.location.assign(buildPlaceUrl({ mode: "view", draft: true }));
+      return;
+    }
+
     generateButton.classList.remove("is-generating");
     generateLabel.textContent = "Generuj kroki";
     progressFill.style.width = "0%";
@@ -264,12 +269,9 @@ export function initPlaceEditorUi() {
     textarea.disabled = false;
     isGenerating = false;
 
-    previewLink.hidden = model.steps.length === 0;
+    previewLink.hidden = true;
 
-    status.textContent =
-      model.steps.length > 0
-        ? `Wygenerowano ${model.steps.length} kroków.`
-        : "Nie udało się wygenerować kroków z tego opisu.";
+    status.textContent = "Nie udało się wygenerować kroków z tego opisu.";
   });
 
   compose.append(heading, field, generateButton, hint, status, previewLink);
