@@ -14,12 +14,13 @@
       <p>C10 · Piętro 2 · Cel 229</p>
       <p>Piętro 2, lokal 229</p>
       <ol>
-        <li>Budynek — C10</li>
-        <li>Ochrona — Poproś o aktywację windy</li>
-        <li>Piętro — 2</li>
+        <li>Wejdź do budynku C10</li>
+        <li>Poproś ochronę o aktywację windy</li>
+        <li>Wjedź na 2 piętro</li>
+        <li>Wprowadź kod ****</li>
         <li>Skręć w lewo</li>
         <li>Idź prosto do końca korytarza</li>
-        <li>Cel — 229 →</li>
+        <li>Lokal 229 po prawej stronie</li>
       </ol>
     </noscript>
 
@@ -50,21 +51,21 @@
           <tup-route>
             <tup-route-step
               type="start"
-              label="Budynek"
-              text="C10"
-              emphasis="primary"
+              text="Wejdź do budynku **C10**"
             ></tup-route-step>
             <tup-route-step
               type="hand"
-              label="Ochrona"
-              text="Poproś o aktywację windy"
+              text="Poproś ochronę o aktywację windy"
               tone="warning"
             ></tup-route-step>
             <tup-route-step
               type="floor-up"
-              label="Piętro"
-              text="2"
-              emphasis="primary"
+              text="Wjedź na **2 piętro**"
+            ></tup-route-step>
+            <tup-route-step
+              type="key"
+              text="Wprowadź kod"
+              code="1234"
             ></tup-route-step>
             <tup-route-step
               type="left"
@@ -76,10 +77,7 @@
             ></tup-route-step>
             <tup-route-step
               type="target"
-              label="Cel"
-              text="229"
-              direction="right"
-              emphasis="primary"
+              text="**Lokal 229** po prawej stronie"
             ></tup-route-step>
           </tup-route>
 

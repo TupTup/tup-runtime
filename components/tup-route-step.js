@@ -41,7 +41,10 @@ const STEP_TYPE_LABELS = {
   "floor-up": "Piętro wyżej",
   "floor-down": "Piętro niżej",
   elevator: "Piętro",
+  key: "Kod",
 };
+
+const SECRET_MASK = "****";
 
 function stepTypeLabel(type) {
   return STEP_TYPE_LABELS[type] ?? "Krok";
@@ -101,17 +104,81 @@ function stepAriaLabel(type, label, text, direction) {
 function renderStepText(label, text, direction) {
   const valueHtml = renderDirectedValue(text, direction);
   const hasLabel = Boolean(String(label ?? "").trim());
-  const labelHtml = hasLabel ? escapeHtml(label) : "";
-  const labelClass = hasLabel
-    ? "route-step-label"
-    : "route-step-label route-step-label--placeholder";
+  const labelHtml = hasLabel
+    ? `<span class="route-step-label">${escapeHtml(label)}</span>`
+    : "";
 
   return `
     <span class="route-step-text">
-      <span class="${labelClass}"${hasLabel ? "" : " aria-hidden=\"true\""}>${labelHtml}</span>
+      ${labelHtml}
       <span class="route-step-value${direction ? " route-step-value--directed" : ""}">${valueHtml}</span>
     </span>
   `;
+}
+
+function renderSecretCodeStep({ type, text, code }) {
+  const stepType = escapeHtml(type || "key");
+  const prefix = String(text ?? "").trim() || "Wprowadź kod";
+  const safeCode = escapeHtml(code);
+  const ariaLabel = escapeHtml(`${prefix}: kod ukryty`);
+
+  return `
+    <li class="route-step route-step--secret" data-code="${safeCode}" aria-label="${ariaLabel}">
+      <div class="route-step-icon-wrap" aria-hidden="true">
+        <span class="route-step-icon route-step-icon--${stepType}"></span>
+      </div>
+
+      <span class="route-step-text route-step-text--secret">
+        <span class="route-step-value">
+          ${escapeHtml(prefix)}
+          <span class="route-step-code" aria-live="polite">${escapeHtml(SECRET_MASK)}</span>
+        </span>
+
+        <button
+          type="button"
+          class="route-step-reveal"
+          aria-label="Pokaż kod"
+          aria-pressed="false"
+        ></button>
+      </span>
+    </li>
+  `;
+}
+
+export function bindSecretRouteSteps(root) {
+  root.querySelectorAll(".route-step--secret").forEach((step) => {
+    const code = step.dataset.code ?? "";
+    const badge = step.querySelector(".route-step-code");
+    const button = step.querySelector(".route-step-reveal");
+
+    if (!code || !badge || !button || button.dataset.bound === "true") {
+      return;
+    }
+
+    button.dataset.bound = "true";
+
+    const prefix = (step.getAttribute("aria-label") ?? "Wprowadź kod: kod ukryty")
+      .replace(/: kod ukryty$/, "")
+      .trim() || "Wprowadź kod";
+
+    button.addEventListener("click", () => {
+      const revealed = button.getAttribute("aria-pressed") === "true";
+
+      if (revealed) {
+        badge.textContent = SECRET_MASK;
+        button.setAttribute("aria-pressed", "false");
+        button.setAttribute("aria-label", "Pokaż kod");
+        button.classList.remove("route-step-reveal--visible");
+        step.setAttribute("aria-label", `${prefix}: kod ukryty`);
+      } else {
+        badge.textContent = code;
+        button.setAttribute("aria-pressed", "true");
+        button.setAttribute("aria-label", "Ukryj kod");
+        button.classList.add("route-step-reveal--visible");
+        step.setAttribute("aria-label", `${prefix}: ${code}`);
+      }
+    });
+  });
 }
 
 export function renderRouteStepMarkup({
@@ -121,7 +188,12 @@ export function renderRouteStepMarkup({
   tone,
   emphasis,
   direction,
+  code,
 }) {
+  if (code) {
+    return renderSecretCodeStep({ type, text, code });
+  }
+
   const stepType = escapeHtml(type || "forward");
   const toneClass = tone === "warning" || tone === "secondary"
     ? ` route-step--${escapeHtml(tone)}`
