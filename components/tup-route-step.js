@@ -27,6 +27,8 @@ function renderInlineMarkdown(text) {
 }
 
 const STEP_TYPE_LABELS = {
+  entrance: "Wejście",
+  hand: "Ochrona",
   reception: "Recepcja",
   stairs: "Schody",
   door: "Drzwi",
@@ -41,37 +43,59 @@ function plainStepText(text) {
   return String(text ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
 }
 
-function stepAriaLabel(type, text) {
-  const label = stepTypeLabel(type || "forward");
+function stepAriaLabel(type, label, text) {
+  const typeLabel = stepTypeLabel(type || "forward");
+  const plainLabel = String(label ?? "").trim();
   const plainText = plainStepText(text).trim();
+  const parts = [plainLabel, plainText].filter(Boolean);
 
-  return plainText ? `${label}: ${plainText}` : label;
+  if (parts.length) {
+    return parts.join(": ");
+  }
+
+  return typeLabel;
+}
+
+function renderStepText(label, text) {
+  const textHtml = renderInlineMarkdown(text);
+
+  if (!label) {
+    return `
+      <span class="route-step-text">
+        <span class="route-step-value">${textHtml}</span>
+      </span>
+    `;
+  }
+
+  return `
+    <span class="route-step-text">
+      <span class="route-step-label">${escapeHtml(label)}</span>
+      <span class="route-step-value">${textHtml}</span>
+    </span>
+  `;
 }
 
 export function renderRouteStepMarkup({
   type,
+  label,
   text,
-  distance,
+  tone,
 }) {
   const stepType = escapeHtml(type || "forward");
-  const distanceHtml = distance
-    ? `<span class="route-step-distance">${escapeHtml(distance)}</span>`
+  const toneClass = tone === "warning" || tone === "secondary"
+    ? ` route-step--${escapeHtml(tone)}`
     : "";
 
-  const textHtml = renderInlineMarkdown(text);
-  const ariaLabel = escapeHtml(stepAriaLabel(type, text));
+  const textHtml = renderStepText(label, text);
+  const ariaLabel = escapeHtml(stepAriaLabel(type, label, text));
 
   return `
-    <li class="route-step" aria-label="${ariaLabel}">
+    <li class="route-step${toneClass}" aria-label="${ariaLabel}">
       <div class="route-step-icon-wrap" aria-hidden="true">
         <span class="route-step-icon route-step-icon--${stepType}"></span>
       </div>
 
-      <span class="route-step-text">
-        ${textHtml}
-      </span>
-
-      ${distanceHtml}
+      ${textHtml}
     </li>
   `;
 }

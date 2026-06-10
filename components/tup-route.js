@@ -17,8 +17,9 @@ export class TupRoute extends HTMLElement {
     const steps = [...this.querySelectorAll(":scope > tup-route-step")].map(
       (step) => ({
         type: step.getAttribute("type"),
+        label: step.getAttribute("label"),
         text: step.getAttribute("text"),
-        distance: step.getAttribute("distance"),
+        tone: step.getAttribute("tone"),
       })
     );
 
