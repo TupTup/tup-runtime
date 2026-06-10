@@ -420,42 +420,73 @@ var r = {
 function i(e) {
 	return r[e] ?? "Krok";
 }
-function a(e) {
+var a = {
+	right: {
+		position: "after",
+		symbol: "→",
+		label: "po prawej"
+	},
+	left: {
+		position: "before",
+		symbol: "←",
+		label: "po lewej"
+	},
+	up: {
+		position: "after",
+		symbol: "↑",
+		label: "naprzeciwko"
+	},
+	down: {
+		position: "after",
+		symbol: "↓",
+		label: "niżej"
+	}
+};
+function o(e) {
+	return a[String(e ?? "").trim().toLowerCase()] ?? null;
+}
+function s(e) {
 	return String(e ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
 }
-function o(e, t, n) {
-	let r = i(e || "forward"), o = [String(t ?? "").trim(), a(n).trim()].filter(Boolean);
-	return o.length ? o.join(": ") : r;
+function c(e, r) {
+	let i = o(r);
+	if (!i) return n(e);
+	let a = n(e), s = `<span class="route-step-direction" aria-hidden="true">${t(i.symbol)}</span>`;
+	return i.position === "before" ? `${s}<span class="route-step-value-text">${a}</span>` : `<span class="route-step-value-text">${a}</span>${s}`;
 }
-function s(e, r) {
-	let i = n(r);
+function l(e, t, n, r) {
+	let a = i(e || "forward"), c = String(t ?? "").trim(), l = s(n).trim(), u = o(r), d = [c, u && l ? `${l} ${u.label}` : l].filter(Boolean);
+	return d.length ? d.join(": ") : a;
+}
+function u(e, n, r) {
+	let i = c(n, r);
 	return e ? `
     <span class="route-step-text">
       <span class="route-step-label">${t(e)}</span>
-      <span class="route-step-value">${i}</span>
+      <span class="route-step-value${r ? " route-step-value--directed" : ""}">${i}</span>
     </span>
   ` : `
       <span class="route-step-text">
-        <span class="route-step-value">${i}</span>
+        <span class="route-step-value${r ? " route-step-value--directed" : ""}">${i}</span>
       </span>
     `;
 }
-function c({ type: e, label: n, text: r, tone: i, emphasis: a }) {
-	let c = t(e || "forward"), l = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", u = a === "primary" ? " route-step--primary" : "", d = s(n, r);
+function d({ type: e, label: n, text: r, tone: i, emphasis: a, direction: o }) {
+	let s = t(e || "forward"), c = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", d = a === "primary" ? " route-step--primary" : "", f = u(n, r, o);
 	return `
-    <li class="route-step${l}${u}" aria-label="${t(o(e, n, r))}">
+    <li class="route-step${c}${d}" aria-label="${t(l(e, n, r, o))}">
       <div class="route-step-icon-wrap" aria-hidden="true">
-        <span class="route-step-icon route-step-icon--${c}"></span>
+        <span class="route-step-icon route-step-icon--${s}"></span>
       </div>
 
-      ${d}
+      ${f}
     </li>
   `;
 }
 e("tup-route-step", class extends HTMLElement {});
 //#endregion
 //#region components/tup-route.js
-var l = class extends HTMLElement {
+var f = class extends HTMLElement {
 	#e = null;
 	connectedCallback() {
 		this.#e ||= `place-route-heading-${crypto.randomUUID()}`, this.#t();
@@ -466,8 +497,9 @@ var l = class extends HTMLElement {
 			label: e.getAttribute("label"),
 			text: e.getAttribute("text"),
 			tone: e.getAttribute("tone"),
-			emphasis: e.getAttribute("emphasis")
-		})).map((e) => c(e)).join("");
+			emphasis: e.getAttribute("emphasis"),
+			direction: e.getAttribute("direction")
+		})).map((e) => d(e)).join("");
 		this.innerHTML = `
       <section class="place-route-section" aria-labelledby="${this.#e}">
         <h2 id="${this.#e}" class="visually-hidden">
@@ -483,7 +515,7 @@ var l = class extends HTMLElement {
     `;
 	}
 };
-e("tup-route", l), e("tup-route-steps", class extends l {}), e("tup-navigation-button", class extends HTMLElement {
+e("tup-route", f), e("tup-route-steps", class extends f {}), e("tup-navigation-button", class extends HTMLElement {
 	connectedCallback() {
 		if (this.querySelector("button")) return;
 		let e = this.textContent.trim() || "Prowadź";
