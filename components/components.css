@@ -942,6 +942,7 @@ a.place-summary-item--parking:hover::before {
 
   display: grid;
   place-items: center;
+  align-self: center;
   justify-self: center;
 
   width: 48px;
@@ -1070,8 +1071,13 @@ a.place-summary-item--parking:hover::before {
 }
 
 .route-step .route-step-icon--floor-up::before {
-  content: "⇡";
-  transform: translateY(-1px);
+  content: "";
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+  background: currentColor;
 }
 
 .route-step .route-step-icon--floor-down::before {
