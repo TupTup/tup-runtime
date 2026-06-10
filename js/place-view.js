@@ -7,6 +7,7 @@ import {
 } from "./place-model.js";
 import {
   createActionButton,
+  PUBLISH_SIMULATION_MS,
   simulateActionProgress,
 } from "./place-action-progress.js";
 import { buildPlaceUrl, isFreshDraftPreview } from "./place-mode.js";
@@ -78,7 +79,7 @@ export function initPlaceViewUi() {
       await simulateActionProgress((value) => {
         publishFill.style.width = `${value}%`;
         publishButton.setAttribute("aria-valuenow", String(value));
-      });
+      }, PUBLISH_SIMULATION_MS);
 
       if (!publishDraft(slug)) {
         resetPublishButton(publishButton, publishFill, publishLabel);

@@ -1,4 +1,5 @@
 export const ACTION_SIMULATION_MS = 2800;
+export const PUBLISH_SIMULATION_MS = 1400;
 
 export function createActionButton(labelText, options = {}) {
   const {
