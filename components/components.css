@@ -212,18 +212,9 @@ tup-navigation-button {
   max-width: 100%;
 
   margin: 0;
-  padding: 8px 14px;
+  padding: 0;
 
   overflow: hidden;
-
-  border: 1px solid rgba(17, 24, 39, 0.04);
-  border-radius: 999px;
-
-  background: rgba(255, 255, 255, 0.96);
-
-  box-shadow:
-    0 6px 16px rgba(17, 24, 39, 0.06),
-    0 1px 4px rgba(17, 24, 39, 0.04);
 }
 
 .place-badge-item {
@@ -315,34 +306,6 @@ tup-navigation-button {
   background-image: url("images/icons/door.svg");
 }
 
-.place-badge-item--brand {
-  gap: 0;
-}
-
-.place-badge-item--chevron::before {
-  display: none;
-}
-
-.place-badge-item--brand:not(:last-child)::after {
-  width: 1px;
-  height: 20px;
-
-  border-radius: 0;
-
-  background: #DADADA;
-}
-
-.place-badge-item--brand::before {
-  width: 28px;
-  height: 22px;
-
-  background-image: url("images/tuptup.svg");
-}
-
-.place-badge-item--chevron {
-  padding-left: 4px;
-}
-
 .place-badge-value {
   min-width: 0;
 
@@ -363,17 +326,6 @@ tup-navigation-button {
   width: 0;
 }
 
-.place-badge-value--chevron {
-  color: #6f6f6f;
-}
-
-.place-badge-chevron {
-  display: block;
-
-  width: 10px;
-  height: 18px;
-}
-
 .place-badge-link {
   position: absolute;
   inset: 0;
@@ -385,8 +337,8 @@ tup-navigation-button {
   background: rgba(96, 165, 250, 0.08);
 }
 
-.place-badge--compact .place-badge-item:not(.place-badge-item--parking, .place-badge-item--brand)::before,
-.place-badge--minimal .place-badge-item:not(.place-badge-item--brand)::before {
+.place-badge--compact .place-badge-item:not(.place-badge-item--parking)::before,
+.place-badge--minimal .place-badge-item::before {
   display: none;
 }
 

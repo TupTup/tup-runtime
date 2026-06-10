@@ -12,7 +12,6 @@ class TupBadge extends HTMLElement {
     "parking",
     "parking-href",
     "variant",
-    "navigate",
   ];
 
   connectedCallback() {
@@ -69,29 +68,7 @@ class TupBadge extends HTMLElement {
       },
     ].filter((item) => item.type === "parking" || item.value);
 
-    const brandItem = {
-      type: "brand",
-      label: "TupTup",
-      value: "",
-    };
-
-    const navigateItems = this.hasAttribute("navigate")
-      ? [
-        {
-          type: "chevron",
-          label: "Dalej",
-          value: ">",
-        },
-      ]
-      : [];
-
-    return locationItems.length > 0
-      ? [
-        brandItem,
-        ...locationItems,
-        ...navigateItems,
-      ]
-      : [];
+    return locationItems.length > 0 ? locationItems : [];
   }
 
   #render() {
@@ -122,14 +99,6 @@ class TupBadge extends HTMLElement {
   #itemMarkup(item, nextItem) {
     const itemClass = this.#itemClass(item, nextItem);
 
-    if (item.type === "chevron") {
-      return `
-        <div class="${itemClass}" aria-hidden="true">
-          ${this.#valueMarkup(item)}
-        </div>
-      `;
-    }
-
     return `
       <div class="${itemClass}">
         <dt class="visually-hidden">${escapeHtml(item.label)}</dt>
@@ -139,36 +108,6 @@ class TupBadge extends HTMLElement {
   }
 
   #valueMarkup(item) {
-    if (item.type === "brand") {
-      return `
-        <dd class="place-badge-value place-badge-value--icon">
-          <span class="visually-hidden">TupTup</span>
-        </dd>
-      `;
-    }
-
-    if (item.type === "chevron") {
-      return `
-        <dd class="place-badge-value place-badge-value--chevron">
-          <svg
-            class="place-badge-chevron"
-            viewBox="0 0 10 18"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <path
-              d="M2 2.5L8 9L2 15.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </dd>
-      `;
-    }
-
     if (item.type !== "parking") {
       return `<dd class="place-badge-value">${escapeHtml(item.value)}</dd>`;
     }
