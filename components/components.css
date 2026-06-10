@@ -559,7 +559,7 @@ tup-place-photo {
 
   cursor: zoom-in;
 
-  border-radius: 12px;
+  border-radius: 12px 12px 0 0;
 
   overflow: hidden;
 
@@ -623,7 +623,7 @@ tup-place-photo {
 
   object-fit: cover;
 
-  border-radius: 12px;
+  border-radius: 12px 12px 0 0;
 }
 
 .hero-image-img {
@@ -1384,12 +1384,24 @@ tup-place-photo {
 }
 
 tup-route {
-  margin-top: 2rem;
+  position: relative;
+  z-index: 2;
+
+  margin-top: -12px;
+
+  overflow: hidden;
+
+  border-radius: 12px 12px 0 0;
+
+  background: #fff;
 }
 
 .place-route-section {
   margin-top: 0;
-  padding-inline: 20px;
+  padding:
+    calc(2rem + 12px)
+    20px
+    0;
 }
 
 tup-navigation-button,
