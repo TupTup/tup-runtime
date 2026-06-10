@@ -1025,6 +1025,7 @@ a.place-summary-item--parking:hover::before {
   background-image: url("images/icons/elevator-up.svg");
 }
 
+.route-step .route-step-icon--start::before,
 .route-step .route-step-icon--left::before,
 .route-step .route-step-icon--right::before,
 .route-step .route-step-icon--forward::before,
@@ -1048,6 +1049,11 @@ a.place-summary-item--parking:hover::before {
   color: #8a929c;
 
   filter: none;
+}
+
+.route-step .route-step-icon--start::before {
+  content: "◎";
+  font-size: 20px;
 }
 
 .route-step .route-step-icon--left::before {

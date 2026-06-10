@@ -33,6 +33,7 @@ const STEP_TYPE_LABELS = {
   reception: "Recepcja",
   stairs: "Schody",
   door: "Drzwi",
+  start: "Start",
   left: "Skręć w lewo",
   right: "Skręć w prawo",
   forward: "Idź prosto",
