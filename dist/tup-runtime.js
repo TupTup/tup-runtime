@@ -1,14 +1,14 @@
-import { n as e } from "./place-mode-CMddMA4V.js";
+import { n as e, r as t } from "./place-mode-Cl7Ta_Q8.js";
 //#region components/define-custom-element.js
-function t(e, t) {
+function n(e, t) {
 	customElements.get(e) || customElements.define(e, t);
 }
 //#endregion
 //#region components/tup-html.js
-function n(e) {
+function r(e) {
 	return String(e ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;");
 }
-t("tup-place-header", class extends HTMLElement {
+n("tup-place-header", class extends HTMLElement {
 	static observedAttributes = [
 		"name",
 		"summary",
@@ -57,7 +57,7 @@ t("tup-place-header", class extends HTMLElement {
 		return e ? `
       <img
         class="place-preview"
-        src="${n(e)}"
+        src="${r(e)}"
         alt=""
         aria-hidden="true"
       />
@@ -71,32 +71,32 @@ t("tup-place-header", class extends HTMLElement {
         itemtype="https://schema.org/GeoCoordinates"
         class="visually-hidden"
       >
-        <meta itemprop="latitude" content="${n(e)}">
-        <meta itemprop="longitude" content="${n(t)}">
+        <meta itemprop="latitude" content="${r(e)}">
+        <meta itemprop="longitude" content="${r(t)}">
       </span>
     `;
 	}
 	#a(e, t) {
 		return e ? t ? `
         <a
-          href="${n(t)}"
+          href="${r(t)}"
           class="place-address-link"
           target="_blank"
           rel="noopener noreferrer"
           itemprop="address"
         >
           <span class="place-address-pin" aria-hidden="true"></span>
-          <span class="place-address-text">${n(e)}</span>
+          <span class="place-address-text">${r(e)}</span>
         </a>
       ` : `
       <span class="place-address-pin" aria-hidden="true"></span>
-      <span class="place-address-text" itemprop="address">${n(e)}</span>
+      <span class="place-address-text" itemprop="address">${r(e)}</span>
     ` : "";
 	}
 	#o(e) {
 		return e ? `
       <a
-        href="${n(e)}"
+        href="${r(e)}"
         download
         class="icon-button icon-button--bookmark"
         aria-label="Zapisz kontakt"
@@ -109,11 +109,11 @@ t("tup-place-header", class extends HTMLElement {
 	#c(e) {
 		let t = this.#s(e);
 		if (!t.length) return "";
-		let r = t.map((e, r) => {
+		let n = t.map((e, n) => {
 			let i = `
-          <span class="place-header-summary-badge">${n(e)}</span>
+          <span class="place-header-summary-badge">${r(e)}</span>
         `;
-			return r === t.length - 1 ? i : `
+			return n === t.length - 1 ? i : `
           ${i}
           <span class="place-header-summary-sep" aria-hidden="true">·</span>
         `;
@@ -123,17 +123,17 @@ t("tup-place-header", class extends HTMLElement {
         <span class="place-address-pin place-address-pin--spacer" aria-hidden="true"></span>
         <div
           class="place-header-summary"
-          aria-label="${n(t.join(" · "))}"
+          aria-label="${r(t.join(" · "))}"
         >
-          ${r}
+          ${n}
         </div>
       </div>
     `;
 	}
 	#l() {
-		let { name: e, summary: t, address: r, vcard: i, preview: a, mapsUrl: o } = this.#t(), s = this.getAttribute("lat")?.trim() ?? "", c = this.getAttribute("lng")?.trim() ?? "";
+		let { name: e, summary: t, address: n, vcard: i, preview: a, mapsUrl: o } = this.#t(), s = this.getAttribute("lat")?.trim() ?? "", c = this.getAttribute("lng")?.trim() ?? "";
 		this.#n(e);
-		let l = this.#r(a), u = this.#a(r, o), d = this.#o(i), f = this.#i(s, c), p = e ? `<h1 class="place-name" itemprop="name">${n(e)}</h1>` : "", m = this.#c(t);
+		let l = this.#r(a), u = this.#a(n, o), d = this.#o(i), f = this.#i(s, c), p = e ? `<h1 class="place-name" itemprop="name">${r(e)}</h1>` : "", m = this.#c(t);
 		this.innerHTML = `
       <header class="sheet-header">
 
@@ -193,7 +193,7 @@ t("tup-place-header", class extends HTMLElement {
 		}
 		navigator.clipboard?.writeText && await navigator.clipboard.writeText(n.url);
 	}
-}), t("tup-place-photo", class e extends HTMLElement {
+}), n("tup-place-photo", class e extends HTMLElement {
 	static observedAttributes = [
 		"src",
 		"alt",
@@ -211,7 +211,7 @@ t("tup-place-header", class extends HTMLElement {
 		this.isConnected && (this.#i(), this.#a(), this.#o());
 	}
 	#i() {
-		let e = this.getAttribute("src") ?? "", t = this.getAttribute("alt") ?? "", r = this.getAttribute("caption") ?? "", i = r && !this.hasAttribute("hide-caption"), a = this.hasAttribute("parking") ? "<span class=\"place-photo-parking\" aria-hidden=\"true\">P</span>" : "", o = i ? `<figcaption class="visually-hidden">${n(r)}</figcaption>` : "";
+		let e = this.getAttribute("src") ?? "", t = this.getAttribute("alt") ?? "", n = this.getAttribute("caption") ?? "", i = n && !this.hasAttribute("hide-caption"), a = this.hasAttribute("parking") ? "<span class=\"place-photo-parking\" aria-hidden=\"true\">P</span>" : "", o = i ? `<figcaption class="visually-hidden">${r(n)}</figcaption>` : "";
 		this.innerHTML = `
       <div class="place-hero-home">
         <figure class="place-hero">
@@ -219,12 +219,12 @@ t("tup-place-header", class extends HTMLElement {
             type="button"
             class="hero-image-trigger"
             data-lightbox
-            aria-label="${n(t ? `Powiększ: ${t}` : "Powiększ zdjęcie")}"
+            aria-label="${r(t ? `Powiększ: ${t}` : "Powiększ zdjęcie")}"
           >
             <img
               class="hero-image-img"
-              src="${n(e)}"
-              alt="${n(t)}"
+              src="${r(e)}"
+              alt="${r(t)}"
               width="800"
               height="450"
             />
@@ -310,7 +310,7 @@ t("tup-place-header", class extends HTMLElement {
 		let r = t.querySelector(".hero-lightbox-img"), i = t.querySelector(".hero-lightbox-caption"), a = t.querySelector("[data-lightbox-prev]"), o = t.querySelector("[data-lightbox-next]"), s = n.caption && !n.hideCaption, c = e.#t.length > 1;
 		r.src = n.src, r.alt = n.alt, i && (s ? (i.textContent = n.caption, i.hidden = !1) : (i.textContent = "", i.hidden = !0)), a && (a.hidden = !c), o && (o.hidden = !c);
 	}
-}), t("tup-badge", class extends HTMLElement {
+}), n("tup-badge", class extends HTMLElement {
 	static observedAttributes = [
 		"building",
 		"floor",
@@ -372,7 +372,7 @@ t("tup-place-header", class extends HTMLElement {
 	#i(e, t) {
 		return `
       <div class="${this.#r(e, t)}">
-        <dt class="visually-hidden">${n(e.label)}</dt>
+        <dt class="visually-hidden">${r(e.label)}</dt>
         ${this.#a(e)}
       </div>
     `;
@@ -382,7 +382,7 @@ t("tup-place-header", class extends HTMLElement {
         <dd class="place-badge-value place-badge-value--icon">
           <a
             class="place-badge-link"
-            href="${n(e.href)}"
+            href="${r(e.href)}"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Przejdź do parkingu"
@@ -390,9 +390,9 @@ t("tup-place-header", class extends HTMLElement {
             <span class="visually-hidden">Parking</span>
           </a>
         </dd>
-      ` : "\n      <dd class=\"place-badge-value place-badge-value--icon\">\n        <span class=\"visually-hidden\">Parking</span>\n      </dd>\n    " : `<dd class="place-badge-value">${n(e.value)}</dd>`;
+      ` : "\n      <dd class=\"place-badge-value place-badge-value--icon\">\n        <span class=\"visually-hidden\">Parking</span>\n      </dd>\n    " : `<dd class="place-badge-value">${r(e.value)}</dd>`;
 	}
-}), t("tup-place-summary", class extends HTMLElement {
+}), n("tup-place-summary", class extends HTMLElement {
 	#e = null;
 	static observedAttributes = [
 		"building",
@@ -409,15 +409,15 @@ t("tup-place-header", class extends HTMLElement {
 		this.isConnected && this.#t();
 	}
 	#t() {
-		let e = this.getAttribute("building") ?? "", t = this.getAttribute("floor") ?? "", r = this.getAttribute("room") ?? "", i = this.getAttribute("parking-href"), a = this.hasAttribute("parking") || !!i, o = e || t || r, s = this.getAttribute("variant") ?? "default", c = o ? `
+		let e = this.getAttribute("building") ?? "", t = this.getAttribute("floor") ?? "", n = this.getAttribute("room") ?? "", i = this.getAttribute("parking-href"), a = this.hasAttribute("parking") || !!i, o = e || t || n, s = this.getAttribute("variant") ?? "default", c = o ? `
         <tup-badge
           class="place-summary-badge"
-          building="${n(e)}"
-          floor="${n(t)}"
-          room="${n(r)}"
-          variant="${n(s)}"
+          building="${r(e)}"
+          floor="${r(t)}"
+          room="${r(n)}"
+          variant="${r(s)}"
           ${a ? "parking" : ""}
-          ${i ? `parking-href="${n(i)}"` : ""}>
+          ${i ? `parking-href="${r(i)}"` : ""}>
         </tup-badge>
       ` : "";
 		this.innerHTML = `
@@ -435,12 +435,12 @@ t("tup-place-header", class extends HTMLElement {
 });
 //#endregion
 //#region components/tup-route-step.js
-function r(e) {
-	let t = String(e ?? ""), r = [], i = /\*\*([^*]+)\*\*/g, a = 0, o;
-	for (; (o = i.exec(t)) !== null;) o.index > a && r.push(n(t.slice(a, o.index))), r.push(`<strong class="route-step-bold">${n(o[1])}</strong>`), a = o.index + o[0].length;
-	return a < t.length && r.push(n(t.slice(a))), r.length ? r.join("") : n(t);
+function i(e) {
+	let t = String(e ?? ""), n = [], i = /\*\*([^*]+)\*\*/g, a = 0, o;
+	for (; (o = i.exec(t)) !== null;) o.index > a && n.push(r(t.slice(a, o.index))), n.push(`<strong class="route-step-bold">${r(o[1])}</strong>`), a = o.index + o[0].length;
+	return a < t.length && n.push(r(t.slice(a))), n.length ? n.join("") : r(t);
 }
-var i = {
+var a = {
 	building: "Budynek",
 	entrance: "Wejście",
 	hand: "Ochrona",
@@ -456,15 +456,15 @@ var i = {
 	"floor-down": "Piętro niżej",
 	elevator: "Piętro",
 	key: "Kod"
-}, a = "****", o = 15;
-function s(e) {
-	let t = Number.parseInt(String(e ?? "").trim(), 10);
-	return !Number.isFinite(t) || t <= 0 ? o : t;
-}
+}, o = "****", s = 15;
 function c(e) {
-	return i[e] ?? "Krok";
+	let t = Number.parseInt(String(e ?? "").trim(), 10);
+	return !Number.isFinite(t) || t <= 0 ? s : t;
 }
-var l = {
+function l(e) {
+	return a[e] ?? "Krok";
+}
+var u = {
 	right: {
 		position: "after",
 		symbol: "→",
@@ -486,48 +486,48 @@ var l = {
 		label: "niżej"
 	}
 };
-function u(e) {
-	return l[String(e ?? "").trim().toLowerCase()] ?? null;
-}
 function d(e) {
+	return u[String(e ?? "").trim().toLowerCase()] ?? null;
+}
+function f(e) {
 	return String(e ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
 }
-function f(e, t) {
-	let i = u(t);
-	if (!i) return r(e);
-	let a = r(e), o = `<span class="route-step-direction" aria-hidden="true">${n(i.symbol)}</span>`;
-	return i.position === "before" ? `${o}<span class="route-step-value-text">${a}</span>` : `<span class="route-step-value-text">${a}</span>${o}`;
+function p(e, t) {
+	let n = d(t);
+	if (!n) return i(e);
+	let a = i(e), o = `<span class="route-step-direction" aria-hidden="true">${r(n.symbol)}</span>`;
+	return n.position === "before" ? `${o}<span class="route-step-value-text">${a}</span>` : `<span class="route-step-value-text">${a}</span>${o}`;
 }
-function p(e, t, n, r) {
-	let i = c(e || "forward"), a = String(t ?? "").trim(), o = d(n).trim(), s = u(r), l = [a, s && o ? `${o} ${s.label}` : o].filter(Boolean);
-	return l.length ? l.join(": ") : i;
+function m(e, t, n, r) {
+	let i = l(e || "forward"), a = String(t ?? "").trim(), o = f(n).trim(), s = d(r), c = [a, s && o ? `${o} ${s.label}` : o].filter(Boolean);
+	return c.length ? c.join(": ") : i;
 }
-function m(e, t, r) {
-	let i = f(t, r);
+function h(e, t, n) {
+	let i = p(t, n);
 	return `
     <span class="route-step-text">
-      ${String(e ?? "").trim() ? `<span class="route-step-label">${n(e)}</span>` : ""}
-      <span class="route-step-value${r ? " route-step-value--directed" : ""}">${i}</span>
+      ${String(e ?? "").trim() ? `<span class="route-step-label">${r(e)}</span>` : ""}
+      <span class="route-step-value${n ? " route-step-value--directed" : ""}">${i}</span>
     </span>
   `;
 }
-function h({ type: e, text: t, code: r, codeHideAfter: i }) {
-	let o = n(e || "key"), c = String(t ?? "").trim() || "Wprowadź kod";
+function g({ type: e, text: t, code: n, codeHideAfter: i }) {
+	let a = r(e || "key"), s = String(t ?? "").trim() || "Wprowadź kod";
 	return `
     <li
       class="route-step route-step--secret"
-      data-code="${n(r)}"
-      data-hide-after="${s(i)}"
-      aria-label="${n(`${c}: kod ukryty`)}"
+      data-code="${r(n)}"
+      data-hide-after="${c(i)}"
+      aria-label="${r(`${s}: kod ukryty`)}"
     >
       <div class="route-step-icon-wrap" aria-hidden="true">
-        <span class="route-step-icon route-step-icon--${o}"></span>
+        <span class="route-step-icon route-step-icon--${a}"></span>
       </div>
 
       <span class="route-step-text route-step-text--secret">
         <span class="route-step-value">
-          ${n(c)}
-          <span class="route-step-code" aria-live="polite">${n(a)}</span>
+          ${r(s)}
+          <span class="route-step-code" aria-live="polite">${r(o)}</span>
         </span>
 
         <button
@@ -540,20 +540,20 @@ function h({ type: e, text: t, code: r, codeHideAfter: i }) {
     </li>
   `;
 }
-function g(e) {
+function _(e) {
 	e.querySelectorAll(".route-step--secret").forEach((e) => {
 		let t = e.dataset.code ?? "", n = e.querySelector(".route-step-code"), r = e.querySelector(".route-step-reveal");
 		if (!t || !n || !r || r.dataset.bound === "true") return;
 		r.dataset.bound = "true";
-		let i = (e.getAttribute("aria-label") ?? "Wprowadź kod: kod ukryty").replace(/: kod ukryty$/, "").trim() || "Wprowadź kod", o = s(e.dataset.hideAfter) * 1e3, c = null;
+		let i = (e.getAttribute("aria-label") ?? "Wprowadź kod: kod ukryty").replace(/: kod ukryty$/, "").trim() || "Wprowadź kod", a = c(e.dataset.hideAfter) * 1e3, s = null;
 		function l() {
-			c !== null && (clearTimeout(c), c = null);
+			s !== null && (clearTimeout(s), s = null);
 		}
 		function u() {
-			l(), n.textContent = a, r.setAttribute("aria-pressed", "false"), r.setAttribute("aria-label", "Pokaż kod"), r.classList.remove("route-step-reveal--visible"), e.setAttribute("aria-label", `${i}: kod ukryty`);
+			l(), n.textContent = o, r.setAttribute("aria-pressed", "false"), r.setAttribute("aria-label", "Pokaż kod"), r.classList.remove("route-step-reveal--visible"), e.setAttribute("aria-label", `${i}: kod ukryty`);
 		}
 		function d() {
-			l(), n.textContent = t, r.setAttribute("aria-pressed", "true"), r.setAttribute("aria-label", "Ukryj kod"), r.classList.add("route-step-reveal--visible"), e.setAttribute("aria-label", `${i}: ${t}`), c = setTimeout(u, o);
+			l(), n.textContent = t, r.setAttribute("aria-pressed", "true"), r.setAttribute("aria-label", "Ukryj kod"), r.classList.add("route-step-reveal--visible"), e.setAttribute("aria-label", `${i}: ${t}`), s = setTimeout(u, a);
 		}
 		r.addEventListener("click", () => {
 			if (r.getAttribute("aria-pressed") === "true") {
@@ -564,28 +564,28 @@ function g(e) {
 		});
 	});
 }
-function _({ type: e, label: t, text: r, tone: i, emphasis: a, direction: o, code: s, codeHideAfter: c }) {
-	if (s) return h({
+function v({ type: e, label: t, text: n, tone: i, emphasis: a, direction: o, code: s, codeHideAfter: c }) {
+	if (s) return g({
 		type: e,
-		text: r,
+		text: n,
 		code: s,
 		codeHideAfter: c
 	});
-	let l = n(e || "forward"), u = i === "warning" || i === "secondary" ? ` route-step--${n(i)}` : "", d = a === "primary" ? " route-step--primary" : "", f = e === "target" ? " route-step--target" : "", g = m(t, r, o);
+	let l = r(e || "forward"), u = i === "warning" || i === "secondary" ? ` route-step--${r(i)}` : "", d = a === "primary" ? " route-step--primary" : "", f = e === "target" ? " route-step--target" : "", p = h(t, n, o);
 	return `
-    <li class="route-step${u}${d}${f}" aria-label="${n(p(e, t, r, o))}">
+    <li class="route-step${u}${d}${f}" aria-label="${r(m(e, t, n, o))}">
       <div class="route-step-icon-wrap" aria-hidden="true">
         <span class="route-step-icon route-step-icon--${l}"></span>
       </div>
 
-      ${g}
+      ${p}
     </li>
   `;
 }
-t("tup-route-step", class extends HTMLElement {});
+n("tup-route-step", class extends HTMLElement {});
 //#endregion
 //#region components/tup-route.js
-function v(e) {
+function y(e) {
 	return {
 		type: e.getAttribute("type"),
 		label: e.getAttribute("label") || void 0,
@@ -597,7 +597,7 @@ function v(e) {
 		codeHideAfter: e.getAttribute("code-hide-after") || void 0
 	};
 }
-var y = class extends HTMLElement {
+var b = class extends HTMLElement {
 	#e = null;
 	#t = [];
 	#n = !1;
@@ -605,7 +605,7 @@ var y = class extends HTMLElement {
 		this.#e ||= `place-route-heading-${crypto.randomUUID()}`, this.#n ||= (this.#t = this.#r(), !0), this.#i();
 	}
 	#r() {
-		return [...this.querySelectorAll(":scope > tup-route-step")].map(v);
+		return [...this.querySelectorAll(":scope > tup-route-step")].map(y);
 	}
 	getSteps() {
 		return this.#t.map((e) => ({ ...e }));
@@ -617,7 +617,7 @@ var y = class extends HTMLElement {
 		this.isConnected && this.#i();
 	}
 	#i() {
-		let e = this.#t.map((e) => _(e)).join("");
+		let e = this.#t.map((e) => v(e)).join("");
 		this.innerHTML = `
       <section class="place-route-section" aria-labelledby="${this.#e}">
         <h2 id="${this.#e}" class="visually-hidden">
@@ -630,12 +630,10 @@ var y = class extends HTMLElement {
           </ol>
         </div>
       </section>
-    `, g(this);
+    `, _(this);
 	}
 };
-//#endregion
-//#region index.js
-t("tup-route", y), t("tup-route-steps", class extends y {}), t("tup-navigation-button", class extends HTMLElement {
+n("tup-route", b), n("tup-route-steps", class extends b {}), n("tup-navigation-button", class extends HTMLElement {
 	connectedCallback() {
 		if (this.querySelector("button")) return;
 		let e = this.textContent.trim() || "Prowadź";
@@ -648,9 +646,9 @@ t("tup-route", y), t("tup-route-steps", class extends y {}), t("tup-navigation-b
 			}));
 		}), this.append(t);
 	}
-}), t("tup-footer", class extends HTMLElement {
+}), n("tup-footer", class extends HTMLElement {
 	connectedCallback() {
 		this.querySelector(".place-footer") || (this.innerHTML = "\n      <footer class=\"place-footer\">\n        <span class=\"place-footer-logo\" role=\"img\" aria-label=\"TupTup\"></span>\n      </footer>\n    ");
 	}
-}), e();
+}), e(), t();
 //#endregion
