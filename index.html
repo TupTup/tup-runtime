@@ -3,19 +3,21 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="TupTup Demo — nawigacja do biura przy ul. Przykładowej 10 w Warszawie, budynek A, piętro 3, lokal 305.">
+    <meta name="description" content="TupTup Demo — nawigacja do lokalu 229 przy ul. Erazma Ciołka 10 w Warszawie, piętro 2.">
     <title>Tup Runtime Demo</title>
     <script type="module" src="/index.js"></script>
   </head>
   <body>
     <noscript>
       <h1>TupTup Demo</h1>
-      <p>ul. Przykładowa 10, Warszawa</p>
-      <p>Budynek A, piętro 3, lokal 305</p>
+      <p>ul. Erazma Ciołka 10 lok. 229, Warszawa</p>
+      <p>Piętro 2, lokal 229</p>
       <ol>
-        <li>Wejdź przez recepcję (20 m)</li>
-        <li>Wejdź na 3 piętro (35 m)</li>
-        <li>Lokal 305 będzie po prawej stronie</li>
+        <li>Wejście — C10</li>
+        <li>Ochrona — Poproś o aktywację windy</li>
+        <li>Piętro — 2</li>
+        <li>Korytarz — W lewo, do końca</li>
+        <li>Miejsce docelowe — po prawej — Lokal 229</li>
       </ol>
     </noscript>
 
@@ -33,7 +35,7 @@
           <tup-place-header
             sync-title
             name="TupTup Demo"
-            address="ul. Przykladowa 10, Warszawa"
+            address="ul. Erazma Ciołka 10 lok. 229"
             lat="52.2297"
             lng="21.0122"
           ></tup-place-header>
@@ -45,26 +47,37 @@
           ></tup-place-photo>
 
           <tup-place-summary
-            building="A"
-            floor="3"
-            room="305"
-            navigate
+            building="C10"
+            floor="2"
+            room="229"
           ></tup-place-summary>
 
           <tup-route>
             <tup-route-step
-              type="reception"
-              text="Wejdz przez **recepcje**"
-              distance="20 m"
+              type="entrance"
+              label="Wejście"
+              text="C10"
             ></tup-route-step>
             <tup-route-step
-              type="stairs"
-              text="Wejdz na **3 pietro**"
-              distance="35 m"
+              type="hand"
+              label="Ochrona"
+              text="Poproś o aktywację windy"
+              tone="warning"
             ></tup-route-step>
             <tup-route-step
-              type="door"
-              text="Lokal **305** bedzie po prawej stronie"
+              type="elevator"
+              label="Piętro"
+              text="2"
+            ></tup-route-step>
+            <tup-route-step
+              type="left"
+              label="Korytarz"
+              text="W lewo, do końca"
+            ></tup-route-step>
+            <tup-route-step
+              type="target"
+              label="Miejsce docelowe — po prawej"
+              text="Lokal 229"
             ></tup-route-step>
           </tup-route>
 
