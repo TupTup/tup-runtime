@@ -459,17 +459,13 @@ function l(e, t, n, r) {
 	return d.length ? d.join(": ") : a;
 }
 function u(e, n, r) {
-	let i = c(n, r);
-	return e ? `
+	let i = c(n, r), a = !!String(e ?? "").trim(), o = a ? t(e) : "";
+	return `
     <span class="route-step-text">
-      <span class="route-step-label">${t(e)}</span>
+      <span class="${a ? "route-step-label" : "route-step-label route-step-label--placeholder"}"${a ? "" : " aria-hidden=\"true\""}>${o}</span>
       <span class="route-step-value${r ? " route-step-value--directed" : ""}">${i}</span>
     </span>
-  ` : `
-      <span class="route-step-text">
-        <span class="route-step-value${r ? " route-step-value--directed" : ""}">${i}</span>
-      </span>
-    `;
+  `;
 }
 function d({ type: e, label: n, text: r, tone: i, emphasis: a, direction: o }) {
 	let s = t(e || "forward"), c = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", d = a === "primary" ? " route-step--primary" : "", f = u(n, r, o);
