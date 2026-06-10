@@ -1,7 +1,14 @@
 {
   "name": "@tuptup/runtime",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/tup-runtime.js",
+    "./css": "./dist/tup-runtime.css"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build"
