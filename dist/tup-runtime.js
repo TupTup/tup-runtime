@@ -424,7 +424,13 @@ var r = {
 	reception: "Recepcja",
 	stairs: "Schody",
 	door: "Drzwi",
-	forward: "Dalej"
+	left: "Skręć w lewo",
+	right: "Skręć w prawo",
+	forward: "Idź prosto",
+	straight: "Idź prosto",
+	"floor-up": "Piętro wyżej",
+	"floor-down": "Piętro niżej",
+	elevator: "Piętro"
 };
 function i(e) {
 	return r[e] ?? "Krok";
