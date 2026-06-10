@@ -431,12 +431,13 @@ var r = {
 	straight: "Idź prosto",
 	"floor-up": "Piętro wyżej",
 	"floor-down": "Piętro niżej",
-	elevator: "Piętro"
-};
-function i(e) {
+	elevator: "Piętro",
+	key: "Kod"
+}, i = "****";
+function a(e) {
 	return r[e] ?? "Krok";
 }
-var a = {
+var o = {
 	right: {
 		position: "after",
 		symbol: "→",
@@ -458,47 +459,87 @@ var a = {
 		label: "niżej"
 	}
 };
-function o(e) {
-	return a[String(e ?? "").trim().toLowerCase()] ?? null;
-}
 function s(e) {
+	return o[String(e ?? "").trim().toLowerCase()] ?? null;
+}
+function c(e) {
 	return String(e ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
 }
-function c(e, r) {
-	let i = o(r);
+function l(e, r) {
+	let i = s(r);
 	if (!i) return n(e);
-	let a = n(e), s = `<span class="route-step-direction" aria-hidden="true">${t(i.symbol)}</span>`;
-	return i.position === "before" ? `${s}<span class="route-step-value-text">${a}</span>` : `<span class="route-step-value-text">${a}</span>${s}`;
+	let a = n(e), o = `<span class="route-step-direction" aria-hidden="true">${t(i.symbol)}</span>`;
+	return i.position === "before" ? `${o}<span class="route-step-value-text">${a}</span>` : `<span class="route-step-value-text">${a}</span>${o}`;
 }
-function l(e, t, n, r) {
-	let a = i(e || "forward"), c = String(t ?? "").trim(), l = s(n).trim(), u = o(r), d = [c, u && l ? `${l} ${u.label}` : l].filter(Boolean);
-	return d.length ? d.join(": ") : a;
+function u(e, t, n, r) {
+	let i = a(e || "forward"), o = String(t ?? "").trim(), l = c(n).trim(), u = s(r), d = [o, u && l ? `${l} ${u.label}` : l].filter(Boolean);
+	return d.length ? d.join(": ") : i;
 }
-function u(e, n, r) {
-	let i = c(n, r), a = !!String(e ?? "").trim(), o = a ? t(e) : "";
+function d(e, n, r) {
+	let i = l(n, r);
 	return `
     <span class="route-step-text">
-      <span class="${a ? "route-step-label" : "route-step-label route-step-label--placeholder"}"${a ? "" : " aria-hidden=\"true\""}>${o}</span>
+      ${String(e ?? "").trim() ? `<span class="route-step-label">${t(e)}</span>` : ""}
       <span class="route-step-value${r ? " route-step-value--directed" : ""}">${i}</span>
     </span>
   `;
 }
-function d({ type: e, label: n, text: r, tone: i, emphasis: a, direction: o }) {
-	let s = t(e || "forward"), c = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", d = a === "primary" ? " route-step--primary" : "", f = e === "target" ? " route-step--target" : "", p = u(n, r, o);
+function f({ type: e, text: n, code: r }) {
+	let a = t(e || "key"), o = String(n ?? "").trim() || "Wprowadź kod";
 	return `
-    <li class="route-step${c}${d}${f}" aria-label="${t(l(e, n, r, o))}">
+    <li class="route-step route-step--secret" data-code="${t(r)}" aria-label="${t(`${o}: kod ukryty`)}">
       <div class="route-step-icon-wrap" aria-hidden="true">
-        <span class="route-step-icon route-step-icon--${s}"></span>
+        <span class="route-step-icon route-step-icon--${a}"></span>
       </div>
 
-      ${p}
+      <span class="route-step-text route-step-text--secret">
+        <span class="route-step-value">
+          ${t(o)}
+          <span class="route-step-code" aria-live="polite">${t(i)}</span>
+        </span>
+
+        <button
+          type="button"
+          class="route-step-reveal"
+          aria-label="Pokaż kod"
+          aria-pressed="false"
+        ></button>
+      </span>
+    </li>
+  `;
+}
+function p(e) {
+	e.querySelectorAll(".route-step--secret").forEach((e) => {
+		let t = e.dataset.code ?? "", n = e.querySelector(".route-step-code"), r = e.querySelector(".route-step-reveal");
+		if (!t || !n || !r || r.dataset.bound === "true") return;
+		r.dataset.bound = "true";
+		let a = (e.getAttribute("aria-label") ?? "Wprowadź kod: kod ukryty").replace(/: kod ukryty$/, "").trim() || "Wprowadź kod";
+		r.addEventListener("click", () => {
+			r.getAttribute("aria-pressed") === "true" ? (n.textContent = i, r.setAttribute("aria-pressed", "false"), r.setAttribute("aria-label", "Pokaż kod"), r.classList.remove("route-step-reveal--visible"), e.setAttribute("aria-label", `${a}: kod ukryty`)) : (n.textContent = t, r.setAttribute("aria-pressed", "true"), r.setAttribute("aria-label", "Ukryj kod"), r.classList.add("route-step-reveal--visible"), e.setAttribute("aria-label", `${a}: ${t}`));
+		});
+	});
+}
+function m({ type: e, label: n, text: r, tone: i, emphasis: a, direction: o, code: s }) {
+	if (s) return f({
+		type: e,
+		text: r,
+		code: s
+	});
+	let c = t(e || "forward"), l = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", p = a === "primary" ? " route-step--primary" : "", m = e === "target" ? " route-step--target" : "", h = d(n, r, o);
+	return `
+    <li class="route-step${l}${p}${m}" aria-label="${t(u(e, n, r, o))}">
+      <div class="route-step-icon-wrap" aria-hidden="true">
+        <span class="route-step-icon route-step-icon--${c}"></span>
+      </div>
+
+      ${h}
     </li>
   `;
 }
 e("tup-route-step", class extends HTMLElement {});
 //#endregion
 //#region components/tup-route.js
-var f = class extends HTMLElement {
+var h = class extends HTMLElement {
 	#e = null;
 	connectedCallback() {
 		this.#e ||= `place-route-heading-${crypto.randomUUID()}`, this.#t();
@@ -510,8 +551,9 @@ var f = class extends HTMLElement {
 			text: e.getAttribute("text"),
 			tone: e.getAttribute("tone"),
 			emphasis: e.getAttribute("emphasis"),
-			direction: e.getAttribute("direction")
-		})).map((e) => d(e)).join("");
+			direction: e.getAttribute("direction"),
+			code: e.getAttribute("code")
+		})).map((e) => m(e)).join("");
 		this.innerHTML = `
       <section class="place-route-section" aria-labelledby="${this.#e}">
         <h2 id="${this.#e}" class="visually-hidden">
@@ -524,10 +566,10 @@ var f = class extends HTMLElement {
           </ol>
         </div>
       </section>
-    `;
+    `, p(this);
 	}
 };
-e("tup-route", f), e("tup-route-steps", class extends f {}), e("tup-navigation-button", class extends HTMLElement {
+e("tup-route", h), e("tup-route-steps", class extends h {}), e("tup-navigation-button", class extends HTMLElement {
 	connectedCallback() {
 		if (this.querySelector("button")) return;
 		let e = this.textContent.trim() || "Prowadź";
