@@ -665,6 +665,10 @@ tup-navigation-button {
   text-decoration: none;
 }
 
+.place-route-compose-preview[hidden] {
+  display: none !important;
+}
+
 .place-view-actions {
   flex-shrink: 0;
 

@@ -206,6 +206,7 @@ export function initPlaceEditorUi() {
   previewLink.className = "place-route-compose-preview";
   previewLink.href = buildPlaceUrl({ mode: "view", draft: true });
   previewLink.textContent = "Podgląd szkicu";
+  previewLink.hidden = true;
 
   let isGenerating = false;
 
@@ -235,6 +236,11 @@ export function initPlaceEditorUi() {
     generateButton.setAttribute("aria-label", "Generuję kroki…");
     compose.dataset.generating = "true";
 
+    model.steps = [];
+    applyPlaceToDom(placeRoot, model);
+    saveDraft(slug, model);
+    previewLink.hidden = true;
+
     await simulateGenerateProgress((value) => {
       progressFill.style.width = `${value}%`;
       generateButton.setAttribute("aria-valuenow", String(value));
@@ -257,6 +263,8 @@ export function initPlaceEditorUi() {
     generateButton.disabled = false;
     textarea.disabled = false;
     isGenerating = false;
+
+    previewLink.hidden = model.steps.length === 0;
 
     status.textContent =
       model.steps.length > 0
