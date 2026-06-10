@@ -956,7 +956,7 @@ a.place-summary-item--parking:hover::before {
   max-width: 34px;
   max-height: 34px;
 
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 .route-step-icon::before {
@@ -1080,7 +1080,7 @@ a.place-summary-item--parking:hover::before {
   max-width: 46px;
   max-height: 46px;
 
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 .route-step--target .route-step-icon::before {
@@ -1173,10 +1173,35 @@ a.place-summary-item--parking:hover::before {
 
 .route-step--warning {
   margin-inline: -20px;
-  padding: 12px 20px;
+  padding: 0;
+
+  background: transparent;
+}
+
+.route-step--warning::before {
+  content: "";
+  grid-column: 1 / -1;
+  grid-row: 1;
+  z-index: 0;
+
   border-radius: 12px;
 
   background: #fefce8;
+}
+
+.route-step--warning .route-step-icon-wrap,
+.route-step--warning .route-step-text {
+  position: relative;
+  z-index: 1;
+}
+
+.route-step--warning .route-step-icon-wrap {
+  align-self: center;
+  padding-left: 20px;
+}
+
+.route-step--warning .route-step-text {
+  padding: 12px 20px 12px 0;
 }
 
 .route-step--warning .route-step-label {
@@ -1185,10 +1210,35 @@ a.place-summary-item--parking:hover::before {
 
 .route-step--secondary {
   margin-inline: -20px;
-  padding: 12px 20px;
+  padding: 0;
+
+  background: transparent;
+}
+
+.route-step--secondary::before {
+  content: "";
+  grid-column: 1 / -1;
+  grid-row: 1;
+  z-index: 0;
+
   border-radius: 12px;
 
   background: #f9fafb;
+}
+
+.route-step--secondary .route-step-icon-wrap,
+.route-step--secondary .route-step-text {
+  position: relative;
+  z-index: 1;
+}
+
+.route-step--secondary .route-step-icon-wrap {
+  align-self: center;
+  padding-left: 20px;
+}
+
+.route-step--secondary .route-step-text {
+  padding: 12px 20px 12px 0;
 }
 
 .route-step-bold {
