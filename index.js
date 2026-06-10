@@ -10,6 +10,7 @@ import './components/tup-route-steps.js';
 import './components/tup-navigation-button.js';
 import './components/tup-footer.js';
 
-import { initPlaceEditor } from './js/place-mode.js';
+import { initPlaceEditor, initPlaceView } from './js/place-mode.js';
 
 initPlaceEditor();
+initPlaceView();

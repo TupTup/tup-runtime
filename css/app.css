@@ -599,6 +599,18 @@ tup-navigation-button {
   text-decoration: none;
 }
 
+.place-view-actions {
+  flex-shrink: 0;
+
+  padding: 0 20px 8px;
+
+  background: #fff;
+}
+
+.place-view-actions .place-route-compose-preview {
+  margin-top: 0;
+}
+
 .place-photo-edit-button {
   position: absolute;
   top: 10px;

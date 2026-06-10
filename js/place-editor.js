@@ -16,6 +16,9 @@ import {
 
 const DESCRIPTION_LIMIT = 500;
 
+const EXAMPLE_ROUTE_DESCRIPTION =
+  "Wejdź do budynku C10. Poproś ochronę o aktywację windy. Wjedź na 2 piętro. Wprowadź kod 1234. Skręć w lewo. Idź prosto do końca korytarza. Lokal 229 po prawej stronie.";
+
 function createMicButton(onResult) {
   const button = document.createElement("button");
   button.type = "button";
@@ -105,9 +108,9 @@ export function initPlaceEditorUi() {
   const textarea = document.createElement("textarea");
   textarea.className = "place-route-compose-textarea";
   textarea.maxLength = DESCRIPTION_LIMIT;
-  textarea.value = model.routeDescription || "";
+  textarea.value = model.routeDescription || EXAMPLE_ROUTE_DESCRIPTION;
   textarea.placeholder =
-    "Napisz lub nagraj opis trasy… Np. Wejdź przez główne drzwi C10, poproś ochronę o windę, jedź na 2 piętro, wprowadź kod i skręć w lewo.";
+    `Napisz lub nagraj opis trasy… Np. ${EXAMPLE_ROUTE_DESCRIPTION}`;
 
   const fieldFooter = document.createElement("div");
   fieldFooter.className = "place-route-compose-field-footer";

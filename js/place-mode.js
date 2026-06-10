@@ -92,3 +92,13 @@ export async function initPlaceEditor() {
 
   initPlaceEditorUi();
 }
+
+export async function initPlaceView() {
+  if (getMode() !== "view") {
+    return;
+  }
+
+  const { initPlaceViewUi } = await import("./place-view.js");
+
+  initPlaceViewUi();
+}

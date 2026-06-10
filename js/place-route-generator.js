@@ -5,67 +5,54 @@ function addBoldMarkers(text) {
     .replace(/\b(\d+)\s*pi[eę]tro\b/gi, "**$1 piętro**");
 }
 
-function inferStep(text, index, total) {
-  const lower = text.toLowerCase();
-  let type = "straight";
-  let tone;
-
-  if (index === 0 || /wejd|budynek|bram|klatk|drzwi|C\d+/i.test(text)) {
-    type = "start";
-  } else if (
-    index === total - 1 ||
-    /lokal|cel\b|miejsce docel|docelow/i.test(text)
-  ) {
-    type = "target";
-  } else if (/ochron|wind|recepc|aktywacj/i.test(text)) {
-    type = "hand";
-    tone = "warning";
-  } else if (/kod|pin|klawiat|hasło/i.test(text)) {
-    type = "key";
-  } else if (/pi[eę]tro|wjedź na|jedź na|poziom/i.test(text)) {
-    type = "floor-up";
-  } else if (/w lewo|skr[eę][ćc] w lewo/i.test(text)) {
-    type = "left";
-  } else if (/w prawo|skr[eę][ćc] w prawo/i.test(text)) {
-    type = "right";
-  } else if (/prosto|korytarz|idź do|idz do/i.test(text)) {
-    type = "straight";
-  }
-
-  const step = {
-    type,
-    text: addBoldMarkers(text),
-  };
-
-  if (tone) {
-    step.tone = tone;
-  }
-
-  return step;
+function cleanSentence(text) {
+  return String(text ?? "")
+    .replace(/[.!?…]+$/g, "")
+    .trim();
 }
 
-export function generateStepsFromDescription(text) {
+/** Fake generator: jeden krok na zdanie, podział po kropkach. */
+function splitSentencesByDots(text) {
   const normalized = String(text ?? "").trim();
 
   if (!normalized) {
     return [];
   }
 
-  const parts = normalized
-    .split(/\n+|(?<=[.!?])\s+/)
-    .map((part) => part.trim())
+  return normalized
+    .split(/\.\s+/)
+    .map(cleanSentence)
     .filter(Boolean);
+}
 
-  if (!parts.length) {
-    return [];
+function fakeStepType(index, total) {
+  if (total === 1) {
+    return "start";
   }
 
-  return parts.map((part, index) => inferStep(part, index, parts.length));
+  if (index === 0) {
+    return "start";
+  }
+
+  if (index === total - 1) {
+    return "target";
+  }
+
+  return "straight";
+}
+
+export function generateStepsFromDescription(text) {
+  const sentences = splitSentencesByDots(text);
+
+  return sentences.map((sentence, index) => ({
+    type: fakeStepType(index, sentences.length),
+    text: addBoldMarkers(sentence),
+  }));
 }
 
 export function stepsToDescription(steps) {
   return (steps ?? [])
     .map((step) => String(step.text ?? "").replace(/\*\*([^*]+)\*\*/g, "$1"))
     .filter(Boolean)
-    .join(" ");
+    .join(". ");
 }
