@@ -34,10 +34,10 @@ tup-footer {
 
   padding:
     calc(16px + env(safe-area-inset-top, 0px))
-    20px
-    14px;
+    16px
+    12px;
 
-  border-radius: 28px 28px 0 0;
+  border-radius: 0;
 
   background: #16181c;
   color: #f9fafb;
@@ -529,7 +529,7 @@ a.place-summary-item--parking:hover::before {
 }
 
 .place-hero {
-  margin: 16px 0 0;
+  margin: 0;
   padding: 0;
 
   touch-action: pan-y;
@@ -541,6 +541,8 @@ a.place-summary-item--parking:hover::before {
   display: block;
 
   width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
 
   padding: 0;
 
@@ -550,7 +552,7 @@ a.place-summary-item--parking:hover::before {
 
   cursor: zoom-in;
 
-  border-radius: 12px;
+  border-radius: 0;
 
   overflow: hidden;
 
@@ -610,11 +612,11 @@ a.place-summary-item--parking:hover::before {
   display: block;
 
   width: 100%;
-  max-height: 180px;
+  max-height: none;
 
   object-fit: cover;
 
-  border-radius: 12px;
+  border-radius: 0;
 }
 
 .hero-image-img {
@@ -950,7 +952,7 @@ a.place-summary-item--parking:hover::before {
 }
 
 .route-step:first-child {
-  padding-top: 14px;
+  padding-top: 8px;
 }
 
 .route-step:last-child {
@@ -1375,7 +1377,13 @@ a.place-summary-item--parking:hover::before {
 }
 
 .place-route-section {
-  margin-top: 8px;
+  margin-top: 0;
+  padding-inline: 20px;
+}
+
+tup-navigation-button,
+tup-footer {
+  padding-inline: 20px;
 }
 
 .navigation-button {

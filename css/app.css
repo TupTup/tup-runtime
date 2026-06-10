@@ -58,10 +58,7 @@ body {
 
   height: 98dvh;
 
-  padding:
-    12px
-    20px
-    calc(20px + env(safe-area-inset-bottom));
+  padding: 0;
 
   background: rgba(255, 255, 255, 0.96);
 
@@ -71,6 +68,8 @@ body {
 
   box-shadow:
     0 -10px 40px rgba(0, 0, 0, 0.18);
+
+  overflow: hidden;
 
   touch-action: none;
 
@@ -130,7 +129,9 @@ body {
 #place tup-place-header,
 #place tup-place-photo,
 #place tup-place-summary,
-#place tup-navigation-button {
+#place tup-route,
+#place tup-navigation-button,
+#place tup-footer {
   flex-shrink: 0;
 }
 
@@ -141,7 +142,7 @@ body {
 }
 
 #place .place-hero {
-  margin-top: 8px;
+  margin-top: 0;
 }
 
 #place .hero-image-img {
@@ -166,9 +167,13 @@ body {
   pointer-events: auto;
 
   padding:
-    12px
-    20px
+    0
+    0
     calc(20px + env(safe-area-inset-bottom));
+}
+
+.sheet > .sheet-content > tup-place-header:first-child .sheet-header {
+  border-radius: 28px 28px 0 0;
 }
 
 #place > .sheet-content > * {
@@ -190,7 +195,7 @@ body {
   flex-direction: column;
   min-height: 0;
 
-  margin-top: 20px;
+  margin-top: 0;
 }
 
 #place .route-steps-scroll {
@@ -204,12 +209,6 @@ body {
   overscroll-behavior: contain;
 
   -webkit-overflow-scrolling: touch;
-}
-
-#place > .sheet-content > tup-place-header .sheet-header {
-  margin-inline: -20px;
-  margin-top: -12px;
-  padding-top: calc(16px + env(safe-area-inset-top, 0px) + 12px);
 }
 
 .sheet-content:has(tup-navigation-button) {
@@ -338,11 +337,7 @@ tup-navigation-button {
     flex-direction: row;
     align-items: stretch;
 
-    padding:
-      20px
-      calc(20px + env(safe-area-inset-right))
-      20px
-      12px;
+    padding: 0;
 
     border-radius: 28px 0 0 28px;
 
