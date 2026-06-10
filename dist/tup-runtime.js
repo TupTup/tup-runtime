@@ -10,6 +10,7 @@ function t(e) {
 e("tup-place-header", class extends HTMLElement {
 	static observedAttributes = [
 		"name",
+		"summary",
 		"address",
 		"lat",
 		"lng",
@@ -32,18 +33,19 @@ e("tup-place-header", class extends HTMLElement {
 		this.isConnected && this.#s();
 	}
 	#t() {
-		let e = this.getAttribute("name") ?? "", t = this.getAttribute("address") ?? "", n = this.getAttribute("lat")?.trim() ?? "", r = this.getAttribute("lng")?.trim() ?? "", i = this.getAttribute("plus-code")?.trim() ?? "", a = this.getAttribute("map-href") ?? this.getAttribute("maps");
+		let e = this.getAttribute("name") ?? "", t = this.getAttribute("summary") ?? "", n = this.getAttribute("address") ?? "", r = this.getAttribute("lat")?.trim() ?? "", i = this.getAttribute("lng")?.trim() ?? "", a = this.getAttribute("plus-code")?.trim() ?? "", o = this.getAttribute("map-href") ?? this.getAttribute("maps");
 		return {
 			name: e,
-			address: t,
+			summary: t,
+			address: n,
 			vcard: this.getAttribute("vcard"),
 			preview: this.getAttribute("preview"),
 			mapsUrl: this.#c({
-				address: t,
-				lat: n,
-				lng: r,
-				plusCode: i,
-				mapHref: a
+				address: n,
+				lat: r,
+				lng: i,
+				plusCode: a,
+				mapHref: o
 			})
 		};
 	}
@@ -101,9 +103,14 @@ e("tup-place-header", class extends HTMLElement {
     ` : "";
 	}
 	#s() {
-		let { name: e, address: n, vcard: r, preview: i, mapsUrl: a } = this.#t(), o = this.getAttribute("lat")?.trim() ?? "", s = this.getAttribute("lng")?.trim() ?? "";
+		let { name: e, summary: n, address: r, vcard: i, preview: a, mapsUrl: o } = this.#t(), s = this.getAttribute("lat")?.trim() ?? "", c = this.getAttribute("lng")?.trim() ?? "";
 		this.#n(e);
-		let c = this.#r(i), l = this.#a(n, a), u = this.#o(r), d = this.#i(o, s), f = e ? `<h1 class="place-name" itemprop="name">${t(e)}</h1>` : "";
+		let l = this.#r(a), u = this.#a(r, o), d = this.#o(i), f = this.#i(s, c), p = e ? `<h1 class="place-name" itemprop="name">${t(e)}</h1>` : "", m = n ? `
+        <div class="place-header-summary-row">
+          <span class="place-address-pin place-address-pin--spacer" aria-hidden="true"></span>
+          <p class="place-header-summary">${t(n)}</p>
+        </div>
+      ` : "";
 		this.innerHTML = `
       <header class="sheet-header">
 
@@ -112,23 +119,25 @@ e("tup-place-header", class extends HTMLElement {
           itemscope
           itemtype="https://schema.org/Place"
         >
-          ${c}
+          ${l}
 
           <div class="place-header-text">
-            ${f}
+            ${p}
 
             <div class="place-address-row">
               <address class="place-address">
-                ${l}
+                ${u}
               </address>
             </div>
 
-            ${d}
+            ${m}
+
+            ${f}
           </div>
         </div>
 
         <div class="sheet-actions">
-          ${u}
+          ${d}
 
           <button
             type="button"
