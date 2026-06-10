@@ -209,6 +209,10 @@ export function draftStorageKey(slug) {
   return `${DRAFT_PREFIX}${slug}`;
 }
 
+export function publishedStorageKey(slug) {
+  return `${draftStorageKey(slug)}:published`;
+}
+
 export function loadDraft(slug) {
   try {
     const raw = localStorage.getItem(draftStorageKey(slug));
@@ -232,6 +236,44 @@ export function saveDraft(slug, model) {
       savedAt: new Date().toISOString(),
     })
   );
+}
+
+export function loadPublished(slug) {
+  try {
+    const raw = localStorage.getItem(publishedStorageKey(slug));
+
+    if (!raw) {
+      return null;
+    }
+
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+export function savePublished(slug, model) {
+  localStorage.setItem(
+    publishedStorageKey(slug),
+    JSON.stringify({
+      ...model,
+      id: slug,
+      publishedAt: new Date().toISOString(),
+    })
+  );
+}
+
+export function publishDraft(slug) {
+  const draft = loadDraft(slug);
+
+  if (!draft) {
+    return false;
+  }
+
+  savePublished(slug, draft);
+  clearDraft(slug);
+
+  return true;
 }
 
 export function clearDraft(slug) {

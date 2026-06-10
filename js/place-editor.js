@@ -252,7 +252,9 @@ export function initPlaceEditorUi() {
     saveDraft(slug, model);
 
     if (model.steps.length > 0) {
-      window.location.assign(buildPlaceUrl({ mode: "view", draft: true }));
+      window.location.assign(
+        buildPlaceUrl({ mode: "view", draft: true, fresh: true })
+      );
       return;
     }
 

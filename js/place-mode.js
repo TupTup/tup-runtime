@@ -3,6 +3,7 @@ import {
   findPlaceRoot,
   getPlaceSlug,
   loadDraft,
+  loadPublished,
 } from "./place-model.js";
 
 let currentMode = "view";
@@ -51,6 +52,16 @@ function bootstrapPlaceMode() {
     if (draft) {
       applyPlaceToDom(placeRoot, draft);
     }
+
+    if (currentMode === "view" && params.get("draft") === "1") {
+      document.documentElement.dataset.draftPreview = "true";
+    }
+  } else if (currentMode === "view") {
+    const published = loadPublished(slug);
+
+    if (published) {
+      applyPlaceToDom(placeRoot, published);
+    }
   }
 }
 
@@ -64,12 +75,27 @@ export function isDraftActive() {
   return usesDraft;
 }
 
-export function buildPlaceUrl({ mode = "view", draft = false } = {}) {
+export function isDraftPreview() {
+  return currentMode === "view" && readSearchParams().get("draft") === "1";
+}
+
+export function isFreshDraftPreview() {
+  const params = readSearchParams();
+
+  return (
+    currentMode === "view" &&
+    params.get("draft") === "1" &&
+    params.get("fresh") === "1"
+  );
+}
+
+export function buildPlaceUrl({ mode = "view", draft = false, fresh = false } = {}) {
   const url = new URL(window.location.href);
 
   if (mode === "edit") {
     url.searchParams.set("mode", "edit");
     url.searchParams.delete("draft");
+    url.searchParams.delete("fresh");
   } else {
     url.searchParams.delete("mode");
 
@@ -77,6 +103,12 @@ export function buildPlaceUrl({ mode = "view", draft = false } = {}) {
       url.searchParams.set("draft", "1");
     } else {
       url.searchParams.delete("draft");
+    }
+
+    if (fresh && draft) {
+      url.searchParams.set("fresh", "1");
+    } else {
+      url.searchParams.delete("fresh");
     }
   }
 

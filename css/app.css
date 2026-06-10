@@ -681,6 +681,45 @@ tup-navigation-button {
   margin-top: 0;
 }
 
+.place-view-actions .place-view-publish + .place-route-compose-preview {
+  margin-top: 12px;
+}
+
+.place-view-publish {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+
+  padding: 16px 24px;
+
+  border: 0;
+  border-radius: 14px;
+
+  background: #2563eb;
+
+  font: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+
+  cursor: pointer;
+
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.place-view-publish:active:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.place-view-publish:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.45;
+}
+
 .place-photo-edit-button {
   position: absolute;
   top: 10px;

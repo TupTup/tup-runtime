@@ -1,5 +1,11 @@
-import { findPlaceContent, findPlaceRoot } from "./place-model.js";
-import { buildPlaceUrl } from "./place-mode.js";
+import {
+  findPlaceContent,
+  findPlaceRoot,
+  getPlaceSlug,
+  loadDraft,
+  publishDraft,
+} from "./place-model.js";
+import { buildPlaceUrl, isFreshDraftPreview } from "./place-mode.js";
 
 export function initPlaceViewUi() {
   const placeRoot = findPlaceRoot();
@@ -9,15 +15,37 @@ export function initPlaceViewUi() {
     return;
   }
 
+  const slug = getPlaceSlug(placeRoot);
+  const draft = loadDraft(slug);
+  const showPublish =
+    isFreshDraftPreview() && Boolean(draft?.steps?.length);
+
   const actions = document.createElement("section");
   actions.className = "place-view-actions";
 
-  const link = document.createElement("a");
-  link.className = "place-route-compose-preview";
-  link.href = buildPlaceUrl({ mode: "edit" });
-  link.textContent = "Edytuj drogę";
+  if (showPublish) {
+    const publishButton = document.createElement("button");
+    publishButton.type = "button";
+    publishButton.className = "place-view-publish";
+    publishButton.textContent = "Publikuj";
 
-  actions.append(link);
+    publishButton.addEventListener("click", () => {
+      if (!publishDraft(slug)) {
+        return;
+      }
+
+      window.location.assign(buildPlaceUrl({ mode: "view", draft: false }));
+    });
+
+    actions.append(publishButton);
+  }
+
+  const editLink = document.createElement("a");
+  editLink.className = "place-route-compose-preview";
+  editLink.href = buildPlaceUrl({ mode: "edit" });
+  editLink.textContent = "Edytuj drogę";
+
+  actions.append(editLink);
 
   const footer = content.querySelector("tup-footer");
 
