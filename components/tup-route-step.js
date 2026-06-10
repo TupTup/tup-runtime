@@ -27,6 +27,7 @@ function renderInlineMarkdown(text) {
 }
 
 const STEP_TYPE_LABELS = {
+  building: "Budynek",
   entrance: "Wejście",
   hand: "Ochrona",
   reception: "Recepcja",
