@@ -285,8 +285,7 @@ e("tup-place-header", class extends HTMLElement {
 		"room",
 		"parking",
 		"parking-href",
-		"variant",
-		"navigate"
+		"variant"
 	];
 	connectedCallback() {
 		this.#n();
@@ -320,20 +319,8 @@ e("tup-place-header", class extends HTMLElement {
 				label: "Lokal",
 				value: this.getAttribute("room") ?? ""
 			}
-		].filter((e) => e.type === "parking" || e.value), n = {
-			type: "brand",
-			label: "TupTup",
-			value: ""
-		}, r = this.hasAttribute("navigate") ? [{
-			type: "chevron",
-			label: "Dalej",
-			value: ">"
-		}] : [];
-		return t.length > 0 ? [
-			n,
-			...t,
-			...r
-		] : [];
+		].filter((e) => e.type === "parking" || e.value);
+		return t.length > 0 ? t : [];
 	}
 	#n() {
 		let e = this.#e(), t = this.#t(e);
@@ -351,20 +338,15 @@ e("tup-place-header", class extends HTMLElement {
 		return ["place-badge-item", `place-badge-item--${e.type}`].filter(Boolean).join(" ");
 	}
 	#i(e, n) {
-		let r = this.#r(e, n);
-		return e.type === "chevron" ? `
-        <div class="${r}" aria-hidden="true">
-          ${this.#a(e)}
-        </div>
-      ` : `
-      <div class="${r}">
+		return `
+      <div class="${this.#r(e, n)}">
         <dt class="visually-hidden">${t(e.label)}</dt>
         ${this.#a(e)}
       </div>
     `;
 	}
 	#a(e) {
-		return e.type === "brand" ? "\n        <dd class=\"place-badge-value place-badge-value--icon\">\n          <span class=\"visually-hidden\">TupTup</span>\n        </dd>\n      " : e.type === "chevron" ? "\n        <dd class=\"place-badge-value place-badge-value--chevron\">\n          <svg\n            class=\"place-badge-chevron\"\n            viewBox=\"0 0 10 18\"\n            aria-hidden=\"true\"\n            focusable=\"false\"\n          >\n            <path\n              d=\"M2 2.5L8 9L2 15.5\"\n              fill=\"none\"\n              stroke=\"currentColor\"\n              stroke-width=\"2.4\"\n              stroke-linecap=\"round\"\n              stroke-linejoin=\"round\"\n            />\n          </svg>\n        </dd>\n      " : e.type === "parking" ? e.href ? `
+		return e.type === "parking" ? e.href ? `
         <dd class="place-badge-value place-badge-value--icon">
           <a
             class="place-badge-link"
@@ -386,8 +368,7 @@ e("tup-place-header", class extends HTMLElement {
 		"room",
 		"parking",
 		"parking-href",
-		"variant",
-		"navigate"
+		"variant"
 	];
 	connectedCallback() {
 		this.#e ||= `place-summary-heading-${crypto.randomUUID()}`, this.#t();
@@ -396,16 +377,15 @@ e("tup-place-header", class extends HTMLElement {
 		this.isConnected && this.#t();
 	}
 	#t() {
-		let e = this.getAttribute("building") ?? "", n = this.getAttribute("floor") ?? "", r = this.getAttribute("room") ?? "", i = this.getAttribute("parking-href"), a = this.hasAttribute("parking") || !!i, o = this.hasAttribute("navigate"), s = e || n || r, c = this.getAttribute("variant") ?? "default", l = s ? `
+		let e = this.getAttribute("building") ?? "", n = this.getAttribute("floor") ?? "", r = this.getAttribute("room") ?? "", i = this.getAttribute("parking-href"), a = this.hasAttribute("parking") || !!i, o = e || n || r, s = this.getAttribute("variant") ?? "default", c = o ? `
         <tup-badge
           class="place-summary-badge"
           building="${t(e)}"
           floor="${t(n)}"
           room="${t(r)}"
-          variant="${t(c)}"
+          variant="${t(s)}"
           ${a ? "parking" : ""}
-          ${i ? `parking-href="${t(i)}"` : ""}
-          ${o ? "navigate" : ""}>
+          ${i ? `parking-href="${t(i)}"` : ""}>
         </tup-badge>
       ` : "";
 		this.innerHTML = `
@@ -415,7 +395,7 @@ e("tup-place-header", class extends HTMLElement {
         </h2>
 
         <div class="place-summary">
-          ${l}
+          ${c}
         </div>
       </section>
     `;
@@ -429,6 +409,8 @@ function n(e) {
 	return a < n.length && r.push(t(n.slice(a))), r.length ? r.join("") : t(n);
 }
 var r = {
+	entrance: "Wejście",
+	hand: "Ochrona",
 	reception: "Recepcja",
 	stairs: "Schody",
 	door: "Drzwi",
@@ -440,30 +422,39 @@ function i(e) {
 function a(e) {
 	return String(e ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
 }
-function o(e, t) {
-	let n = i(e || "forward"), r = a(t).trim();
-	return r ? `${n}: ${r}` : n;
+function o(e, t, n) {
+	let r = i(e || "forward"), o = [String(t ?? "").trim(), a(n).trim()].filter(Boolean);
+	return o.length ? o.join(": ") : r;
 }
-function s({ type: e, text: r, distance: i }) {
-	let a = t(e || "forward"), s = i ? `<span class="route-step-distance">${t(i)}</span>` : "", c = n(r);
+function s(e, r) {
+	let i = n(r);
+	return e ? `
+    <span class="route-step-text">
+      <span class="route-step-label">${t(e)}</span>
+      <span class="route-step-value">${i}</span>
+    </span>
+  ` : `
+      <span class="route-step-text">
+        <span class="route-step-value">${i}</span>
+      </span>
+    `;
+}
+function c({ type: e, label: n, text: r, tone: i }) {
+	let a = t(e || "forward"), c = i === "warning" || i === "secondary" ? ` route-step--${t(i)}` : "", l = s(n, r);
 	return `
-    <li class="route-step" aria-label="${t(o(e, r))}">
+    <li class="route-step${c}" aria-label="${t(o(e, n, r))}">
       <div class="route-step-icon-wrap" aria-hidden="true">
         <span class="route-step-icon route-step-icon--${a}"></span>
       </div>
 
-      <span class="route-step-text">
-        ${c}
-      </span>
-
-      ${s}
+      ${l}
     </li>
   `;
 }
 e("tup-route-step", class extends HTMLElement {});
 //#endregion
 //#region components/tup-route.js
-var c = class extends HTMLElement {
+var l = class extends HTMLElement {
 	#e = null;
 	connectedCallback() {
 		this.#e ||= `place-route-heading-${crypto.randomUUID()}`, this.#t();
@@ -471,9 +462,10 @@ var c = class extends HTMLElement {
 	#t() {
 		let e = [...this.querySelectorAll(":scope > tup-route-step")].map((e) => ({
 			type: e.getAttribute("type"),
+			label: e.getAttribute("label"),
 			text: e.getAttribute("text"),
-			distance: e.getAttribute("distance")
-		})).map((e) => s(e)).join("");
+			tone: e.getAttribute("tone")
+		})).map((e) => c(e)).join("");
 		this.innerHTML = `
       <section class="place-route-section" aria-labelledby="${this.#e}">
         <h2 id="${this.#e}" class="visually-hidden">
@@ -489,7 +481,7 @@ var c = class extends HTMLElement {
     `;
 	}
 };
-e("tup-route", c), e("tup-route-steps", class extends c {}), e("tup-navigation-button", class extends HTMLElement {
+e("tup-route", l), e("tup-route-steps", class extends l {}), e("tup-navigation-button", class extends HTMLElement {
 	connectedCallback() {
 		if (this.querySelector("button")) return;
 		let e = this.textContent.trim() || "Prowadź";
