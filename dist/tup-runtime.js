@@ -409,6 +409,7 @@ function n(e) {
 	return a < n.length && r.push(t(n.slice(a))), r.length ? r.join("") : t(n);
 }
 var r = {
+	building: "Budynek",
 	entrance: "Wejście",
 	hand: "Ochrona",
 	reception: "Recepcja",
