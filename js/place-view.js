@@ -15,7 +15,7 @@ export function initPlaceViewUi() {
   const link = document.createElement("a");
   link.className = "place-route-compose-preview";
   link.href = buildPlaceUrl({ mode: "edit" });
-  link.textContent = "Edytuj trasę";
+  link.textContent = "Edytuj drogę";
 
   actions.append(link);
 
