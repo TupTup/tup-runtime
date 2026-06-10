@@ -1004,10 +1004,6 @@ tup-place-photo {
   margin-top: var(--route-target-extra-gap);
 }
 
-.route-step:has(+ .route-step--target)::after {
-  display: none;
-}
-
 .route-step:has(+ .route-step--target) .route-step-icon-wrap::after {
   display: none;
 }
