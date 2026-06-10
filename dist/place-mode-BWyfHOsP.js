@@ -204,12 +204,12 @@ function B() {
 }
 async function V() {
 	if (I() !== "edit") return;
-	let { initPlaceEditorUi: e } = await import("./place-editor-B97hkAT9.js");
+	let { initPlaceEditorUi: e } = await import("./place-editor-AXqQS0A9.js");
 	e();
 }
 async function H() {
 	if (I() !== "view") return;
-	let { initPlaceViewUi: e } = await import("./place-view-CM7X04TG.js");
+	let { initPlaceViewUi: e } = await import("./place-view-CFxTivf2.js");
 	if (e(), B()) {
 		z();
 		let { firePublishConfetti: e } = await import("./place-confetti-DYzU4ojq.js");

@@ -1,4 +1,4 @@
-import { a as e, c as t, d as n, f as r, l as i, m as a, o, p as s, s as c, t as l } from "./place-mode-Cc9vhLLr.js";
+import { a as e, c as t, d as n, f as r, l as i, m as a, o, p as s, s as c, t as l } from "./place-mode-BWyfHOsP.js";
 import { n as u, r as d } from "./place-action-progress-Bj517IQQ.js";
 //#region js/place-editor.js
 var f = 500, p = "Wejdź do budynku C10. Poproś ochronę o aktywację windy. Wjedź na 2 piętro. Wprowadź kod 1234. Skręć w lewo. Idź prosto do końca korytarza. Lokal 229 po prawej stronie.";
@@ -77,17 +77,33 @@ function h() {
 		A.classList.remove("is-generating"), M.textContent = "Generuj kroki", j.style.width = "0%", A.removeAttribute("aria-busy"), A.removeAttribute("aria-valuemin"), A.removeAttribute("aria-valuemax"), A.removeAttribute("aria-valuenow"), A.removeAttribute("aria-label"), delete S.dataset.generating, A.disabled = !1, T.disabled = !1, I = !1, F.hidden = !0, P.textContent = "Nie udało się wygenerować kroków z tego opisu.";
 	}), S.append(C, w, A, N, P, F);
 	let L = _.querySelector("tup-place-photo");
-	L ? L.insertAdjacentElement("afterend", S) : _.append(S), g(_.querySelector("tup-place-photo"));
+	L ? L.insertAdjacentElement("afterend", S) : _.append(S), g(_.querySelector("tup-place-photo"), {
+		slug: v,
+		model: y
+	});
 }
-function g(e) {
+function g(e, { slug: t, model: n }) {
 	if (!e || e.querySelector(".place-photo-edit-button")) return;
-	let t = e.querySelector(".place-hero, .hero-image-trigger");
-	if (!t) return;
-	let n = document.createElement("button");
-	n.type = "button", n.className = "place-photo-edit-button", n.innerHTML = "<span class=\"place-photo-edit-button-icon\" aria-hidden=\"true\"></span><span>Zmień zdjęcie</span>", n.addEventListener("click", () => {
-		let t = window.prompt("Adres URL zdjęcia:", e.getAttribute("src") || "");
-		t !== null && e.setAttribute("src", t.trim());
-	}), t.append(n);
+	let i = e.querySelector(".place-hero, .hero-image-trigger");
+	if (!i) return;
+	let a = document.createElement("input");
+	a.type = "file", a.accept = "image/*", a.capture = "environment", a.hidden = !0, a.className = "place-photo-edit-input";
+	let o = document.createElement("button");
+	o.type = "button", o.className = "place-photo-edit-button", o.setAttribute("aria-label", "Zmień zdjęcie — otwórz aparat"), o.innerHTML = "<span class=\"place-photo-edit-button-icon\" aria-hidden=\"true\"></span><span>Zmień zdjęcie</span>", o.addEventListener("click", () => {
+		a.value = "", a.click();
+	}), a.addEventListener("change", () => {
+		let i = a.files?.[0];
+		if (!i?.type.startsWith("image/")) return;
+		let o = new FileReader();
+		o.addEventListener("load", () => {
+			let i = typeof o.result == "string" ? o.result : "";
+			i && (e.setAttribute("src", i), n.photo = {
+				...n.photo,
+				src: i,
+				alt: n.photo?.alt || e.getAttribute("alt") || ""
+			}, r(t, n));
+		}), o.readAsDataURL(i);
+	}), i.append(o, a);
 }
 //#endregion
 export { h as initPlaceEditorUi };

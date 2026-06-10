@@ -232,10 +232,10 @@ export function initPlaceEditorUi() {
     content.append(compose);
   }
 
-  addPhotoEditButton(content.querySelector("tup-place-photo"));
+  addPhotoEditButton(content.querySelector("tup-place-photo"), { slug, model });
 }
 
-function addPhotoEditButton(photo) {
+function addPhotoEditButton(photo, { slug, model }) {
   if (!photo || photo.querySelector(".place-photo-edit-button")) {
     return;
   }
@@ -246,21 +246,52 @@ function addPhotoEditButton(photo) {
     return;
   }
 
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.capture = "environment";
+  input.hidden = true;
+  input.className = "place-photo-edit-input";
+
   const button = document.createElement("button");
   button.type = "button";
   button.className = "place-photo-edit-button";
+  button.setAttribute("aria-label", "Zmień zdjęcie — otwórz aparat");
   button.innerHTML =
     `<span class="place-photo-edit-button-icon" aria-hidden="true"></span><span>Zmień zdjęcie</span>`;
 
   button.addEventListener("click", () => {
-    const nextSrc = window.prompt("Adres URL zdjęcia:", photo.getAttribute("src") || "");
+    input.value = "";
+    input.click();
+  });
 
-    if (nextSrc === null) {
+  input.addEventListener("change", () => {
+    const file = input.files?.[0];
+
+    if (!file?.type.startsWith("image/")) {
       return;
     }
 
-    photo.setAttribute("src", nextSrc.trim());
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      const src = typeof reader.result === "string" ? reader.result : "";
+
+      if (!src) {
+        return;
+      }
+
+      photo.setAttribute("src", src);
+      model.photo = {
+        ...model.photo,
+        src,
+        alt: model.photo?.alt || photo.getAttribute("alt") || "",
+      };
+      saveDraft(slug, model);
+    });
+
+    reader.readAsDataURL(file);
   });
 
-  hero.append(button);
+  hero.append(button, input);
 }
