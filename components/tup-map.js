@@ -231,7 +231,7 @@ class TupMap extends HTMLElement {
       paint: { "line-color": "#3b82f6", "line-width": 3 },
     });
 
-    await this.#loadPinIcon(map);
+    this.#loadPinIcon(map);
 
     if (!this.#isEditMode()) {
       map.addLayer({
@@ -251,25 +251,38 @@ class TupMap extends HTMLElement {
   }
 
   #loadPinIcon(map) {
-    return new Promise((resolve) => {
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="38" viewBox="0 0 28 38">
-        <path d="M14 1C7.373 1 2 6.373 2 13c0 9.5 12 24 12 24S26 22.5 26 13C26 6.373 20.627 1 14 1z"
-          fill="#3b82f6" stroke="#fff" stroke-width="2"/>
-        <circle cx="14" cy="13" r="5" fill="#fff"/>
-      </svg>`;
+    if (map.hasImage("pickup-pin")) return;
 
-      const img = new Image(28, 38);
+    const S = 2;
+    const W = 28, H = 38;
+    const canvas = document.createElement("canvas");
+    canvas.width = W * S;
+    canvas.height = H * S;
+    const ctx = canvas.getContext("2d");
+    ctx.scale(S, S);
 
-      img.onload = () => {
-        if (!map.hasImage("pickup-pin")) {
-          map.addImage("pickup-pin", img, { pixelRatio: 2 });
-        }
-        resolve();
-      };
+    const cx = W / 2;
+    const r = W / 2 - 2;
+    const tipY = H - 2;
 
-      img.onerror = resolve;
-      img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-    });
+    ctx.beginPath();
+    ctx.moveTo(cx, tipY);
+    ctx.bezierCurveTo(cx - r * 1.1, r * 1.8, cx - r, r, cx - r, r);
+    ctx.arc(cx, r, r, Math.PI, 0);
+    ctx.bezierCurveTo(cx + r, r, cx + r * 1.1, r * 1.8, cx, tipY);
+    ctx.closePath();
+    ctx.fillStyle = "#3b82f6";
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(cx, r, 5, 0, Math.PI * 2);
+    ctx.fillStyle = "#fff";
+    ctx.fill();
+
+    map.addImage("pickup-pin", ctx.getImageData(0, 0, W * S, H * S), { pixelRatio: S });
   }
 
   #computeBounds(geojson) {
