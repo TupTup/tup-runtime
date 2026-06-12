@@ -167,7 +167,7 @@ class TupMap extends HTMLElement {
 
       const hint = document.createElement("div");
       hint.className = "tup-map-edit-hint";
-      hint.textContent = "Przesuń mapę, aby ustawić pozycję";
+      hint.textContent = "Przesuń mapę aby ustawić punkt dostawy";
       mapBody.appendChild(hint);
     }
 
