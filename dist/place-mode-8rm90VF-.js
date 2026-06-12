@@ -306,16 +306,16 @@ function X() {
 async function Z() {
 	if (K() !== "edit") return;
 	if (W()) {
-		let { initPlaceRouteEditUi: e } = await import("./place-route-reorder-Ddfv8p-P.js");
+		let { initPlaceRouteEditUi: e } = await import("./place-route-reorder-B432l-ab.js");
 		e();
 		return;
 	}
-	let { initPlaceEditorUi: e } = await import("./place-editor-DLZXm9h9.js");
+	let { initPlaceEditorUi: e } = await import("./place-editor-DMcBtvs1.js");
 	e();
 }
 async function Q() {
 	if (K() !== "view") return;
-	let { initPlaceViewUi: e } = await import("./place-view-C2NcQm0S.js");
+	let { initPlaceViewUi: e } = await import("./place-view-h4rBtWnK.js");
 	if (e(), X()) {
 		Y();
 		let { firePublishConfetti: e } = await import("./place-confetti-jSKW8Urk.js");

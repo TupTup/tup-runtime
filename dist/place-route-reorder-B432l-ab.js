@@ -1,5 +1,5 @@
-import { a as e, c as t, f as n, l as r, o as i, s as a } from "./place-mode-B4-qNqm1.js";
-import { initPlaceViewUi as o } from "./place-view-C2NcQm0S.js";
+import { a as e, c as t, f as n, l as r, o as i, s as a } from "./place-mode-8rm90VF-.js";
+import { initPlaceViewUi as o } from "./place-view-h4rBtWnK.js";
 //#region js/place-route-reorder.js
 var s = 3;
 function c(e, t) {
@@ -30,8 +30,8 @@ function f(e) {
 			return;
 		}
 		if (e.classList.add("route-step--reorderable"), e.querySelector(".route-step-reorder-handle")) return;
-		let r = document.createElement("button");
-		r.type = "button", r.className = "route-step-reorder-handle", r.setAttribute("aria-label", "Przenieś krok"), e.append(r);
+		let r = document.createElement("span");
+		r.className = "route-step-reorder-handle", r.setAttribute("aria-hidden", "true"), e.append(r);
 	});
 }
 function p(e) {
@@ -49,15 +49,14 @@ function m(e, { slug: t, model: r }) {
 		o < s && --s, o !== s && (r.steps = u(r.steps, o, s), n(t, r), e.setSteps(r.steps), f(e));
 	};
 	e.addEventListener("pointerdown", (t) => {
-		let n = t.target.closest(".route-step-reorder-handle");
-		if (!n || t.button !== 0) return;
-		let r = e.querySelector(".route-steps"), a = n.closest(".route-step--reorderable");
-		!r || !a || (t.preventDefault(), n.setPointerCapture(t.pointerId), i = {
-			list: r,
-			item: a,
-			fromIndex: [...r.children].indexOf(a),
+		if (t.button !== 0) return;
+		let n = e.querySelector(".route-steps"), r = t.target.closest(".route-step--reorderable");
+		!n || !r || t.target.closest("button, a, input, textarea") || (t.preventDefault(), r.setPointerCapture(t.pointerId), i = {
+			list: n,
+			item: r,
+			fromIndex: [...n.children].indexOf(r),
 			pointerId: t.pointerId
-		}, a.classList.add("is-dragging"));
+		}, r.classList.add("is-dragging"));
 	}), e.addEventListener("pointermove", (e) => {
 		if (!i || e.pointerId !== i.pointerId) return;
 		p(i.list);

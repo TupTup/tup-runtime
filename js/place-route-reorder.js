@@ -78,10 +78,9 @@ export function decorateRouteReorderHandles(routeEl) {
       return;
     }
 
-    const handle = document.createElement("button");
-    handle.type = "button";
+    const handle = document.createElement("span");
     handle.className = "route-step-reorder-handle";
-    handle.setAttribute("aria-label", "Przenieś krok");
+    handle.setAttribute("aria-hidden", "true");
     item.append(handle);
   });
 }
@@ -130,21 +129,23 @@ function bindReorderInteractions(routeEl, { slug, model }) {
   };
 
   routeEl.addEventListener("pointerdown", (event) => {
-    const handle = event.target.closest(".route-step-reorder-handle");
-
-    if (!handle || event.button !== 0) {
+    if (event.button !== 0) {
       return;
     }
 
     const list = routeEl.querySelector(".route-steps");
-    const item = handle.closest(".route-step--reorderable");
+    const item = event.target.closest(".route-step--reorderable");
 
     if (!list || !item) {
       return;
     }
 
+    if (event.target.closest("button, a, input, textarea")) {
+      return;
+    }
+
     event.preventDefault();
-    handle.setPointerCapture(event.pointerId);
+    item.setPointerCapture(event.pointerId);
 
     active = {
       list,

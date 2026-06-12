@@ -437,8 +437,20 @@ tup-navigation-button {
   display: flex;
 }
 
+.place-route-reorderable .route-steps {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .place-route-reorderable .route-step--reorderable {
   grid-template-columns: 48px minmax(0, 1fr) 40px;
+
+  cursor: grab;
+  touch-action: none;
+}
+
+.place-route-reorderable .route-step--reorderable.is-dragging {
+  cursor: grabbing;
 }
 
 .route-step-reorder-handle {
@@ -453,19 +465,7 @@ tup-navigation-button {
   width: 32px;
   height: 32px;
 
-  padding: 0;
-
-  border: 0;
-  border-radius: 8px;
-
-  background: transparent;
-
-  cursor: grab;
-  touch-action: none;
-}
-
-.route-step-reorder-handle:active {
-  cursor: grabbing;
+  pointer-events: none;
 }
 
 .route-step-reorder-handle::before {

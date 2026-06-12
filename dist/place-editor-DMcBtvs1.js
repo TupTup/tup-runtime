@@ -1,4 +1,4 @@
-import { a as e, c as t, d as n, f as r, h as i, l as a, m as o, o as s, p as c, s as l, t as u } from "./place-mode-B4-qNqm1.js";
+import { a as e, c as t, d as n, f as r, h as i, l as a, m as o, o as s, p as c, s as l, t as u } from "./place-mode-8rm90VF-.js";
 import { n as d, r as f } from "./place-action-progress-Bj517IQQ.js";
 //#region js/place-editor.js
 var p = 500, m = "Wejdź do budynku C10. Poproś ochronę o aktywację windy. Wjedź na 2 piętro. Wprowadź kod 1234. Skręć w lewo. Idź prosto do końca korytarza. Lokal 229 po prawej stronie.";
