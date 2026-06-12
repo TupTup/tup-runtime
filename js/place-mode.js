@@ -73,14 +73,6 @@ export function getMode() {
   return currentMode;
 }
 
-export function isDraftActive() {
-  return usesDraft;
-}
-
-export function isDraftPreview() {
-  return currentMode === "view" && readSearchParams().get("draft") === "1";
-}
-
 export function isFreshDraftPreview() {
   const params = readSearchParams();
 

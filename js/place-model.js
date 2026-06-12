@@ -208,11 +208,11 @@ export function applyPlaceToDom(placeRoot, model, { includeRoute = true } = {}) 
   }
 }
 
-export function draftStorageKey(slug) {
+function draftStorageKey(slug) {
   return `${DRAFT_PREFIX}${slug}`;
 }
 
-export function publishedStorageKey(slug) {
+function publishedStorageKey(slug) {
   return `${draftStorageKey(slug)}:published`;
 }
 
@@ -255,7 +255,7 @@ export function loadPublished(slug) {
   }
 }
 
-export function savePublished(slug, model) {
+function savePublished(slug, model) {
   localStorage.setItem(
     publishedStorageKey(slug),
     JSON.stringify({
