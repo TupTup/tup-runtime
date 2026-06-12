@@ -459,6 +459,9 @@ tup-navigation-button {
   align-self: center;
   justify-self: center;
 
+  position: relative;
+  z-index: 1;
+
   display: grid;
   place-items: center;
 
