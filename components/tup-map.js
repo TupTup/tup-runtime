@@ -71,7 +71,7 @@ class TupMap extends HTMLElement {
       interactive: false,
     });
 
-    this.#map.once("load", () => this.#loadIntoMap(this.#map, { animate: false }));
+    this.#map.once("load", () => this.#loadIntoMap(this.#map, { animate: false, iconSize: 0.7 }));
   }
 
   #updatePickupCoords(lng, lat) {
@@ -136,6 +136,7 @@ class TupMap extends HTMLElement {
     });
 
     lightboxMap.addControl(new maplibregl.NavigationControl(), "top-right");
+    lightboxMap.once("load", () => this.#loadIntoMap(lightboxMap, { animate: false, editPicker: editMode, iconSize: 1.2 }));
 
     if (editMode) {
       lightboxMap.on("movestart", () => mapBody.classList.add("is-dragging"));
@@ -145,8 +146,6 @@ class TupMap extends HTMLElement {
         this.#updatePickupCoords(lng, lat);
       });
     }
-    lightboxMap.once("load", () => this.#loadIntoMap(lightboxMap, { animate: false }));
-
     const close = () => {
       dialog.close();
       lightboxMap.remove();
@@ -160,7 +159,7 @@ class TupMap extends HTMLElement {
     });
   }
 
-  async #loadIntoMap(map, { animate = true } = {}) {
+  async #loadIntoMap(map, { animate = true, editPicker = false, iconSize = 1.0 } = {}) {
     const src = this.getAttribute("src");
 
     if (!src || !map) {
@@ -194,7 +193,7 @@ class TupMap extends HTMLElement {
       existing.setData(data);
     } else {
       map.addSource("data", { type: "geojson", data });
-      await this.#addLayersTo(map);
+      await this.#addLayersTo(map, { editPicker, iconSize });
     }
 
     const bounds = this.#computeBounds(data);
@@ -204,7 +203,7 @@ class TupMap extends HTMLElement {
     }
   }
 
-  async #addLayersTo(map) {
+  async #addLayersTo(map, { editPicker = false, iconSize = 1.0 } = {}) {
     const notParking = ["!=", ["get", "featureType"], "parking"];
 
     map.addLayer({
@@ -233,19 +232,21 @@ class TupMap extends HTMLElement {
 
     this.#loadPinIcon(map);
 
-    map.addLayer({
-      id: "pickup-pins",
-      type: "symbol",
-      source: "data",
-      filter: ["==", ["get", "featureType"], "pickup"],
-      layout: {
-        "icon-image": "pickup-pin",
-        "icon-anchor": "bottom",
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": true,
-        "icon-size": 1.5,
-      },
-    });
+    if (!editPicker) {
+      map.addLayer({
+        id: "pickup-pins",
+        type: "symbol",
+        source: "data",
+        filter: ["==", ["get", "featureType"], "pickup"],
+        layout: {
+          "icon-image": "pickup-pin",
+          "icon-anchor": "bottom",
+          "icon-allow-overlap": true,
+          "icon-ignore-placement": true,
+          "icon-size": iconSize,
+        },
+      });
+    }
   }
 
   #loadPinIcon(map) {
