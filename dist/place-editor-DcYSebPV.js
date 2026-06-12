@@ -1,4 +1,4 @@
-import { a as e, c as t, d as n, f as r, l as i, m as a, o, p as s, s as c, t as l } from "./place-mode-BWyfHOsP.js";
+import { a as e, c as t, d as n, f as r, l as i, m as a, o, p as s, s as c, t as l } from "./place-mode-CPZ0Qq7w.js";
 import { n as u, r as d } from "./place-action-progress-Bj517IQQ.js";
 //#region js/place-editor.js
 var f = 500, p = "Wejdź do budynku C10. Poproś ochronę o aktywację windy. Wjedź na 2 piętro. Wprowadź kod 1234. Skręć w lewo. Idź prosto do końca korytarza. Lokal 229 po prawej stronie.";
@@ -76,10 +76,15 @@ function h() {
 		}
 		A.classList.remove("is-generating"), M.textContent = "Generuj kroki", j.style.width = "0%", A.removeAttribute("aria-busy"), A.removeAttribute("aria-valuemin"), A.removeAttribute("aria-valuemax"), A.removeAttribute("aria-valuenow"), A.removeAttribute("aria-label"), delete S.dataset.generating, A.disabled = !1, T.disabled = !1, I = !1, F.hidden = !0, P.textContent = "Nie udało się wygenerować kroków z tego opisu.";
 	}), S.append(C, w, A, N, P, F);
-	let L = _.querySelector("tup-place-photo");
+	let L = _.querySelector(":scope > tup-bento-layout") ?? _.querySelector(":scope > tup-place-photo");
 	L ? L.insertAdjacentElement("afterend", S) : _.append(S), g(_.querySelector("tup-place-photo"), {
 		slug: v,
 		model: y
+	}), _.addEventListener("tup-map-pickup-change", (e) => {
+		y.pickup = {
+			lat: e.detail.lat,
+			lng: e.detail.lng
+		}, r(v, y);
 	});
 }
 function g(e, { slug: t, model: n }) {

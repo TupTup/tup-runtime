@@ -1278,10 +1278,6 @@ tup-bento-layout > tup-map {
   background-image: url("images/icons/building.svg");
 }
 
-.route-step-icon--entrance::before {
-  background-image: url("images/icons/entrance.svg");
-}
-
 .route-step-icon--door::before {
   background-image: url("images/icons/door.svg");
 }
@@ -1303,11 +1299,13 @@ tup-bento-layout > tup-map {
 }
 
 .route-step .route-step-icon--start::before,
+.route-step .route-step-icon--entrance::before,
 .route-step .route-step-icon--left::before,
 .route-step .route-step-icon--right::before,
 .route-step .route-step-icon--forward::before,
 .route-step .route-step-icon--straight::before,
-.route-step .route-step-icon--floor::before {
+.route-step .route-step-icon--floor::before,
+.route-step .route-step-icon--target::before {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1327,7 +1325,8 @@ tup-bento-layout > tup-map {
   filter: none;
 }
 
-.route-step .route-step-icon--start::before {
+.route-step .route-step-icon--start::before,
+.route-step .route-step-icon--entrance::before {
   content: "◎";
   font-size: 20px;
 }
@@ -1357,10 +1356,6 @@ tup-bento-layout > tup-map {
   content: "↓";
 }
 
-.route-step-icon--target::before {
-  background-image: url("images/icons/pushpin.svg");
-}
-
 .route-step--target .route-step-icon {
   display: flex;
   align-items: center;
@@ -1375,9 +1370,36 @@ tup-bento-layout > tup-map {
 }
 
 .route-step--target .route-step-icon::before {
-  background: url("images/icons/pushpin-filled.svg") center / contain no-repeat;
+  content: "";
+  display: block;
 
-  filter: drop-shadow(0 1px 2px rgba(59, 130, 246, 0.28));
+  width: 20px;
+  height: 20px;
+
+  background: #3b82f6;
+  border-radius: 50% 50% 50% 5%;
+
+  transform: rotate(-45deg);
+
+  filter: drop-shadow(0 1px 2px rgba(59, 130, 246, 0.35));
+}
+
+.route-step--target .route-step-icon::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  transform: translate(-50%, -65%);
 }
 
 .route-step--target .route-step-value {

@@ -3,11 +3,11 @@
     viewBox="0 0 24 24"
     fill="none"
     stroke="black"
-    stroke-width="1.2"
+    stroke-width="0.85"
     stroke-linecap="round"
     stroke-linejoin="round">
 
-    <path d="M7 21V5h10v16" />
-    <path d="M7 21h10" />
+    <path d="M7 21V11a5 5 0 0 1 10 0v10" />
+    <path d="M5 21h14" />
 
 </svg>
