@@ -195,6 +195,7 @@ class TupMap extends HTMLElement {
         editPicker: editMode,
         iconSize: 1.2,
         fit: false,
+        skipFetch: editMode && !!this.#data,
       });
       requestAnimationFrame(() => this.#refitLightbox());
     });
@@ -210,8 +211,9 @@ class TupMap extends HTMLElement {
         }
       });
 
-      lightboxMap.on("moveend", () => {
+      lightboxMap.on("moveend", (e) => {
         mapBody.classList.remove("is-dragging");
+        if (!e.originalEvent) return;
         const { lng, lat } = lightboxMap.getCenter();
         this.#updatePickupCoords(lng, lat);
       });
@@ -224,20 +226,24 @@ class TupMap extends HTMLElement {
     });
   }
 
-  async #loadIntoMap(map, { animate = true, editPicker = false, iconSize = 1.0, padding = 40, fit = true } = {}) {
-    const src = this.getAttribute("src");
-
-    if (!src || !map) {
-      return;
-    }
-
+  async #loadIntoMap(map, { animate = true, editPicker = false, iconSize = 1.0, padding = 40, fit = true, skipFetch = false } = {}) {
     let geojson;
 
-    try {
-      const res = await fetch(src);
-      geojson = await res.json();
-    } catch {
-      return;
+    if (skipFetch && this.#data) {
+      geojson = this.#data;
+    } else {
+      const src = this.getAttribute("src");
+
+      if (!src || !map) {
+        return;
+      }
+
+      try {
+        const res = await fetch(src);
+        geojson = await res.json();
+      } catch {
+        return;
+      }
     }
 
     const feature = this.getAttribute("feature");
