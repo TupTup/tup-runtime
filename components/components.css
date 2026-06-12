@@ -818,13 +818,10 @@ tup-bento-layout {
 
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 6px;
 
   border-radius: 12px 12px 0 0;
 
   overflow: hidden;
-
-  background: #e5e7eb;
 }
 
 tup-bento-layout > *:first-child {
@@ -832,7 +829,6 @@ tup-bento-layout > *:first-child {
 }
 
 tup-bento-layout > *:not(:first-child) {
-  border-radius: 4px;
   overflow: hidden;
 }
 
