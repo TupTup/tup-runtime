@@ -106,7 +106,7 @@ function m(e) {
 function h(e = l()) {
 	let t = u(e);
 	if (!t) return null;
-	let n = t.querySelector("tup-place-header"), r = t.querySelector("tup-place-photo"), i = m(t.querySelector("tup-route"));
+	let n = t.querySelector("tup-place-header"), r = [...t.querySelectorAll("tup-place-photo")], i = m(t.querySelector("tup-route"));
 	return {
 		id: d(e),
 		header: {
@@ -120,12 +120,8 @@ function h(e = l()) {
 			vcard: f(n, "vcard"),
 			preview: f(n, "preview")
 		},
-		photo: {
-			src: r?.getAttribute("src") || "",
-			alt: r?.getAttribute("alt") || "",
-			caption: f(r, "caption"),
-			fallbackSrc: f(r, "fallback-src")
-		},
+		photo: v(r[0]),
+		bentoPhotos: r.length > 1 ? r.slice(1).map(v) : void 0,
 		routeDescription: o(i),
 		steps: i
 	};
@@ -140,128 +136,149 @@ function g(e, t, n) {
 function _(e, t) {
 	!e || !t || (g(e, "name", t.name), g(e, "summary", t.summary), g(e, "address", t.address), g(e, "lat", t.lat), g(e, "lng", t.lng), g(e, "plus-code", t.plusCode), g(e, "map-href", t.mapHref), g(e, "vcard", t.vcard), g(e, "preview", t.preview));
 }
-function v(e, t) {
+function v(e) {
+	return e ? {
+		src: e.getAttribute("src") || "",
+		alt: e.getAttribute("alt") || "",
+		caption: f(e, "caption"),
+		fallbackSrc: f(e, "fallback-src")
+	} : {
+		src: "",
+		alt: ""
+	};
+}
+function y(e, t) {
+	let n = [...e.querySelectorAll("tup-place-photo")];
+	n[0] && (t.photo = v(n[0])), n.length > 1 ? t.bentoPhotos = n.slice(1).map(v) : delete t.bentoPhotos;
+}
+function b(e, t) {
 	!e || !t || (g(e, "src", t.src), g(e, "alt", t.alt), g(e, "caption", t.caption), g(e, "fallback-src", t.fallbackSrc));
 }
-function y(e) {
+function x(e, t, n) {
+	let r = [...e.querySelectorAll("tup-place-photo")];
+	b(r[0], t), n?.length && n.forEach((e, t) => {
+		b(r[t + 1], e);
+	});
+}
+function S(e) {
 	let t = [`type="${c(e.type || "forward")}"`, `text="${c(e.text || "")}"`];
 	return e.label && t.push(`label="${c(e.label)}"`), e.tone && t.push(`tone="${c(e.tone)}"`), e.emphasis && t.push(`emphasis="${c(e.emphasis)}"`), e.direction && t.push(`direction="${c(e.direction)}"`), e.code && t.push(`code="${c(e.code)}"`), e.codeHideAfter && t.push(`code-hide-after="${c(e.codeHideAfter)}"`), `<tup-route-step ${t.join(" ")}></tup-route-step>`;
 }
-function b(e, t) {
+function C(e, t) {
 	if (e) {
 		if (typeof e.setSteps == "function") {
 			e.setSteps(t);
 			return;
 		}
-		e.innerHTML = t.map(y).join("");
+		e.innerHTML = t.map(S).join("");
 	}
 }
-function x(e, t, { includeRoute: n = !0 } = {}) {
+function w(e, t, { includeRoute: n = !0 } = {}) {
 	let r = u(e);
-	!r || !t || (_(r.querySelector("tup-place-header"), t.header), v(r.querySelector("tup-place-photo"), t.photo), n && b(r.querySelector("tup-route"), t.steps));
+	!r || !t || (_(r.querySelector("tup-place-header"), t.header), x(r, t.photo, t.bentoPhotos), n && C(r.querySelector("tup-route"), t.steps));
 }
-function S(e) {
+function T(e) {
 	return `${s}${e}`;
 }
-function C(e) {
-	return `${S(e)}:published`;
+function E(e) {
+	return `${T(e)}:published`;
 }
-function w(e) {
+function D(e) {
 	try {
-		let t = localStorage.getItem(S(e));
+		let t = localStorage.getItem(T(e));
 		return t ? JSON.parse(t) : null;
 	} catch {
 		return null;
 	}
 }
-function T(e, t) {
-	localStorage.setItem(S(e), JSON.stringify({
+function O(e, t) {
+	localStorage.setItem(T(e), JSON.stringify({
 		...t,
 		id: e,
 		savedAt: (/* @__PURE__ */ new Date()).toISOString()
 	}));
 }
-function E(e) {
+function k(e) {
 	try {
-		let t = localStorage.getItem(C(e));
+		let t = localStorage.getItem(E(e));
 		return t ? JSON.parse(t) : null;
 	} catch {
 		return null;
 	}
 }
-function D(e, t) {
-	localStorage.setItem(C(e), JSON.stringify({
+function A(e, t) {
+	localStorage.setItem(E(e), JSON.stringify({
 		...t,
 		id: e,
 		publishedAt: (/* @__PURE__ */ new Date()).toISOString()
 	}));
 }
-function O(e) {
-	let t = w(e);
-	return t ? (D(e, t), k(e), !0) : !1;
+function j(e) {
+	let t = D(e);
+	return t ? (A(e, t), M(e), !0) : !1;
 }
-function k(e) {
-	localStorage.removeItem(S(e));
+function M(e) {
+	localStorage.removeItem(T(e));
 }
-function A(e) {
+function N(e) {
 	return structuredClone(e);
 }
 //#endregion
 //#region js/place-mode.js
-var j = "view", M = !1;
-function N() {
+var P = "view", F = !1;
+function I() {
 	return new URLSearchParams(window.location.search);
 }
-function P(e) {
+function L(e) {
 	return e.get("mode") === "edit" ? "edit" : "view";
 }
-function F(e, t, n) {
-	return e.get("draft") === "1" || t === "edit" ? !!w(n) : !1;
+function R(e, t, n) {
+	return e.get("draft") === "1" || t === "edit" ? !!D(n) : !1;
 }
-function I() {
-	let e = N(), t = l();
-	if (j = P(e), document.documentElement.dataset.mode = j, !t) return;
+function z() {
+	let e = I(), t = l();
+	if (P = L(e), document.documentElement.dataset.mode = P, !t) return;
 	let n = d(t);
-	if (document.documentElement.dataset.placeId = n, M = F(e, j, n), M) {
-		let r = w(n);
-		r && x(t, r, { includeRoute: j !== "edit" }), j === "view" && e.get("draft") === "1" && (document.documentElement.dataset.draftPreview = "true");
-	} else if (j === "view") {
-		let e = E(n);
-		e && x(t, e);
+	if (document.documentElement.dataset.placeId = n, F = R(e, P, n), F) {
+		let r = D(n);
+		r && w(t, r, { includeRoute: P !== "edit" }), P === "view" && e.get("draft") === "1" && (document.documentElement.dataset.draftPreview = "true");
+	} else if (P === "view") {
+		let e = k(n);
+		e && w(t, e);
 	}
 }
-I();
-function L() {
-	return j;
+z();
+function B() {
+	return P;
 }
-function R() {
-	let e = N();
-	return j === "view" && e.get("draft") === "1" && e.get("fresh") === "1";
+function V() {
+	let e = I();
+	return P === "view" && e.get("draft") === "1" && e.get("fresh") === "1";
 }
-function z({ mode: e = "view", draft: t = !1, fresh: n = !1, published: r = !1 } = {}) {
+function H({ mode: e = "view", draft: t = !1, fresh: n = !1, published: r = !1 } = {}) {
 	let i = new URL(window.location.href);
 	return e === "edit" ? (i.searchParams.set("mode", "edit"), i.searchParams.delete("draft"), i.searchParams.delete("fresh"), i.searchParams.delete("published")) : (i.searchParams.delete("mode"), t ? i.searchParams.set("draft", "1") : i.searchParams.delete("draft"), n && t ? i.searchParams.set("fresh", "1") : i.searchParams.delete("fresh"), r ? i.searchParams.set("published", "1") : i.searchParams.delete("published")), `${i.pathname}${i.search}${i.hash}`;
 }
-function B() {
+function U() {
 	let e = new URL(window.location.href);
 	e.searchParams.has("published") && (e.searchParams.delete("published"), window.history.replaceState({}, "", `${e.pathname}${e.search}${e.hash}`));
 }
-function V() {
-	return N().get("published") === "1";
+function W() {
+	return I().get("published") === "1";
 }
-async function H() {
-	if (L() !== "edit") return;
-	let { initPlaceEditorUi: e } = await import("./place-editor-DcYSebPV.js");
+async function G() {
+	if (B() !== "edit") return;
+	let { initPlaceEditorUi: e } = await import("./place-editor-0hbGbuaF.js");
 	e();
 }
-async function U() {
-	if (L() !== "view") return;
-	let { initPlaceViewUi: e } = await import("./place-view-pLrMOdsX.js");
-	if (e(), V()) {
-		B();
+async function K() {
+	if (B() !== "view") return;
+	let { initPlaceViewUi: e } = await import("./place-view-oNnVc7lt.js");
+	if (e(), W()) {
+		U();
 		let { firePublishConfetti: e } = await import("./place-confetti-jSKW8Urk.js");
 		e();
 	}
 }
 //#endregion
-export { A as a, d as c, h as d, T as f, R as i, w as l, o as m, H as n, u as o, a as p, U as r, l as s, z as t, O as u };
+export { N as a, d as c, h as d, O as f, o as h, V as i, D as l, a as m, G as n, u as o, y as p, K as r, l as s, H as t, j as u };

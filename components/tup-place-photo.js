@@ -24,12 +24,39 @@ class TupPlacePhoto extends HTMLElement {
     }
   }
 
+  #isEditMode() {
+    return document.documentElement.dataset.mode === "edit";
+  }
+
+  #hasPhoto() {
+    return Boolean(this.getAttribute("src")?.trim());
+  }
+
   #render() {
     const src = this.getAttribute("src") ?? "";
     const alt = this.getAttribute("alt") ?? "";
     const caption = this.getAttribute("caption") ?? "";
     const showCaption = caption && !this.hasAttribute("hide-caption");
     const parking = this.hasAttribute("parking");
+
+    if (!this.#hasPhoto() && this.#isEditMode()) {
+      this.innerHTML = `
+        <div class="place-hero-home">
+          <figure class="place-hero">
+            <button
+              type="button"
+              class="hero-image-trigger hero-image-trigger--empty"
+              data-photo-add
+              aria-label="Dodaj zdjęcie"
+            >
+              <span class="place-photo-add-icon" aria-hidden="true">+</span>
+              <span class="place-photo-add-label">Dodaj zdjęcie</span>
+            </button>
+          </figure>
+        </div>
+      `;
+      return;
+    }
 
     const parkingHtml = parking
       ? `<span class="place-photo-parking" aria-hidden="true">P</span>`
@@ -89,6 +116,10 @@ class TupPlacePhoto extends HTMLElement {
   }
 
   #bindLightbox() {
+    if (this.#isEditMode()) {
+      return;
+    }
+
     const trigger = this.querySelector("[data-lightbox]");
 
     if (!trigger || trigger.dataset.bound === "true") {

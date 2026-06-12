@@ -81,7 +81,7 @@ export function readPlaceFromDom(placeRoot = findPlaceRoot()) {
   }
 
   const header = content.querySelector("tup-place-header");
-  const photo = content.querySelector("tup-place-photo");
+  const photoEls = [...content.querySelectorAll("tup-place-photo")];
   const route = content.querySelector("tup-route");
   const steps = readSteps(route);
 
@@ -100,12 +100,11 @@ export function readPlaceFromDom(placeRoot = findPlaceRoot()) {
       vcard: readOptionalAttr(header, "vcard"),
       preview: readOptionalAttr(header, "preview"),
     },
-    photo: {
-      src: photo?.getAttribute("src") || "",
-      alt: photo?.getAttribute("alt") || "",
-      caption: readOptionalAttr(photo, "caption"),
-      fallbackSrc: readOptionalAttr(photo, "fallback-src"),
-    },
+    photo: readPhotoFromElement(photoEls[0]),
+    bentoPhotos:
+      photoEls.length > 1
+        ? photoEls.slice(1).map(readPhotoFromElement)
+        : undefined,
     routeDescription: stepsToDescription(steps),
     steps,
   };
@@ -136,6 +135,36 @@ function applyHeaderModel(header, model) {
   setOptionalAttr(header, "preview", model.preview);
 }
 
+export function readPhotoFromElement(photo) {
+  if (!photo) {
+    return {
+      src: "",
+      alt: "",
+    };
+  }
+
+  return {
+    src: photo.getAttribute("src") || "",
+    alt: photo.getAttribute("alt") || "",
+    caption: readOptionalAttr(photo, "caption"),
+    fallbackSrc: readOptionalAttr(photo, "fallback-src"),
+  };
+}
+
+export function syncPhotosFromDom(content, model) {
+  const photoEls = [...content.querySelectorAll("tup-place-photo")];
+
+  if (photoEls[0]) {
+    model.photo = readPhotoFromElement(photoEls[0]);
+  }
+
+  if (photoEls.length > 1) {
+    model.bentoPhotos = photoEls.slice(1).map(readPhotoFromElement);
+  } else {
+    delete model.bentoPhotos;
+  }
+}
+
 function applyPhotoModel(photo, model) {
   if (!photo || !model) {
     return;
@@ -145,6 +174,20 @@ function applyPhotoModel(photo, model) {
   setOptionalAttr(photo, "alt", model.alt);
   setOptionalAttr(photo, "caption", model.caption);
   setOptionalAttr(photo, "fallback-src", model.fallbackSrc);
+}
+
+function applyPhotosModel(content, photo, bentoPhotos) {
+  const photoEls = [...content.querySelectorAll("tup-place-photo")];
+
+  applyPhotoModel(photoEls[0], photo);
+
+  if (!bentoPhotos?.length) {
+    return;
+  }
+
+  bentoPhotos.forEach((entry, index) => {
+    applyPhotoModel(photoEls[index + 1], entry);
+  });
 }
 
 function renderStepMarker(step) {
@@ -201,7 +244,7 @@ export function applyPlaceToDom(placeRoot, model, { includeRoute = true } = {}) 
   }
 
   applyHeaderModel(content.querySelector("tup-place-header"), model.header);
-  applyPhotoModel(content.querySelector("tup-place-photo"), model.photo);
+  applyPhotosModel(content, model.photo, model.bentoPhotos);
 
   if (includeRoute) {
     applyStepsModel(content.querySelector("tup-route"), model.steps);

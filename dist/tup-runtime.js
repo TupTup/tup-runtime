@@ -1,4 +1,4 @@
-import { n as e, r as t } from "./place-mode-CPZ0Qq7w.js";
+import { n as e, r as t } from "./place-mode-agz2r2gc.js";
 //#region \0rolldown/runtime.js
 var n = Object.create, r = Object.defineProperty, i = Object.getOwnPropertyDescriptor, a = Object.getOwnPropertyNames, o = Object.getPrototypeOf, s = Object.prototype.hasOwnProperty, c = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t.exports), l = (e, t, n, o) => {
 	if (t && typeof t == "object" || typeof t == "function") for (var c = a(t), l = 0, u = c.length, d; l < u; l++) d = c[l], !s.call(e, d) && d !== n && r(e, d, {
@@ -217,13 +217,24 @@ d("tup-place-header", class extends HTMLElement {
 	static #n = 0;
 	static #r = null;
 	connectedCallback() {
-		this.#i(), this.#a(), this.#o();
+		this.#o(), this.#s(), this.#c();
 	}
 	attributeChangedCallback() {
-		this.isConnected && (this.#i(), this.#a(), this.#o());
+		this.isConnected && (this.#o(), this.#s(), this.#c());
 	}
 	#i() {
-		let e = this.getAttribute("src") ?? "", t = this.getAttribute("alt") ?? "", n = this.getAttribute("caption") ?? "", r = n && !this.hasAttribute("hide-caption"), i = this.hasAttribute("parking") ? "<span class=\"place-photo-parking\" aria-hidden=\"true\">P</span>" : "", a = r ? `<figcaption class="visually-hidden">${f(n)}</figcaption>` : "";
+		return document.documentElement.dataset.mode === "edit";
+	}
+	#a() {
+		return !!this.getAttribute("src")?.trim();
+	}
+	#o() {
+		let e = this.getAttribute("src") ?? "", t = this.getAttribute("alt") ?? "", n = this.getAttribute("caption") ?? "", r = n && !this.hasAttribute("hide-caption"), i = this.hasAttribute("parking");
+		if (!this.#a() && this.#i()) {
+			this.innerHTML = "\n        <div class=\"place-hero-home\">\n          <figure class=\"place-hero\">\n            <button\n              type=\"button\"\n              class=\"hero-image-trigger hero-image-trigger--empty\"\n              data-photo-add\n              aria-label=\"Dodaj zdjęcie\"\n            >\n              <span class=\"place-photo-add-icon\" aria-hidden=\"true\">+</span>\n              <span class=\"place-photo-add-label\">Dodaj zdjęcie</span>\n            </button>\n          </figure>\n        </div>\n      ";
+			return;
+		}
+		let a = i ? "<span class=\"place-photo-parking\" aria-hidden=\"true\">P</span>" : "", o = r ? `<figcaption class="visually-hidden">${f(n)}</figcaption>` : "";
 		this.innerHTML = `
       <div class="place-hero-home">
         <figure class="place-hero">
@@ -241,28 +252,29 @@ d("tup-place-header", class extends HTMLElement {
               height="450"
             />
 
-            ${i}
+            ${a}
           </button>
 
-          ${a}
+          ${o}
         </figure>
       </div>
     `;
 	}
-	#a() {
+	#s() {
 		let e = this.querySelector(".hero-image-img"), t = this.getAttribute("fallback-src");
 		!e || !t || (e.addEventListener("error", () => {
 			e.dataset.fallbackApplied !== "true" && (e.dataset.fallbackApplied = "true", e.src = t);
 		}), e.complete && e.naturalWidth === 0 && (e.dataset.fallbackApplied = "true", e.src = t));
 	}
-	#o() {
+	#c() {
+		if (this.#i()) return;
 		let t = this.querySelector("[data-lightbox]");
 		!t || t.dataset.bound === "true" || (t.dataset.bound = "true", t.addEventListener("click", () => {
-			let t = e.#s(), n = t.findIndex((e) => e.host === this);
-			n !== -1 && e.#c(t, n);
+			let t = e.#l(), n = t.findIndex((e) => e.host === this);
+			n !== -1 && e.#u(t, n);
 		}));
 	}
-	static #s() {
+	static #l() {
 		return [...document.querySelectorAll("tup-place-photo")].map((e) => {
 			let t = e.querySelector(".hero-image-img");
 			return t?.src ? {
@@ -274,20 +286,20 @@ d("tup-place-header", class extends HTMLElement {
 			} : null;
 		}).filter(Boolean);
 	}
-	static #c(t, n) {
-		let r = e.#l();
-		e.#t = t, e.#n = n, e.#m(), r.open || r.showModal();
+	static #u(t, n) {
+		let r = e.#d();
+		e.#t = t, e.#n = n, e.#g(), r.open || r.showModal();
 	}
-	static #l() {
+	static #d() {
 		if (e.#e?.isConnected) return e.#e;
 		let t = document.getElementById("tup-photo-lightbox");
-		return t || (t = document.createElement("dialog"), t.id = "tup-photo-lightbox", t.className = "hero-lightbox", t.setAttribute("aria-label", "Powiększone zdjęcie"), t.innerHTML = "\n        <button\n          type=\"button\"\n          class=\"hero-lightbox-close\"\n          aria-label=\"Zamknij\"\n        >\n          &times;\n        </button>\n\n        <button\n          type=\"button\"\n          class=\"hero-lightbox-nav hero-lightbox-nav--prev\"\n          data-lightbox-prev\n          aria-label=\"Poprzednie zdjęcie\"\n          hidden\n        ></button>\n\n        <button\n          type=\"button\"\n          class=\"hero-lightbox-nav hero-lightbox-nav--next\"\n          data-lightbox-next\n          aria-label=\"Następne zdjęcie\"\n          hidden\n        ></button>\n\n        <div class=\"hero-lightbox-body\">\n          <img class=\"hero-lightbox-img\" src=\"\" alt=\"\" />\n          <p class=\"hero-lightbox-caption\" hidden></p>\n        </div>\n      ", document.body.appendChild(t)), e.#e = t, e.#u(t), t;
+		return t || (t = document.createElement("dialog"), t.id = "tup-photo-lightbox", t.className = "hero-lightbox", t.setAttribute("aria-label", "Powiększone zdjęcie"), t.innerHTML = "\n        <button\n          type=\"button\"\n          class=\"hero-lightbox-close\"\n          aria-label=\"Zamknij\"\n        >\n          &times;\n        </button>\n\n        <button\n          type=\"button\"\n          class=\"hero-lightbox-nav hero-lightbox-nav--prev\"\n          data-lightbox-prev\n          aria-label=\"Poprzednie zdjęcie\"\n          hidden\n        ></button>\n\n        <button\n          type=\"button\"\n          class=\"hero-lightbox-nav hero-lightbox-nav--next\"\n          data-lightbox-next\n          aria-label=\"Następne zdjęcie\"\n          hidden\n        ></button>\n\n        <div class=\"hero-lightbox-body\">\n          <img class=\"hero-lightbox-img\" src=\"\" alt=\"\" />\n          <p class=\"hero-lightbox-caption\" hidden></p>\n        </div>\n      ", document.body.appendChild(t)), e.#e = t, e.#f(t), t;
 	}
-	static #u(t) {
-		t.dataset.bound !== "true" && (t.dataset.bound = "true", t.querySelector(".hero-lightbox-close")?.addEventListener("click", () => t.close()), t.querySelector("[data-lightbox-prev]")?.addEventListener("click", () => e.#p(-1)), t.querySelector("[data-lightbox-next]")?.addEventListener("click", () => e.#p(1)), t.addEventListener("click", (e) => {
+	static #f(t) {
+		t.dataset.bound !== "true" && (t.dataset.bound = "true", t.querySelector(".hero-lightbox-close")?.addEventListener("click", () => t.close()), t.querySelector("[data-lightbox-prev]")?.addEventListener("click", () => e.#h(-1)), t.querySelector("[data-lightbox-next]")?.addEventListener("click", () => e.#h(1)), t.addEventListener("click", (e) => {
 			e.target === t && t.close();
 		}), t.addEventListener("pointerdown", (t) => {
-			e.#d(t.target) && (e.#r = {
+			e.#p(t.target) && (e.#r = {
 				pointerId: t.pointerId,
 				x: t.clientX,
 				y: t.clientY,
@@ -298,25 +310,25 @@ d("tup-place-header", class extends HTMLElement {
 			if (e.#r = null, !r || r.pointerId !== n.pointerId) return;
 			let i = n.clientX - r.x, a = n.clientY - r.y, o = Math.hypot(i, a);
 			if (Math.abs(i) > 48 && Math.abs(i) > Math.abs(a) * 1.5) {
-				e.#p(i > 0 ? -1 : 1);
+				e.#h(i > 0 ? -1 : 1);
 				return;
 			}
-			o < 10 && e.#f(r.pointerType) && t.close();
+			o < 10 && e.#m(r.pointerType) && t.close();
 		}), t.addEventListener("pointercancel", () => {
 			e.#r = null;
 		}));
 	}
-	static #d(e) {
+	static #p(e) {
 		return !!e.closest(".hero-lightbox-body");
 	}
-	static #f(e) {
+	static #m(e) {
 		return e === "touch" || e === "pen";
 	}
-	static #p(t) {
+	static #h(t) {
 		let n = e.#t.length;
-		n < 2 || (e.#n = (e.#n + t + n) % n, e.#m());
+		n < 2 || (e.#n = (e.#n + t + n) % n, e.#g());
 	}
-	static #m() {
+	static #g() {
 		let t = e.#e, n = e.#t[e.#n];
 		if (!t || !n) return;
 		let r = t.querySelector(".hero-lightbox-img"), i = t.querySelector(".hero-lightbox-caption"), a = t.querySelector("[data-lightbox-prev]"), o = t.querySelector("[data-lightbox-next]"), s = n.caption && !n.hideCaption, c = e.#t.length > 1;

@@ -6,6 +6,7 @@ import {
   loadDraft,
   readPlaceFromDom,
   saveDraft,
+  syncPhotosFromDom,
 } from "./place-model.js";
 import { buildPlaceUrl } from "./place-mode.js";
 import {
@@ -234,7 +235,7 @@ export function initPlaceEditorUi() {
     content.append(compose);
   }
 
-  addPhotoEditButton(content.querySelector("tup-place-photo"), { slug, model });
+  initPhotoEditing(content, { slug, model });
 
   content.addEventListener("tup-map-pickup-change", (event) => {
     model.pickup = { lat: event.detail.lat, lng: event.detail.lng };
@@ -242,16 +243,18 @@ export function initPlaceEditorUi() {
   });
 }
 
-function addPhotoEditButton(photo, { slug, model }) {
-  if (!photo || photo.querySelector(".place-photo-edit-button")) {
+function initPhotoEditing(content, { slug, model }) {
+  content.querySelectorAll("tup-place-photo").forEach((photo) => {
+    setupPhotoEditing(photo, { slug, model, content });
+  });
+}
+
+function setupPhotoEditing(photo, { slug, model, content }) {
+  if (!photo || photo.dataset.photoEditBound === "true") {
     return;
   }
 
-  const hero = photo.querySelector(".place-hero, .hero-image-trigger");
-
-  if (!hero) {
-    return;
-  }
+  photo.dataset.photoEditBound = "true";
 
   const input = document.createElement("input");
   input.type = "file";
@@ -260,16 +263,43 @@ function addPhotoEditButton(photo, { slug, model }) {
   input.hidden = true;
   input.className = "place-photo-edit-input";
 
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "place-photo-edit-button";
-  button.setAttribute("aria-label", "Zmień zdjęcie — otwórz aparat");
-  button.innerHTML =
-    `<span class="place-photo-edit-button-icon" aria-hidden="true"></span><span>Zmień zdjęcie</span>`;
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.className = "place-photo-edit-remove";
+  removeButton.setAttribute("aria-label", "Usuń zdjęcie");
+  removeButton.innerHTML = "&times;";
 
-  button.addEventListener("click", () => {
+  const openFilePicker = () => {
     input.value = "";
     input.click();
+  };
+
+  photo.addEventListener(
+    "click",
+    (event) => {
+      if (event.target.closest(".place-photo-edit-remove")) {
+        return;
+      }
+
+      const trigger = event.target.closest(".hero-image-trigger");
+
+      if (!trigger) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openFilePicker();
+    },
+    true
+  );
+
+  removeButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    photo.removeAttribute("src");
+    syncPhotosFromDom(content, model);
+    saveDraft(slug, model);
   });
 
   input.addEventListener("change", () => {
@@ -289,16 +319,12 @@ function addPhotoEditButton(photo, { slug, model }) {
       }
 
       photo.setAttribute("src", src);
-      model.photo = {
-        ...model.photo,
-        src,
-        alt: model.photo?.alt || photo.getAttribute("alt") || "",
-      };
+      syncPhotosFromDom(content, model);
       saveDraft(slug, model);
     });
 
     reader.readAsDataURL(file);
   });
 
-  hero.append(button, input);
+  photo.append(input, removeButton);
 }
