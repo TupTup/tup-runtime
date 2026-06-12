@@ -32,20 +32,26 @@ export function firePublishConfetti() {
     return;
   }
 
+  const article = document.querySelector("#place");
+
+  if (!article) {
+    return;
+  }
+
   const canvas = document.createElement("canvas");
   canvas.className = "place-publish-confetti";
   canvas.setAttribute("aria-hidden", "true");
-  document.body.append(canvas);
+  article.append(canvas);
 
   const context = canvas.getContext("2d");
   const particles = [];
 
-  let width = window.innerWidth;
-  let height = window.innerHeight;
+  let width = article.offsetWidth;
+  let height = article.offsetHeight;
 
   const resize = () => {
-    width = window.innerWidth;
-    height = window.innerHeight;
+    width = article.offsetWidth;
+    height = article.offsetHeight;
     canvas.width = width;
     canvas.height = height;
   };
