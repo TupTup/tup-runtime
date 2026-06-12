@@ -224,10 +224,12 @@ export function initPlaceEditorUi() {
 
   compose.append(heading, field, generateButton, hint, status, previewLink);
 
-  const photo = content.querySelector("tup-place-photo");
+  const photoAnchor =
+    content.querySelector(":scope > tup-bento-layout") ??
+    content.querySelector(":scope > tup-place-photo");
 
-  if (photo) {
-    photo.insertAdjacentElement("afterend", compose);
+  if (photoAnchor) {
+    photoAnchor.insertAdjacentElement("afterend", compose);
   } else {
     content.append(compose);
   }
