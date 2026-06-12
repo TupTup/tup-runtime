@@ -124,13 +124,23 @@ class TupMap extends HTMLElement {
   #refitLightbox() {
     if (!this.#lightboxMap || !this.#data || !this.#lightboxBody) return;
 
-    const bounds = this.#computeBounds(this.#data);
-    if (!bounds) return;
-
     const padding = Math.round(
       Math.min(this.#lightboxBody.offsetWidth, this.#lightboxBody.offsetHeight) * 0.25
     );
+
+    const bounds = this.#computeBounds(this.#data);
+    if (!bounds) return;
+
     this.#lightboxMap.fitBounds(bounds, { padding, maxZoom: 19, animate: false });
+
+    if (this.#isEditMode()) {
+      const pickup = this.#data.features?.find(
+        (f) => f.properties?.featureType === "pickup"
+      );
+      if (pickup?.geometry?.coordinates) {
+        this.#lightboxMap.setCenter(pickup.geometry.coordinates);
+      }
+    }
   }
 
   #createLightbox() {
