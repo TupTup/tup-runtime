@@ -203,13 +203,15 @@ class TupMap extends HTMLElement {
     if (editMode) {
       lightboxMap.on("movestart", () => mapBody.classList.add("is-dragging"));
 
-      lightboxMap.on("move", () => {
+      lightboxMap.on("move", (e) => {
         const { lng, lat } = lightboxMap.getCenter();
         const [clampedLng, clampedLat] = this.#clampToBuilding(lng, lat);
         if (Math.abs(clampedLng - lng) > 1e-8 || Math.abs(clampedLat - lat) > 1e-8) {
           lightboxMap.setCenter([clampedLng, clampedLat]);
         }
-        this.#updatePickupCoords(clampedLng, clampedLat);
+        if (e.originalEvent) {
+          this.#updatePickupCoords(clampedLng, clampedLat);
+        }
       });
 
       lightboxMap.on("moveend", (e) => {
