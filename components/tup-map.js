@@ -131,7 +131,7 @@ class TupMap extends HTMLElement {
       ? {
           ...geojson,
           features: geojson.features?.filter(
-            (f) => f.properties?.feature === feature
+            (f) => f.properties?.featureType === feature
           ) ?? [],
         }
       : geojson;
