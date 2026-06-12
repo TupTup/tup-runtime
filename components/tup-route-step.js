@@ -244,12 +244,15 @@ export function renderRouteStepMarkup({
   const targetClass = type === "target"
     ? " route-step--target"
     : "";
+  const handClass = type === "hand"
+    ? " route-step--hand"
+    : "";
 
   const textHtml = renderStepText(label, text, direction);
   const ariaLabel = escapeHtml(stepAriaLabel(type, label, text, direction));
 
   return `
-    <li class="route-step${toneClass}${emphasisClass}${targetClass}" aria-label="${ariaLabel}">
+    <li class="route-step${toneClass}${emphasisClass}${targetClass}${handClass}" aria-label="${ariaLabel}">
       <div class="route-step-icon-wrap" aria-hidden="true">
         <span class="route-step-icon route-step-icon--${stepType}"></span>
       </div>

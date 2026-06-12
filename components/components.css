@@ -1559,6 +1559,31 @@ tup-bento-layout > tup-map {
   z-index: 1;
 }
 
+.route-step--secret,
+.route-step--hand {
+  background: transparent;
+}
+
+.route-step--secret::before,
+.route-step--hand::before {
+  content: "";
+  grid-column: 1 / -1;
+  grid-row: 1;
+  z-index: 0;
+
+  border-radius: 12px;
+
+  background: #fffbeb;
+}
+
+.route-step--secret .route-step-icon-wrap,
+.route-step--secret .route-step-text,
+.route-step--hand .route-step-icon-wrap,
+.route-step--hand .route-step-text {
+  position: relative;
+  z-index: 1;
+}
+
 .route-step-bold {
   font-weight: 700;
 }
