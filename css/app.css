@@ -449,8 +449,40 @@ tup-navigation-button {
   touch-action: none;
 }
 
-.place-route-reorderable .route-step--reorderable.is-dragging {
+.place-route-reorderable .route-steps.is-reorder-active {
   cursor: grabbing;
+}
+
+.place-route-reorderable .route-step--reorderable.route-step--sortable-chosen:not(.route-step--sortable-ghost) {
+  position: relative;
+  z-index: 2;
+
+  box-shadow:
+    0 10px 28px rgba(17, 24, 39, 0.16),
+    0 2px 8px rgba(17, 24, 39, 0.08);
+
+  cursor: grabbing;
+}
+
+.place-route-reorderable .route-step--sortable-ghost {
+  opacity: 0;
+
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.place-route-reorderable .route-step--sortable-ghost::before {
+  content: none !important;
+}
+
+.place-route-reorderable .route-step--sortable-ghost .route-step-icon-wrap,
+.place-route-reorderable .route-step--sortable-ghost .route-step-text,
+.place-route-reorderable .route-step--sortable-ghost .route-step-reorder-handle {
+  visibility: hidden;
+}
+
+.place-route-reorderable .route-step--sortable-drag {
+  opacity: 1;
 }
 
 .route-step-reorder-handle {
@@ -486,17 +518,6 @@ tup-navigation-button {
     radial-gradient(circle, #9ca3af 1.5px, transparent 2px) 6px 12px / 6px 6px;
 }
 
-.route-step--reorderable.is-dragging {
-  opacity: 0.72;
-}
-
-.route-step--reorderable.is-drop-before {
-  box-shadow: inset 0 2px 0 #2563eb;
-}
-
-.route-step--reorderable.is-drop-after {
-  box-shadow: inset 0 -2px 0 #2563eb;
-}
 
 [data-mode="edit"] tup-place-header .place-header-text::before {
   content: "Nowa droga";

@@ -10,42 +10,8 @@ import { initPlaceViewUi } from "./place-view.js";
 
 const MIN_REORDERABLE_STEPS = 3;
 
-function clampReorderIndex(index, stepsLength) {
-  const min = 1;
-  const max = stepsLength - 2;
-
-  return Math.max(min, Math.min(max, index));
-}
-
-function clampInsertIndex(index, stepsLength) {
-  const min = 1;
-  const max = stepsLength - 1;
-
-  return Math.max(min, Math.min(max, index));
-}
-
-function reorderSteps(steps, fromIndex, toIndex) {
-  if (fromIndex === toIndex) {
-    return steps;
-  }
-
-  const next = [...steps];
-  const [moved] = next.splice(fromIndex, 1);
-  next.splice(toIndex, 0, moved);
-
-  return next;
-}
-
-function resolveDropIndex(list, target, clientY, fallbackIndex) {
-  if (!target) {
-    return fallbackIndex;
-  }
-
-  const targetIndex = [...list.children].indexOf(target);
-  const rect = target.getBoundingClientRect();
-  const insertAfter = clientY >= rect.top + rect.height / 2;
-
-  return insertAfter ? targetIndex + 1 : targetIndex;
+function getSortable() {
+  return window.Sortable;
 }
 
 export function decorateRouteReorderHandles(routeEl) {
@@ -58,13 +24,7 @@ export function decorateRouteReorderHandles(routeEl) {
   const items = [...list.querySelectorAll(":scope > .route-step")];
 
   items.forEach((item, index) => {
-    item.classList.remove(
-      "route-step--fixed",
-      "route-step--reorderable",
-      "is-dragging",
-      "is-drop-before",
-      "is-drop-after",
-    );
+    item.classList.remove("route-step--fixed", "route-step--reorderable");
 
     if (index === 0 || index === items.length - 1) {
       item.classList.add("route-step--fixed");
@@ -85,121 +45,47 @@ export function decorateRouteReorderHandles(routeEl) {
   });
 }
 
-function clearDropMarkers(list) {
-  list.querySelectorAll(".is-drop-before, .is-drop-after").forEach((item) => {
-    item.classList.remove("is-drop-before", "is-drop-after");
-  });
+function destroyRouteSortable(routeEl) {
+  routeEl._sortable?.destroy();
+  routeEl._sortable = null;
 }
 
-function bindReorderInteractions(routeEl, { slug, model }) {
-  if (routeEl.dataset.reorderBound === "true") {
+function bindRouteSortable(routeEl, { slug, model }) {
+  const Sortable = getSortable();
+  const list = routeEl.querySelector(".route-steps");
+
+  if (!Sortable || !list) {
     return;
   }
 
-  routeEl.dataset.reorderBound = "true";
+  destroyRouteSortable(routeEl);
 
-  let active = null;
+  routeEl._sortable = Sortable.create(list, {
+    animation: 280,
+    easing: "cubic-bezier(0.2, 0, 0, 1)",
+    draggable: ".route-step--reorderable",
+    filter: "button, a, input, textarea",
+    preventOnFilter: true,
+    ghostClass: "route-step--sortable-ghost",
+    chosenClass: "route-step--sortable-chosen",
+    dragClass: "route-step--sortable-drag",
+    onStart() {
+      list.classList.add("is-reorder-active");
+    },
+    onEnd(event) {
+      list.classList.remove("is-reorder-active");
 
-  const finishDrag = () => {
-    if (!active) {
-      return;
-    }
+      if (event.oldIndex === event.newIndex) {
+        return;
+      }
 
-    active.item.classList.remove("is-dragging");
-    clearDropMarkers(active.list);
-    active = null;
-  };
-
-  const applyReorder = (fromIndex, toIndex) => {
-    const boundedFrom = clampReorderIndex(fromIndex, model.steps.length);
-    let boundedTo = clampInsertIndex(toIndex, model.steps.length);
-
-    if (boundedFrom < boundedTo) {
-      boundedTo -= 1;
-    }
-
-    if (boundedFrom === boundedTo) {
-      return;
-    }
-
-    model.steps = reorderSteps(model.steps, boundedFrom, boundedTo);
-    saveDraft(slug, model);
-    routeEl.setSteps(model.steps);
-    decorateRouteReorderHandles(routeEl);
-  };
-
-  routeEl.addEventListener("pointerdown", (event) => {
-    if (event.button !== 0) {
-      return;
-    }
-
-    const list = routeEl.querySelector(".route-steps");
-    const item = event.target.closest(".route-step--reorderable");
-
-    if (!list || !item) {
-      return;
-    }
-
-    if (event.target.closest("button, a, input, textarea")) {
-      return;
-    }
-
-    event.preventDefault();
-    item.setPointerCapture(event.pointerId);
-
-    active = {
-      list,
-      item,
-      fromIndex: [...list.children].indexOf(item),
-      pointerId: event.pointerId,
-    };
-
-    item.classList.add("is-dragging");
+      const next = [...model.steps];
+      const [moved] = next.splice(event.oldIndex, 1);
+      next.splice(event.newIndex, 0, moved);
+      model.steps = next;
+      saveDraft(slug, model);
+    },
   });
-
-  routeEl.addEventListener("pointermove", (event) => {
-    if (!active || event.pointerId !== active.pointerId) {
-      return;
-    }
-
-    clearDropMarkers(active.list);
-
-    const target = document
-      .elementFromPoint(event.clientX, event.clientY)
-      ?.closest(".route-step--reorderable");
-
-    if (!target || target === active.item) {
-      return;
-    }
-
-    const rect = target.getBoundingClientRect();
-    target.classList.add(
-      event.clientY < rect.top + rect.height / 2
-        ? "is-drop-before"
-        : "is-drop-after",
-    );
-  });
-
-  const finishPointer = (event) => {
-    if (!active || event.pointerId !== active.pointerId) {
-      return;
-    }
-
-    const target = document
-      .elementFromPoint(event.clientX, event.clientY)
-      ?.closest(".route-step--reorderable");
-
-    const toIndex = clampInsertIndex(
-      resolveDropIndex(active.list, target, event.clientY, active.fromIndex),
-      model.steps.length,
-    );
-
-    applyReorder(active.fromIndex, toIndex);
-    finishDrag();
-  };
-
-  routeEl.addEventListener("pointerup", finishPointer);
-  routeEl.addEventListener("pointercancel", finishDrag);
 }
 
 export function initRouteReorder(routeEl, { slug, model }) {
@@ -211,9 +97,13 @@ export function initRouteReorder(routeEl, { slug, model }) {
     return;
   }
 
+  if (!getSortable()) {
+    return;
+  }
+
   routeEl.classList.add("place-route-reorderable");
   decorateRouteReorderHandles(routeEl);
-  bindReorderInteractions(routeEl, { slug, model });
+  bindRouteSortable(routeEl, { slug, model });
 }
 
 export function initPlaceRouteEditUi() {
