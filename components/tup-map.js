@@ -28,7 +28,7 @@ const MAP_STYLE = {
 
 class TupMap extends HTMLElement {
 
-  static observedAttributes = ["src", "feature"];
+  static observedAttributes = ["src", "feature", "pickup-lat", "pickup-lng"];
 
   #map = null;
   #container = null;
@@ -55,7 +55,12 @@ class TupMap extends HTMLElement {
     this.#data = null;
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback(name) {
+    if (name === "pickup-lat" || name === "pickup-lng") {
+      this.#applySavedPickup();
+      return;
+    }
+
     if (this.#map) {
       this.#loadIntoMap(this.#map, { animate: false });
     }
@@ -87,8 +92,21 @@ class TupMap extends HTMLElement {
     this.#map.once("load", () => this.#loadIntoMap(this.#map, { animate: false, iconSize: 0.7 }));
   }
 
-  #updatePickupCoords(lng, lat) {
+  #updatePickupCoords(lng, lat, { silent = false } = {}) {
     if (!this.#data) return;
+
+    const pickup = this.#data.features?.find(
+      (f) => f.properties?.featureType === "pickup"
+    );
+    const current = pickup?.geometry?.coordinates;
+
+    if (
+      current &&
+      Math.abs(current[0] - lng) < 1e-7 &&
+      Math.abs(current[1] - lat) < 1e-7
+    ) {
+      return;
+    }
 
     const updated = {
       ...this.#data,
@@ -103,11 +121,32 @@ class TupMap extends HTMLElement {
     this.#map?.getSource("data")?.setData(updated);
     this.#lightboxMap?.getSource("data")?.setData(updated);
 
-    this.dispatchEvent(new CustomEvent("tup-map-pickup-change", {
-      bubbles: true,
-      composed: true,
-      detail: { lng, lat },
-    }));
+    if (!silent) {
+      this.dispatchEvent(new CustomEvent("tup-map-pickup-change", {
+        bubbles: true,
+        composed: true,
+        detail: { lng, lat },
+      }));
+    }
+  }
+
+  #applySavedPickup() {
+    const lat = this.getAttribute("pickup-lat");
+    const lng = this.getAttribute("pickup-lng");
+
+    if (lat === null || lng === null || !this.#data) {
+      return;
+    }
+
+    const latNum = Number(lat);
+    const lngNum = Number(lng);
+
+    if (!Number.isFinite(latNum) || !Number.isFinite(lngNum)) {
+      return;
+    }
+
+    const [clng, clat] = this.#clampToBuilding(lngNum, latNum);
+    this.#updatePickupCoords(clng, clat, { silent: true });
   }
 
   #openLightbox() {
@@ -173,7 +212,7 @@ class TupMap extends HTMLElement {
       mapBody.appendChild(hint);
     }
 
-    dialog.append(closeBtn, mapBody);
+    dialog.append(mapBody);
     document.body.appendChild(dialog);
 
     this.#lightboxDialog = dialog;
@@ -187,6 +226,8 @@ class TupMap extends HTMLElement {
       attributionControl: { compact: true },
       interactive: true,
     });
+
+    mapBody.appendChild(closeBtn);
 
     this.#lightboxMap = lightboxMap;
     lightboxMap.addControl(new maplibregl.NavigationControl(), "top-right");
@@ -284,6 +325,8 @@ class TupMap extends HTMLElement {
     if (fit && bounds) {
       map.fitBounds(bounds, { padding, maxZoom: 17, animate });
     }
+
+    this.#applySavedPickup();
   }
 
   async #addLayersTo(map, { editPicker = false, iconSize = 1.0 } = {}) {

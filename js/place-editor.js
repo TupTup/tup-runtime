@@ -238,7 +238,16 @@ export function initPlaceEditorUi() {
   initPhotoEditing(content, { slug, model });
 
   content.addEventListener("tup-map-pickup-change", (event) => {
-    model.pickup = { lat: event.detail.lat, lng: event.detail.lng };
+    const { lat, lng } = event.detail;
+    model.pickup = { lat, lng };
+
+    const map = content.querySelector("tup-map");
+
+    if (map) {
+      map.setAttribute("pickup-lat", String(lat));
+      map.setAttribute("pickup-lng", String(lng));
+    }
+
     saveDraft(slug, model);
   });
 }

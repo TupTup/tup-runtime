@@ -107,6 +107,7 @@ export function readPlaceFromDom(placeRoot = findPlaceRoot()) {
         : undefined,
     routeDescription: stepsToDescription(steps),
     steps,
+    pickup: readMapPickup(content.querySelector("tup-map")),
   };
 }
 
@@ -174,6 +175,37 @@ function applyPhotoModel(photo, model) {
   setOptionalAttr(photo, "alt", model.alt);
   setOptionalAttr(photo, "caption", model.caption);
   setOptionalAttr(photo, "fallback-src", model.fallbackSrc);
+}
+
+function readMapPickup(map) {
+  if (!map) {
+    return undefined;
+  }
+
+  const lat = readOptionalAttr(map, "pickup-lat");
+  const lng = readOptionalAttr(map, "pickup-lng");
+
+  if (lat === undefined || lng === undefined) {
+    return undefined;
+  }
+
+  return { lat, lng };
+}
+
+function applyMapModel(map, pickup) {
+  if (!map || !pickup) {
+    return;
+  }
+
+  const lat = pickup.lat;
+  const lng = pickup.lng;
+
+  if (lat === undefined || lat === null || lng === undefined || lng === null) {
+    return;
+  }
+
+  setOptionalAttr(map, "pickup-lat", String(lat));
+  setOptionalAttr(map, "pickup-lng", String(lng));
 }
 
 function applyPhotosModel(content, photo, bentoPhotos) {
@@ -245,6 +277,7 @@ export function applyPlaceToDom(placeRoot, model, { includeRoute = true } = {}) 
 
   applyHeaderModel(content.querySelector("tup-place-header"), model.header);
   applyPhotosModel(content, model.photo, model.bentoPhotos);
+  applyMapModel(content.querySelector("tup-map"), model.pickup);
 
   if (includeRoute) {
     applyStepsModel(content.querySelector("tup-route"), model.steps);
