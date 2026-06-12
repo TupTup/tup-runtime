@@ -145,30 +145,30 @@ class TupMap extends HTMLElement {
     });
 
     if (editMode) {
-      let snapping = false;
+      let jumping = false;
 
       lightboxMap.on("movestart", () => {
-        if (!snapping) mapBody.classList.add("is-dragging");
+        if (!jumping) mapBody.classList.add("is-dragging");
       });
 
       lightboxMap.on("moveend", () => {
         mapBody.classList.remove("is-dragging");
 
-        if (snapping) {
-          snapping = false;
+        if (jumping) {
+          jumping = false;
           return;
         }
 
         const { lng, lat } = lightboxMap.getCenter();
         const [clampedLng, clampedLat] = this.#clampToBuilding(lng, lat);
 
-        const moved =
+        const outside =
           Math.abs(clampedLng - lng) > 1e-8 ||
           Math.abs(clampedLat - lat) > 1e-8;
 
-        if (moved) {
-          snapping = true;
-          lightboxMap.easeTo({ center: [clampedLng, clampedLat], duration: 200 });
+        if (outside) {
+          jumping = true;
+          lightboxMap.jumpTo({ center: [clampedLng, clampedLat] });
         }
 
         this.#updatePickupCoords(clampedLng, clampedLat);
