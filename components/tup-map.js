@@ -31,6 +31,9 @@ class TupMap extends HTMLElement {
   #map = null;
   #container = null;
   #data = null;
+  #lightboxDialog = null;
+  #lightboxMap = null;
+  #lightboxBody = null;
 
   connectedCallback() {
     if (!this.#map) {
@@ -39,6 +42,11 @@ class TupMap extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this.#lightboxMap?.remove();
+    this.#lightboxMap = null;
+    this.#lightboxDialog?.remove();
+    this.#lightboxDialog = null;
+    this.#lightboxBody = null;
     this.#map?.remove();
     this.#map = null;
     this.#container = null;
@@ -90,7 +98,8 @@ class TupMap extends HTMLElement {
     };
 
     this.#data = updated;
-    this.#map.getSource("data")?.setData(updated);
+    this.#map?.getSource("data")?.setData(updated);
+    this.#lightboxMap?.getSource("data")?.setData(updated);
 
     this.dispatchEvent(new CustomEvent("tup-map-pickup-change", {
       bubbles: true,
@@ -100,6 +109,31 @@ class TupMap extends HTMLElement {
   }
 
   #openLightbox() {
+    if (!this.#lightboxDialog) {
+      this.#createLightbox();
+    }
+
+    this.#lightboxDialog.showModal();
+
+    requestAnimationFrame(() => {
+      this.#lightboxMap?.resize();
+      this.#refitLightbox();
+    });
+  }
+
+  #refitLightbox() {
+    if (!this.#lightboxMap || !this.#data || !this.#lightboxBody) return;
+
+    const bounds = this.#computeBounds(this.#data);
+    if (!bounds) return;
+
+    const padding = Math.round(
+      Math.min(this.#lightboxBody.offsetWidth, this.#lightboxBody.offsetHeight) * 0.25
+    );
+    this.#lightboxMap.fitBounds(bounds, { padding, maxZoom: 17, animate: false });
+  }
+
+  #createLightbox() {
     const editMode = this.#isEditMode();
 
     const dialog = document.createElement("dialog");
@@ -129,19 +163,30 @@ class TupMap extends HTMLElement {
 
     dialog.append(closeBtn, mapBody);
     document.body.appendChild(dialog);
-    dialog.showModal();
+
+    this.#lightboxDialog = dialog;
+    this.#lightboxBody = mapBody;
 
     const lightboxMap = new maplibregl.Map({
       container: mapBody,
       style: MAP_STYLE,
+      center: this.#map?.getCenter() ?? [21.0, 52.2],
+      zoom: this.#map?.getZoom() ?? 15,
       attributionControl: { compact: true },
       interactive: true,
     });
 
+    this.#lightboxMap = lightboxMap;
     lightboxMap.addControl(new maplibregl.NavigationControl(), "top-right");
+
     lightboxMap.once("load", () => {
-      const padding = Math.round(Math.min(mapBody.offsetWidth, mapBody.offsetHeight) * 0.25);
-      this.#loadIntoMap(lightboxMap, { animate: false, editPicker: editMode, iconSize: 1.2, padding });
+      this.#loadIntoMap(lightboxMap, {
+        animate: false,
+        editPicker: editMode,
+        iconSize: 1.2,
+        fit: false,
+      });
+      requestAnimationFrame(() => this.#refitLightbox());
     });
 
     if (editMode) {
@@ -150,11 +195,7 @@ class TupMap extends HTMLElement {
       lightboxMap.on("move", () => {
         const { lng, lat } = lightboxMap.getCenter();
         const [clampedLng, clampedLat] = this.#clampToBuilding(lng, lat);
-
-        if (
-          Math.abs(clampedLng - lng) > 1e-8 ||
-          Math.abs(clampedLat - lat) > 1e-8
-        ) {
+        if (Math.abs(clampedLng - lng) > 1e-8 || Math.abs(clampedLat - lat) > 1e-8) {
           lightboxMap.setCenter([clampedLng, clampedLat]);
         }
       });
@@ -165,20 +206,15 @@ class TupMap extends HTMLElement {
         this.#updatePickupCoords(lng, lat);
       });
     }
-    const close = () => {
-      dialog.close();
-      lightboxMap.remove();
-      dialog.remove();
-    };
 
+    const close = () => dialog.close();
     closeBtn.addEventListener("click", close);
-
     dialog.addEventListener("click", (event) => {
       if (event.target === dialog) close();
     });
   }
 
-  async #loadIntoMap(map, { animate = true, editPicker = false, iconSize = 1.0, padding = 40 } = {}) {
+  async #loadIntoMap(map, { animate = true, editPicker = false, iconSize = 1.0, padding = 40, fit = true } = {}) {
     const src = this.getAttribute("src");
 
     if (!src || !map) {
@@ -217,7 +253,7 @@ class TupMap extends HTMLElement {
 
     const bounds = this.#computeBounds(data);
 
-    if (bounds) {
+    if (fit && bounds) {
       map.fitBounds(bounds, { padding, maxZoom: 17, animate });
     }
   }
