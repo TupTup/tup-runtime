@@ -1302,17 +1302,12 @@ tup-bento-layout > tup-map {
   background-image: url("images/icons/key.svg");
 }
 
-.route-step-icon--elevator::before {
-  background-image: url("images/icons/elevator-up.svg");
-}
-
 .route-step .route-step-icon--start::before,
 .route-step .route-step-icon--left::before,
 .route-step .route-step-icon--right::before,
 .route-step .route-step-icon--forward::before,
 .route-step .route-step-icon--straight::before,
-.route-step .route-step-icon--floor-up::before,
-.route-step .route-step-icon--floor-down::before {
+.route-step .route-step-icon--floor::before {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1350,19 +1345,16 @@ tup-bento-layout > tup-map {
   content: "↑";
 }
 
-.route-step .route-step-icon--floor-up::before {
-  content: "";
-
-  width: 7px;
-  height: 7px;
-
-  border-radius: 50%;
-  background: currentColor;
+.route-step-icon--floor {
+  gap: 2px;
 }
 
-.route-step .route-step-icon--floor-down::before {
-  content: "⇣";
-  transform: translateY(-1px);
+.route-step .route-step-icon--floor::before {
+  content: "↑";
+}
+
+.route-step .route-step-icon--floor::after {
+  content: "↓";
 }
 
 .route-step-icon--target::before {

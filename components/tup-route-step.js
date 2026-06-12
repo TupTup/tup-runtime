@@ -38,9 +38,7 @@ const STEP_TYPE_LABELS = {
   right: "Skręć w prawo",
   forward: "Idź prosto",
   straight: "Idź prosto",
-  "floor-up": "Piętro wyżej",
-  "floor-down": "Piętro niżej",
-  elevator: "Piętro",
+  floor: "Zmiana piętra",
   key: "Kod",
 };
 

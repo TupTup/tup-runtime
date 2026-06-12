@@ -203,16 +203,26 @@ class TupMap extends HTMLElement {
     });
 
     if (editMode) {
+      let lastValidCenter = null;
+
       lightboxMap.on("movestart", () => mapBody.classList.add("is-dragging"));
 
       lightboxMap.on("move", (e) => {
         const { lng, lat } = lightboxMap.getCenter();
-        const [clampedLng, clampedLat] = this.#clampToBuilding(lng, lat);
-        if (Math.abs(clampedLng - lng) > 1e-8 || Math.abs(clampedLat - lat) > 1e-8) {
-          lightboxMap.setCenter([clampedLng, clampedLat]);
-        }
-        if (e.originalEvent) {
-          this.#updatePickupCoords(clampedLng, clampedLat);
+        const pt = point([lng, lat]);
+        const building = this.#data?.features?.find(
+          (f) => f.properties?.featureType === "building"
+        );
+
+        if (building && !booleanPointInPolygon(pt, building)) {
+          if (lastValidCenter) {
+            lightboxMap.setCenter(lastValidCenter);
+          }
+        } else {
+          lastValidCenter = [lng, lat];
+          if (e.originalEvent) {
+            this.#updatePickupCoords(lng, lat);
+          }
         }
       });
 
