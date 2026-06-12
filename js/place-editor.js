@@ -235,6 +235,11 @@ export function initPlaceEditorUi() {
   }
 
   addPhotoEditButton(content.querySelector("tup-place-photo"), { slug, model });
+
+  content.addEventListener("tup-map-pickup-change", (event) => {
+    model.pickup = { lat: event.detail.lat, lng: event.detail.lng };
+    saveDraft(slug, model);
+  });
 }
 
 function addPhotoEditButton(photo, { slug, model }) {
