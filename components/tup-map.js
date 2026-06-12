@@ -2,6 +2,8 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import nearestPointOnLine from "@turf/nearest-point-on-line";
+import destination from "@turf/destination";
+import bearing from "@turf/bearing";
 import { point, lineString } from "@turf/helpers";
 import { defineCustomElement } from "./define-custom-element.js";
 
@@ -368,8 +370,22 @@ class TupMap extends HTMLElement {
 
     const ring = building.geometry.coordinates[0];
     const nearest = nearestPointOnLine(lineString(ring), pt);
+    const nearestCoords = nearest.geometry.coordinates;
 
-    return nearest.geometry.coordinates;
+    const centroid = this.#getPolygonCentroid(ring);
+    const dir = bearing(point(nearestCoords), point(centroid));
+    const buffered = destination(point(nearestCoords), 0.00005, dir);
+
+    return buffered.geometry.coordinates;
+  }
+
+  #getPolygonCentroid(ring) {
+    let x = 0, y = 0;
+    for (const [lon, lat] of ring) {
+      x += lon;
+      y += lat;
+    }
+    return [x / ring.length, y / ring.length];
   }
 
   #computeBounds(geojson) {
