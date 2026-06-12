@@ -142,11 +142,36 @@ class TupMap extends HTMLElement {
     });
 
     if (editMode) {
-      lightboxMap.on("movestart", () => mapBody.classList.add("is-dragging"));
+      let snapping = false;
+
+      lightboxMap.on("movestart", () => {
+        if (!snapping) mapBody.classList.add("is-dragging");
+      });
+
       lightboxMap.on("moveend", () => {
         mapBody.classList.remove("is-dragging");
+
+        if (snapping) {
+          snapping = false;
+          return;
+        }
+
         const { lng, lat } = lightboxMap.getCenter();
-        this.#updatePickupCoords(lng, lat);
+        const ring = this.#buildingRing();
+        const [clampedLng, clampedLat] = ring
+          ? this.#clampToRing(lng, lat, ring)
+          : [lng, lat];
+
+        const moved =
+          Math.abs(clampedLng - lng) > 1e-8 ||
+          Math.abs(clampedLat - lat) > 1e-8;
+
+        if (moved) {
+          snapping = true;
+          lightboxMap.easeTo({ center: [clampedLng, clampedLat], duration: 200 });
+        }
+
+        this.#updatePickupCoords(clampedLng, clampedLat);
       });
     }
     const close = () => {
@@ -285,6 +310,47 @@ class TupMap extends HTMLElement {
     ctx.fill();
 
     map.addImage("pickup-pin", ctx.getImageData(0, 0, W * S, H * S), { pixelRatio: S });
+  }
+
+  #buildingRing() {
+    const f = this.#data?.features?.find(
+      (f) => f.properties?.featureType === "building"
+    );
+    return f?.geometry?.coordinates?.[0] ?? null;
+  }
+
+  #clampToRing(lng, lat, ring) {
+    if (this.#insideRing(lng, lat, ring)) return [lng, lat];
+
+    let minDist = Infinity;
+    let nearest = [lng, lat];
+
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [ax, ay] = ring[j];
+      const [bx, by] = ring[i];
+      const dx = bx - ax, dy = by - ay;
+      const lenSq = dx * dx + dy * dy;
+      const t = lenSq === 0 ? 0 : Math.max(0, Math.min(1,
+        ((lng - ax) * dx + (lat - ay) * dy) / lenSq
+      ));
+      const px = ax + t * dx, py = ay + t * dy;
+      const dist = (px - lng) ** 2 + (py - lat) ** 2;
+      if (dist < minDist) { minDist = dist; nearest = [px, py]; }
+    }
+
+    return nearest;
+  }
+
+  #insideRing(lng, lat, ring) {
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [xi, yi] = ring[i], [xj, yj] = ring[j];
+      if ((yi > lat) !== (yj > lat) &&
+          lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) {
+        inside = !inside;
+      }
+    }
+    return inside;
   }
 
   #computeBounds(geojson) {
