@@ -142,7 +142,7 @@ class TupMap extends HTMLElement {
       existing.setData(data);
     } else {
       map.addSource("data", { type: "geojson", data });
-      this.#addLayersTo(map);
+      await this.#addLayersTo(map);
     }
 
     const bounds = this.#computeBounds(data);
@@ -152,7 +152,7 @@ class TupMap extends HTMLElement {
     }
   }
 
-  #addLayersTo(map) {
+  async #addLayersTo(map) {
     map.addLayer({
       id: "polygons-fill",
       type: "fill",
@@ -177,17 +177,42 @@ class TupMap extends HTMLElement {
       paint: { "line-color": "#3b82f6", "line-width": 3 },
     });
 
+    await this.#loadPinIcon(map);
+
     map.addLayer({
-      id: "points",
-      type: "circle",
+      id: "pickup-pins",
+      type: "symbol",
       source: "data",
-      filter: ["==", "$type", "Point"],
-      paint: {
-        "circle-radius": 8,
-        "circle-color": "#3b82f6",
-        "circle-stroke-width": 2,
-        "circle-stroke-color": "#fff",
+      filter: ["==", ["get", "featureType"], "pickup"],
+      layout: {
+        "icon-image": "pickup-pin",
+        "icon-anchor": "bottom",
+        "icon-allow-overlap": true,
+        "icon-ignore-placement": true,
+        "icon-size": 1,
       },
+    });
+  }
+
+  #loadPinIcon(map) {
+    return new Promise((resolve) => {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="38" viewBox="0 0 28 38">
+        <path d="M14 1C7.373 1 2 6.373 2 13c0 9.5 12 24 12 24S26 22.5 26 13C26 6.373 20.627 1 14 1z"
+          fill="#3b82f6" stroke="#fff" stroke-width="2"/>
+        <circle cx="14" cy="13" r="5" fill="#fff"/>
+      </svg>`;
+
+      const img = new Image(28, 38);
+
+      img.onload = () => {
+        if (!map.hasImage("pickup-pin")) {
+          map.addImage("pickup-pin", img, { pixelRatio: 2 });
+        }
+        resolve();
+      };
+
+      img.onerror = resolve;
+      img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
     });
   }
 
