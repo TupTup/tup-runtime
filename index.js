@@ -6,6 +6,7 @@ import './js/place-mode.js';
 import './components/tup-place-header.js';
 import './components/tup-place-photo.js';
 import './components/tup-bento-layout.js';
+import './components/tup-map.js';
 import './components/tup-place-summary.js';
 import './components/tup-route-steps.js';
 import './components/tup-navigation-button.js';

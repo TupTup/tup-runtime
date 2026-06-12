@@ -1,0 +1,33 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "feature": "entrance",
+        "name": "Wejście C10"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [21.01155, 52.22955]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "feature": "building",
+        "name": "Budynek C10"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [21.01095, 52.22930],
+          [21.01215, 52.22930],
+          [21.01215, 52.22985],
+          [21.01095, 52.22985],
+          [21.01095, 52.22930]
+        ]]
+      }
+    }
+  ]
+}
