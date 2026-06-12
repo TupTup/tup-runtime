@@ -1319,7 +1319,6 @@ tup-bento-layout > tup-map {
 .route-step .route-step-icon--right::before,
 .route-step .route-step-icon--forward::before,
 .route-step .route-step-icon--straight::before,
-.route-step .route-step-icon--floor::before,
 .route-step .route-step-icon--target::before {
   display: flex;
   align-items: center;
@@ -1360,7 +1359,27 @@ tup-bento-layout > tup-map {
 }
 
 .route-step-icon--floor {
-  gap: 2px;
+  flex-direction: column;
+  gap: 0;
+}
+
+.route-step .route-step-icon--floor::before,
+.route-step .route-step-icon--floor::after {
+  display: block;
+
+  width: auto;
+  height: auto;
+
+  background: none;
+  background-image: none;
+
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 0.9;
+  text-align: center;
+  color: #8a929c;
+
+  filter: none;
 }
 
 .route-step .route-step-icon--floor::before {
@@ -1369,6 +1388,7 @@ tup-bento-layout > tup-map {
 
 .route-step .route-step-icon--floor::after {
   content: "↓";
+  margin-top: -1px;
 }
 
 .route-step--target .route-step-icon {
