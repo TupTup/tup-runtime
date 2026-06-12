@@ -27,6 +27,7 @@ class TupMap extends HTMLElement {
 
   #map = null;
   #container = null;
+  #data = null;
 
   connectedCallback() {
     if (!this.#map) {
@@ -38,6 +39,7 @@ class TupMap extends HTMLElement {
     this.#map?.remove();
     this.#map = null;
     this.#container = null;
+    this.#data = null;
   }
 
   attributeChangedCallback() {
@@ -46,27 +48,79 @@ class TupMap extends HTMLElement {
     }
   }
 
+  #isEditMode() {
+    return document.documentElement.dataset.mode === "edit";
+  }
+
   #init() {
     this.#container = document.createElement("div");
     this.#container.className = "tup-map-container";
     this.appendChild(this.#container);
 
-    const trigger = document.createElement("button");
-    trigger.type = "button";
-    trigger.className = "tup-map-trigger";
-    trigger.setAttribute("aria-label", "Powiększ mapę");
-    this.#container.appendChild(trigger);
+    const editMode = this.#isEditMode();
+
+    if (editMode) {
+      this.#initEditOverlay();
+    } else {
+      const trigger = document.createElement("button");
+      trigger.type = "button";
+      trigger.className = "tup-map-trigger";
+      trigger.setAttribute("aria-label", "Powiększ mapę");
+      this.#container.appendChild(trigger);
+      trigger.addEventListener("click", () => this.#openLightbox());
+    }
 
     this.#map = new maplibregl.Map({
       container: this.#container,
       style: MAP_STYLE,
       attributionControl: false,
-      interactive: false,
+      interactive: editMode,
     });
 
     this.#map.once("load", () => this.#loadIntoMap(this.#map, { animate: false }));
 
-    trigger.addEventListener("click", () => this.#openLightbox());
+    if (editMode) {
+      this.#map.on("movestart", () => this.classList.add("is-dragging"));
+      this.#map.on("moveend", () => {
+        this.classList.remove("is-dragging");
+        const { lng, lat } = this.#map.getCenter();
+        this.#updatePickupCoords(lng, lat);
+      });
+    }
+  }
+
+  #initEditOverlay() {
+    const pin = document.createElement("div");
+    pin.className = "tup-map-edit-pin";
+    pin.setAttribute("aria-hidden", "true");
+    this.#container.appendChild(pin);
+
+    const hint = document.createElement("div");
+    hint.className = "tup-map-edit-hint";
+    hint.textContent = "Przesuń mapę, aby ustawić pozycję";
+    this.#container.appendChild(hint);
+  }
+
+  #updatePickupCoords(lng, lat) {
+    if (!this.#data) return;
+
+    const updated = {
+      ...this.#data,
+      features: this.#data.features.map((f) =>
+        f.properties?.featureType === "pickup"
+          ? { ...f, geometry: { type: "Point", coordinates: [lng, lat] } }
+          : f
+      ),
+    };
+
+    this.#data = updated;
+    this.#map.getSource("data")?.setData(updated);
+
+    this.dispatchEvent(new CustomEvent("tup-map-pickup-change", {
+      bubbles: true,
+      composed: true,
+      detail: { lng, lat },
+    }));
   }
 
   #openLightbox() {
@@ -136,6 +190,8 @@ class TupMap extends HTMLElement {
         }
       : geojson;
 
+    this.#data = data;
+
     const existing = map.getSource("data");
 
     if (existing) {
@@ -181,19 +237,21 @@ class TupMap extends HTMLElement {
 
     await this.#loadPinIcon(map);
 
-    map.addLayer({
-      id: "pickup-pins",
-      type: "symbol",
-      source: "data",
-      filter: ["==", ["get", "featureType"], "pickup"],
-      layout: {
-        "icon-image": "pickup-pin",
-        "icon-anchor": "bottom",
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": true,
-        "icon-size": 1.5,
-      },
-    });
+    if (!this.#isEditMode()) {
+      map.addLayer({
+        id: "pickup-pins",
+        type: "symbol",
+        source: "data",
+        filter: ["==", ["get", "featureType"], "pickup"],
+        layout: {
+          "icon-image": "pickup-pin",
+          "icon-anchor": "bottom",
+          "icon-allow-overlap": true,
+          "icon-ignore-placement": true,
+          "icon-size": 1.5,
+        },
+      });
+    }
   }
 
   #loadPinIcon(map) {
