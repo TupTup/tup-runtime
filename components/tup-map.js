@@ -153,11 +153,13 @@ class TupMap extends HTMLElement {
   }
 
   async #addLayersTo(map) {
+    const notParking = ["!=", ["get", "featureType"], "parking"];
+
     map.addLayer({
       id: "polygons-fill",
       type: "fill",
       source: "data",
-      filter: ["==", "$type", "Polygon"],
+      filter: ["all", ["==", "$type", "Polygon"], notParking],
       paint: { "fill-color": "#3b82f6", "fill-opacity": 0.15 },
     });
 
@@ -165,7 +167,7 @@ class TupMap extends HTMLElement {
       id: "polygons-line",
       type: "line",
       source: "data",
-      filter: ["==", "$type", "Polygon"],
+      filter: ["all", ["==", "$type", "Polygon"], notParking],
       paint: { "line-color": "#3b82f6", "line-width": 2 },
     });
 
