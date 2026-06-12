@@ -160,7 +160,7 @@ class TupMap extends HTMLElement {
       type: "fill",
       source: "data",
       filter: ["all", ["==", "$type", "Polygon"], notParking],
-      paint: { "fill-color": "#3b82f6", "fill-opacity": 0.15 },
+      paint: { "fill-color": "#3b82f6", "fill-opacity": 0.2 },
     });
 
     map.addLayer({
@@ -168,7 +168,7 @@ class TupMap extends HTMLElement {
       type: "line",
       source: "data",
       filter: ["all", ["==", "$type", "Polygon"], notParking],
-      paint: { "line-color": "#3b82f6", "line-width": 2 },
+      paint: { "line-color": "#1e40af", "line-width": 4 },
     });
 
     map.addLayer({
@@ -191,7 +191,7 @@ class TupMap extends HTMLElement {
         "icon-anchor": "bottom",
         "icon-allow-overlap": true,
         "icon-ignore-placement": true,
-        "icon-size": 1,
+        "icon-size": 1.5,
       },
     });
   }
