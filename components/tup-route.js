@@ -16,15 +16,10 @@ function readStepFromElement(step) {
 
 export class TupRoute extends HTMLElement {
 
-  #headingId = null;
   #steps = [];
   #initialized = false;
 
   connectedCallback() {
-    if (!this.#headingId) {
-      this.#headingId = `place-route-heading-${crypto.randomUUID()}`;
-    }
-
     if (!this.#initialized) {
       this.#steps = this.#readStepsFromDom();
       this.#initialized = true;
@@ -63,11 +58,7 @@ export class TupRoute extends HTMLElement {
       .join("");
 
     this.innerHTML = `
-      <section class="place-route-section" aria-labelledby="${this.#headingId}">
-        <h2 id="${this.#headingId}" class="visually-hidden">
-          Trasa
-        </h2>
-
+      <section class="place-route-section" aria-label="Trasa">
         <div class="route-steps-scroll" tabindex="0">
           <ol class="route-steps">
             ${stepsHtml}
