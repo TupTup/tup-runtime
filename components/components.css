@@ -867,8 +867,70 @@ tup-bento-layout > tup-map {
 }
 
 .tup-map-container {
+  position: relative;
+
   width: 100%;
   height: 100%;
+}
+
+.tup-map-trigger {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: zoom-in;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tup-map-lightbox:not([open]) {
+  display: none;
+}
+
+.tup-map-lightbox[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+
+  margin: 0;
+  padding:
+    calc(16px + env(safe-area-inset-top))
+    calc(16px + env(safe-area-inset-right))
+    calc(16px + env(safe-area-inset-bottom))
+    calc(16px + env(safe-area-inset-left));
+
+  border: 0;
+
+  background: transparent;
+
+  overflow: hidden;
+}
+
+.tup-map-lightbox::backdrop {
+  background: rgba(0, 0, 0, 0.92);
+}
+
+.tup-map-lightbox-body {
+  width: 100%;
+  height: 100%;
+
+  border-radius: 16px;
+
+  overflow: hidden;
 }
 
 .place-instructions {

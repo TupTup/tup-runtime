@@ -42,7 +42,7 @@ class TupMap extends HTMLElement {
 
   attributeChangedCallback() {
     if (this.#map) {
-      this.#reloadData();
+      this.#loadIntoMap(this.#map, { animate: false });
     }
   }
 
@@ -51,6 +51,12 @@ class TupMap extends HTMLElement {
     this.#container.className = "tup-map-container";
     this.appendChild(this.#container);
 
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "tup-map-trigger";
+    trigger.setAttribute("aria-label", "Powiększ mapę");
+    this.#container.appendChild(trigger);
+
     this.#map = new maplibregl.Map({
       container: this.#container,
       style: MAP_STYLE,
@@ -58,13 +64,56 @@ class TupMap extends HTMLElement {
       interactive: false,
     });
 
-    this.#map.once("load", () => this.#reloadData());
+    this.#map.once("load", () => this.#loadIntoMap(this.#map, { animate: false }));
+
+    trigger.addEventListener("click", () => this.#openLightbox());
   }
 
-  async #reloadData() {
+  #openLightbox() {
+    const dialog = document.createElement("dialog");
+    dialog.className = "tup-map-lightbox";
+    dialog.setAttribute("aria-label", "Mapa miejsca");
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "hero-lightbox-close";
+    closeBtn.setAttribute("aria-label", "Zamknij");
+    closeBtn.innerHTML = "&times;";
+
+    const mapBody = document.createElement("div");
+    mapBody.className = "tup-map-lightbox-body";
+
+    dialog.append(closeBtn, mapBody);
+    document.body.appendChild(dialog);
+    dialog.showModal();
+
+    const lightboxMap = new maplibregl.Map({
+      container: mapBody,
+      style: MAP_STYLE,
+      attributionControl: { compact: true },
+      interactive: true,
+    });
+
+    lightboxMap.addControl(new maplibregl.NavigationControl(), "top-right");
+    lightboxMap.once("load", () => this.#loadIntoMap(lightboxMap, { animate: false }));
+
+    const close = () => {
+      dialog.close();
+      lightboxMap.remove();
+      dialog.remove();
+    };
+
+    closeBtn.addEventListener("click", close);
+
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) close();
+    });
+  }
+
+  async #loadIntoMap(map, { animate = true } = {}) {
     const src = this.getAttribute("src");
 
-    if (!src || !this.#map) {
+    if (!src || !map) {
       return;
     }
 
@@ -87,24 +136,24 @@ class TupMap extends HTMLElement {
         }
       : geojson;
 
-    const existing = this.#map.getSource("data");
+    const existing = map.getSource("data");
 
     if (existing) {
       existing.setData(data);
     } else {
-      this.#map.addSource("data", { type: "geojson", data });
-      this.#addLayers();
+      map.addSource("data", { type: "geojson", data });
+      this.#addLayersTo(map);
     }
 
     const bounds = this.#computeBounds(data);
 
     if (bounds) {
-      this.#map.fitBounds(bounds, { padding: 40, maxZoom: 17, animate: false });
+      map.fitBounds(bounds, { padding: 40, maxZoom: 17, animate });
     }
   }
 
-  #addLayers() {
-    this.#map.addLayer({
+  #addLayersTo(map) {
+    map.addLayer({
       id: "polygons-fill",
       type: "fill",
       source: "data",
@@ -112,7 +161,7 @@ class TupMap extends HTMLElement {
       paint: { "fill-color": "#3b82f6", "fill-opacity": 0.15 },
     });
 
-    this.#map.addLayer({
+    map.addLayer({
       id: "polygons-line",
       type: "line",
       source: "data",
@@ -120,7 +169,7 @@ class TupMap extends HTMLElement {
       paint: { "line-color": "#3b82f6", "line-width": 2 },
     });
 
-    this.#map.addLayer({
+    map.addLayer({
       id: "lines",
       type: "line",
       source: "data",
@@ -128,7 +177,7 @@ class TupMap extends HTMLElement {
       paint: { "line-color": "#3b82f6", "line-width": 3 },
     });
 
-    this.#map.addLayer({
+    map.addLayer({
       id: "points",
       type: "circle",
       source: "data",
