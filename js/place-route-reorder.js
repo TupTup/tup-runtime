@@ -6,7 +6,6 @@ import {
   loadDraft,
   saveDraft,
 } from "./place-model.js";
-import { initPlaceViewUi } from "./place-view.js";
 
 const MIN_REORDERABLE_STEPS = 3;
 
@@ -14,14 +13,22 @@ function getSortable() {
   return window.Sortable;
 }
 
+function listStepItems(list) {
+  return [...list.querySelectorAll(":scope > .route-step")];
+}
+
+function getRouteList(routeEl) {
+  return routeEl.querySelector(".route-steps");
+}
+
 export function decorateRouteReorderHandles(routeEl) {
-  const list = routeEl?.querySelector(".route-steps");
+  const list = getRouteList(routeEl);
 
   if (!list) {
     return;
   }
 
-  const items = [...list.querySelectorAll(":scope > .route-step")];
+  const items = listStepItems(list);
 
   items.forEach((item, index) => {
     item.classList.remove("route-step--fixed", "route-step--reorderable");
@@ -52,7 +59,7 @@ function destroyRouteSortable(routeEl) {
 
 function bindRouteSortable(routeEl, { slug, model }) {
   const Sortable = getSortable();
-  const list = routeEl.querySelector(".route-steps");
+  const list = getRouteList(routeEl);
 
   if (!Sortable || !list) {
     return;
@@ -63,6 +70,7 @@ function bindRouteSortable(routeEl, { slug, model }) {
   routeEl._sortable = Sortable.create(list, {
     animation: 280,
     easing: "cubic-bezier(0.2, 0, 0, 1)",
+    direction: "vertical",
     draggable: ".route-step--reorderable",
     filter: "button, a, input, textarea",
     preventOnFilter: true,
@@ -84,6 +92,7 @@ function bindRouteSortable(routeEl, { slug, model }) {
       next.splice(event.newIndex, 0, moved);
       model.steps = next;
       saveDraft(slug, model);
+      decorateRouteReorderHandles(routeEl);
     },
   });
 }
@@ -136,6 +145,4 @@ export function initPlaceRouteEditUi() {
   if (navigation) {
     navigation.hidden = true;
   }
-
-  initPlaceViewUi();
 }

@@ -10,7 +10,35 @@ import {
   PUBLISH_SIMULATION_MS,
   simulateActionProgress,
 } from "./place-action-progress.js";
-import { buildPlaceUrl, isFreshDraftPreview } from "./place-mode.js";
+import { buildPlaceUrl } from "./place-mode.js";
+
+function readSearchParams() {
+  return new URLSearchParams(window.location.search);
+}
+
+function isDraftPreviewMode(params = readSearchParams()) {
+  return params.get("draft") === "1";
+}
+
+function buildEditTupUrl(slug) {
+  const draft = loadDraft(slug);
+
+  if (draft?.steps?.length) {
+    return buildPlaceUrl({ mode: "edit", draft: true });
+  }
+
+  return buildPlaceUrl({ mode: "edit" });
+}
+
+function insertActionsBeforeFooter(content, actions) {
+  const footer = content.querySelector("tup-footer");
+
+  if (footer) {
+    footer.insertAdjacentElement("beforebegin", actions);
+  } else {
+    content.append(actions);
+  }
+}
 
 function resetPublishButton(button, fill, label) {
   button.classList.remove("is-generating");
@@ -24,7 +52,39 @@ function resetPublishButton(button, fill, label) {
   button.disabled = false;
 }
 
+export function initPlaceEditActions() {
+  const placeRoot = findPlaceRoot();
+  const content = findPlaceContent(placeRoot);
+
+  if (!placeRoot || !content || content.querySelector(".place-edit-actions")) {
+    return;
+  }
+
+  const slug = getPlaceSlug(placeRoot);
+
+  if (!loadDraft(slug)) {
+    return;
+  }
+
+  const actions = document.createElement("section");
+  actions.className = "place-view-actions place-edit-actions";
+
+  const previewLink = document.createElement("a");
+  previewLink.className = "place-route-compose-preview";
+  previewLink.href = buildPlaceUrl({ mode: "view", draft: true });
+  previewLink.textContent = "Podgląd tupa";
+
+  actions.append(previewLink);
+  insertActionsBeforeFooter(content, actions);
+}
+
 export function initPlaceViewUi() {
+  const params = readSearchParams();
+
+  if (!isDraftPreviewMode(params)) {
+    return;
+  }
+
   const placeRoot = findPlaceRoot();
   const content = findPlaceContent(placeRoot);
 
@@ -34,16 +94,15 @@ export function initPlaceViewUi() {
 
   const slug = getPlaceSlug(placeRoot);
   const draft = loadDraft(slug);
-  const showPublish =
-    isFreshDraftPreview() && Boolean(draft?.steps?.length);
+  const showPublish = Boolean(draft?.steps?.length);
 
   const actions = document.createElement("section");
   actions.className = "place-view-actions";
 
   const editLink = document.createElement("a");
   editLink.className = "place-route-compose-preview";
-  editLink.href = buildPlaceUrl({ mode: "edit" });
-  editLink.textContent = "Edytuj drogę";
+  editLink.href = buildEditTupUrl(slug);
+  editLink.textContent = "Edytuj tupa";
 
   let isPublishing = false;
 
@@ -97,12 +156,5 @@ export function initPlaceViewUi() {
   }
 
   actions.append(editLink);
-
-  const footer = content.querySelector("tup-footer");
-
-  if (footer) {
-    footer.insertAdjacentElement("beforebegin", actions);
-  } else {
-    content.append(actions);
-  }
+  insertActionsBeforeFooter(content, actions);
 }

@@ -163,6 +163,10 @@ export async function initPlaceEditor() {
     return;
   }
 
+  const { initPlaceEditActions } = await import("./place-view.js");
+
+  initPlaceEditActions();
+
   if (isRouteEditMode()) {
     const { initPlaceRouteEditUi } = await import("./place-route-reorder.js");
 

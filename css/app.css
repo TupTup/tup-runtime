@@ -481,10 +481,6 @@ tup-navigation-button {
   visibility: hidden;
 }
 
-.place-route-reorderable .route-step--sortable-drag {
-  opacity: 1;
-}
-
 .route-step-reorder-handle {
   grid-column: 3;
   grid-row: 1;

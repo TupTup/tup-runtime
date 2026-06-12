@@ -1,4 +1,5 @@
-import { a as e, c as t, d as n, f as r, h as i, l as a, m as o, o as s, p as c, s as l, t as u } from "./place-mode-BN0zZslM.js";
+import { a as e, d as t, f as n, i as r, l as i, n as a, o, p as s, r as c, u as l } from "./place-model-DoPGJvCY.js";
+import { t as u } from "./place-mode-BaQIPXtk.js";
 import { n as d, r as f } from "./place-action-progress-Bj517IQQ.js";
 //#region js/place-editor.js
 var p = 500, m = "Wejdź do budynku C10. Poproś ochronę o aktywację windy. Wjedź na 2 piętro. Wprowadź kod 1234. Skręć w lewo. Idź prosto do końca korytarza. Lokal 229 po prawej stronie.";
@@ -15,16 +16,16 @@ function h(e) {
 	}), !window.SpeechRecognition && !window.webkitSpeechRecognition && (t.hidden = !0), t;
 }
 function g() {
-	let c = l(), g = s(c);
-	if (!c || !g) return;
-	let v = t(c), y = e(a(v) || n(c) || {
+	let t = r(), g = c(t);
+	if (!t || !g) return;
+	let v = e(t), y = a(o(v) || i(t) || {
 		id: v,
 		header: {},
 		photo: {},
 		routeDescription: "",
 		steps: []
 	});
-	!y.routeDescription && y.steps?.length && (y.routeDescription = i(y.steps));
+	!y.routeDescription && y.steps?.length && (y.routeDescription = s(y.steps));
 	let b = g.querySelector("tup-route"), x = g.querySelector("tup-navigation-button");
 	b && b.remove(), x && (x.hidden = !0);
 	let S = document.createElement("section");
@@ -40,7 +41,7 @@ function g() {
 	let D = document.createElement("span");
 	D.className = "place-route-compose-counter", D.textContent = `${T.value.length} / ${p}`;
 	let O = () => {
-		D.textContent = `${T.value.length} / ${p}`, y.routeDescription = T.value, r(v, y);
+		D.textContent = `${T.value.length} / ${p}`, y.routeDescription = T.value, l(v, y);
 	};
 	T.addEventListener("input", O);
 	let k = h((e) => {
@@ -51,22 +52,17 @@ function g() {
 	N.className = "place-route-compose-hint", N.textContent = "Im więcej szczegółów, tym lepsze wskazówki.";
 	let P = document.createElement("p");
 	P.className = "place-route-compose-status", P.setAttribute("aria-live", "polite");
-	let F = document.createElement("a");
-	F.className = "place-route-compose-preview", F.href = u({
-		mode: "view",
-		draft: !0
-	}), F.textContent = "Podgląd szkicu", F.hidden = !0;
-	let I = !1;
+	let F = !1;
 	A.addEventListener("click", async () => {
-		if (I) return;
+		if (F) return;
 		let e = T.value.trim();
 		if (!e) {
 			P.textContent = "Wpisz opis trasy, zanim wygenerujesz kroki.";
 			return;
 		}
-		if (I = !0, A.disabled = !0, T.disabled = !0, P.textContent = "", A.classList.add("is-generating"), M.textContent = "Generuję kroki…", j.style.width = "0%", A.setAttribute("aria-busy", "true"), A.setAttribute("aria-valuemin", "0"), A.setAttribute("aria-valuemax", "100"), A.setAttribute("aria-valuenow", "0"), A.setAttribute("aria-label", "Generuję kroki…"), S.dataset.generating = "true", y.steps = [], r(v, y), F.hidden = !0, await f((e) => {
+		if (F = !0, A.disabled = !0, T.disabled = !0, P.textContent = "", A.classList.add("is-generating"), M.textContent = "Generuję kroki…", j.style.width = "0%", A.setAttribute("aria-busy", "true"), A.setAttribute("aria-valuemin", "0"), A.setAttribute("aria-valuemax", "100"), A.setAttribute("aria-valuenow", "0"), A.setAttribute("aria-label", "Generuję kroki…"), S.dataset.generating = "true", y.steps = [], l(v, y), await f((e) => {
 			j.style.width = `${e}%`, A.setAttribute("aria-valuenow", String(e));
-		}), y.routeDescription = e, y.steps = o(e), r(v, y), y.steps.length > 0) {
+		}), y.routeDescription = e, y.steps = n(e), l(v, y), y.steps.length > 0) {
 			window.location.assign(u({
 				mode: "edit",
 				draft: !0,
@@ -74,10 +70,10 @@ function g() {
 			}));
 			return;
 		}
-		A.classList.remove("is-generating"), M.textContent = "Generuj kroki", j.style.width = "0%", A.removeAttribute("aria-busy"), A.removeAttribute("aria-valuemin"), A.removeAttribute("aria-valuemax"), A.removeAttribute("aria-valuenow"), A.removeAttribute("aria-label"), delete S.dataset.generating, A.disabled = !1, T.disabled = !1, I = !1, F.hidden = !0, P.textContent = "Nie udało się wygenerować kroków z tego opisu.";
-	}), S.append(C, w, A, N, P, F);
-	let L = g.querySelector(":scope > tup-bento-layout") ?? g.querySelector(":scope > tup-place-photo");
-	L ? L.insertAdjacentElement("afterend", S) : g.append(S), _(g, {
+		A.classList.remove("is-generating"), M.textContent = "Generuj kroki", j.style.width = "0%", A.removeAttribute("aria-busy"), A.removeAttribute("aria-valuemin"), A.removeAttribute("aria-valuemax"), A.removeAttribute("aria-valuenow"), A.removeAttribute("aria-label"), delete S.dataset.generating, A.disabled = !1, T.disabled = !1, F = !1, P.textContent = "Nie udało się wygenerować kroków z tego opisu.";
+	}), S.append(C, w, A, N, P);
+	let I = g.querySelector(":scope > tup-bento-layout") ?? g.querySelector(":scope > tup-place-photo");
+	I ? I.insertAdjacentElement("afterend", S) : g.append(S), _(g, {
 		slug: v,
 		model: y
 	}), g.addEventListener("tup-map-pickup-change", (e) => {
@@ -86,8 +82,8 @@ function g() {
 			lat: t,
 			lng: n
 		};
-		let i = g.querySelector("tup-map");
-		i && (i.setAttribute("pickup-lat", String(t)), i.setAttribute("pickup-lng", String(n))), r(v, y);
+		let r = g.querySelector("tup-map");
+		r && (r.setAttribute("pickup-lat", String(t)), r.setAttribute("pickup-lng", String(n))), l(v, y);
 	});
 }
 function _(e, { slug: t, model: n }) {
@@ -99,7 +95,7 @@ function _(e, { slug: t, model: n }) {
 		});
 	});
 }
-function v(e, { slug: t, model: n, content: i }) {
+function v(e, { slug: n, model: r, content: i }) {
 	if (!e || e.dataset.photoEditBound === "true") return;
 	e.dataset.photoEditBound = "true";
 	let a = document.createElement("input");
@@ -108,22 +104,22 @@ function v(e, { slug: t, model: n, content: i }) {
 	o.type = "button", o.className = "place-photo-edit-remove", o.setAttribute("aria-label", "Usuń zdjęcie"), o.innerHTML = "&times;";
 	let s = () => {
 		a.value = "", a.click();
-	}, l = () => {
+	}, c = () => {
 		o.hidden = !e.getAttribute("src")?.trim();
 	};
 	e.addEventListener("click", (e) => {
 		e.target.closest(".place-photo-edit-remove") || e.target.closest("[data-photo-add]") && (e.preventDefault(), e.stopImmediatePropagation(), s());
 	}, !0), o.addEventListener("click", (a) => {
-		a.preventDefault(), a.stopPropagation(), e.removeAttribute("src"), l(), c(i, n), r(t, n);
+		a.preventDefault(), a.stopPropagation(), e.removeAttribute("src"), c(), t(i, r), l(n, r);
 	}), a.addEventListener("change", () => {
 		let o = a.files?.[0];
 		if (!o?.type.startsWith("image/")) return;
 		let s = new FileReader();
 		s.addEventListener("load", () => {
 			let a = typeof s.result == "string" ? s.result : "";
-			a && (e.setAttribute("src", a), l(), c(i, n), r(t, n));
+			a && (e.setAttribute("src", a), c(), t(i, r), l(n, r));
 		}), s.readAsDataURL(o);
-	}), e.append(a, o), l();
+	}), e.append(a, o), c();
 }
 //#endregion
 export { g as initPlaceEditorUi };

@@ -151,12 +151,6 @@ export function initPlaceEditorUi() {
   status.className = "place-route-compose-status";
   status.setAttribute("aria-live", "polite");
 
-  const previewLink = document.createElement("a");
-  previewLink.className = "place-route-compose-preview";
-  previewLink.href = buildPlaceUrl({ mode: "view", draft: true });
-  previewLink.textContent = "Podgląd szkicu";
-  previewLink.hidden = true;
-
   let isGenerating = false;
 
   generateButton.addEventListener("click", async () => {
@@ -187,7 +181,6 @@ export function initPlaceEditorUi() {
 
     model.steps = [];
     saveDraft(slug, model);
-    previewLink.hidden = true;
 
     await simulateActionProgress((value) => {
       progressFill.style.width = `${value}%`;
@@ -218,12 +211,10 @@ export function initPlaceEditorUi() {
     textarea.disabled = false;
     isGenerating = false;
 
-    previewLink.hidden = true;
-
     status.textContent = "Nie udało się wygenerować kroków z tego opisu.";
   });
 
-  compose.append(heading, field, generateButton, hint, status, previewLink);
+  compose.append(heading, field, generateButton, hint, status);
 
   const photoAnchor =
     content.querySelector(":scope > tup-bento-layout") ??
