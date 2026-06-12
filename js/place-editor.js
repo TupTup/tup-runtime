@@ -200,7 +200,7 @@ export function initPlaceEditorUi() {
 
     if (model.steps.length > 0) {
       window.location.assign(
-        buildPlaceUrl({ mode: "view", draft: true, fresh: true })
+        buildPlaceUrl({ mode: "edit", draft: true, fresh: true })
       );
       return;
     }

@@ -433,6 +433,68 @@ tup-navigation-button {
   display: none;
 }
 
+[data-mode="edit"] tup-route.place-route-reorderable {
+  display: flex;
+}
+
+.place-route-reorderable .route-step--reorderable {
+  grid-template-columns: 48px minmax(0, 1fr) 40px;
+}
+
+.route-step-reorder-handle {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: center;
+  justify-self: center;
+
+  display: grid;
+  place-items: center;
+
+  width: 32px;
+  height: 32px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  cursor: grab;
+  touch-action: none;
+}
+
+.route-step-reorder-handle:active {
+  cursor: grabbing;
+}
+
+.route-step-reorder-handle::before {
+  content: "";
+
+  width: 12px;
+  height: 18px;
+
+  background:
+    radial-gradient(circle, #9ca3af 1.5px, transparent 2px) 0 0 / 6px 6px,
+    radial-gradient(circle, #9ca3af 1.5px, transparent 2px) 6px 0 / 6px 6px,
+    radial-gradient(circle, #9ca3af 1.5px, transparent 2px) 0 6px / 6px 6px,
+    radial-gradient(circle, #9ca3af 1.5px, transparent 2px) 6px 6px / 6px 6px,
+    radial-gradient(circle, #9ca3af 1.5px, transparent 2px) 0 12px / 6px 6px,
+    radial-gradient(circle, #9ca3af 1.5px, transparent 2px) 6px 12px / 6px 6px;
+}
+
+.route-step--reorderable.is-dragging {
+  opacity: 0.72;
+}
+
+.route-step--reorderable.is-drop-before {
+  box-shadow: inset 0 2px 0 #2563eb;
+}
+
+.route-step--reorderable.is-drop-after {
+  box-shadow: inset 0 -2px 0 #2563eb;
+}
+
 [data-mode="edit"] tup-place-header .place-header-text::before {
   content: "Nowa droga";
 

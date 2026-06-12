@@ -1,4 +1,4 @@
-import { a as e, c as t, d as n, f as r, h as i, l as a, m as o, o as s, p as c, s as l, t as u } from "./place-mode-agz2r2gc.js";
+import { a as e, c as t, d as n, f as r, h as i, l as a, m as o, o as s, p as c, s as l, t as u } from "./place-mode-B4-qNqm1.js";
 import { n as d, r as f } from "./place-action-progress-Bj517IQQ.js";
 //#region js/place-editor.js
 var p = 500, m = "Wejdź do budynku C10. Poproś ochronę o aktywację windy. Wjedź na 2 piętro. Wprowadź kod 1234. Skręć w lewo. Idź prosto do końca korytarza. Lokal 229 po prawej stronie.";
@@ -68,7 +68,7 @@ function g() {
 			j.style.width = `${e}%`, A.setAttribute("aria-valuenow", String(e));
 		}), y.routeDescription = e, y.steps = o(e), r(v, y), y.steps.length > 0) {
 			window.location.assign(u({
-				mode: "view",
+				mode: "edit",
 				draft: !0,
 				fresh: !0
 			}));
@@ -81,10 +81,13 @@ function g() {
 		slug: v,
 		model: y
 	}), g.addEventListener("tup-map-pickup-change", (e) => {
+		let { lat: t, lng: n } = e.detail;
 		y.pickup = {
-			lat: e.detail.lat,
-			lng: e.detail.lng
-		}, r(v, y);
+			lat: t,
+			lng: n
+		};
+		let i = g.querySelector("tup-map");
+		i && (i.setAttribute("pickup-lat", String(t)), i.setAttribute("pickup-lng", String(n))), r(v, y);
 	});
 }
 function _(e, { slug: t, model: n }) {
@@ -105,20 +108,22 @@ function v(e, { slug: t, model: n, content: i }) {
 	o.type = "button", o.className = "place-photo-edit-remove", o.setAttribute("aria-label", "Usuń zdjęcie"), o.innerHTML = "&times;";
 	let s = () => {
 		a.value = "", a.click();
+	}, l = () => {
+		o.hidden = !e.getAttribute("src")?.trim();
 	};
 	e.addEventListener("click", (e) => {
-		e.target.closest(".place-photo-edit-remove") || e.target.closest(".hero-image-trigger") && (e.preventDefault(), e.stopImmediatePropagation(), s());
+		e.target.closest(".place-photo-edit-remove") || e.target.closest("[data-photo-add]") && (e.preventDefault(), e.stopImmediatePropagation(), s());
 	}, !0), o.addEventListener("click", (a) => {
-		a.preventDefault(), a.stopPropagation(), e.removeAttribute("src"), c(i, n), r(t, n);
+		a.preventDefault(), a.stopPropagation(), e.removeAttribute("src"), l(), c(i, n), r(t, n);
 	}), a.addEventListener("change", () => {
 		let o = a.files?.[0];
 		if (!o?.type.startsWith("image/")) return;
 		let s = new FileReader();
 		s.addEventListener("load", () => {
 			let a = typeof s.result == "string" ? s.result : "";
-			a && (e.setAttribute("src", a), c(i, n), r(t, n));
+			a && (e.setAttribute("src", a), l(), c(i, n), r(t, n));
 		}), s.readAsDataURL(o);
-	}), e.append(a, o);
+	}), e.append(a, o), l();
 }
 //#endregion
 export { g as initPlaceEditorUi };

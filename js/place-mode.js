@@ -29,6 +29,17 @@ function resolveUsesDraft(params, mode, slug) {
   return false;
 }
 
+export function isRouteEditMode(params = readSearchParams()) {
+  if (resolveMode(params) !== "edit" || params.get("draft") !== "1") {
+    return false;
+  }
+
+  const placeRoot = findPlaceRoot();
+  const slug = getPlaceSlug(placeRoot);
+
+  return Boolean(loadDraft(slug)?.steps?.length);
+}
+
 function bootstrapPlaceMode() {
   const params = readSearchParams();
   const placeRoot = findPlaceRoot();
@@ -51,7 +62,7 @@ function bootstrapPlaceMode() {
 
     if (draft) {
       applyPlaceToDom(placeRoot, draft, {
-        includeRoute: currentMode !== "edit",
+        includeRoute: currentMode !== "edit" || isRouteEditMode(params),
       });
     }
 
@@ -76,11 +87,7 @@ export function getMode() {
 export function isFreshDraftPreview() {
   const params = readSearchParams();
 
-  return (
-    currentMode === "view" &&
-    params.get("draft") === "1" &&
-    params.get("fresh") === "1"
-  );
+  return params.get("draft") === "1" && params.get("fresh") === "1";
 }
 
 export function buildPlaceUrl({
@@ -93,8 +100,19 @@ export function buildPlaceUrl({
 
   if (mode === "edit") {
     url.searchParams.set("mode", "edit");
-    url.searchParams.delete("draft");
-    url.searchParams.delete("fresh");
+
+    if (draft) {
+      url.searchParams.set("draft", "1");
+    } else {
+      url.searchParams.delete("draft");
+    }
+
+    if (fresh && draft) {
+      url.searchParams.set("fresh", "1");
+    } else {
+      url.searchParams.delete("fresh");
+    }
+
     url.searchParams.delete("published");
   } else {
     url.searchParams.delete("mode");
@@ -142,6 +160,13 @@ export function isPublishedCelebration() {
 
 export async function initPlaceEditor() {
   if (getMode() !== "edit") {
+    return;
+  }
+
+  if (isRouteEditMode()) {
+    const { initPlaceRouteEditUi } = await import("./place-route-reorder.js");
+
+    initPlaceRouteEditUi();
     return;
   }
 
