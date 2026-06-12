@@ -1,7 +1,7 @@
 import { defineCustomElement } from "./define-custom-element.js";
 import { escapeHtml } from "./tup-html.js";
 
-class TupPlaceOverview extends HTMLElement {
+class TupBentoLayout extends HTMLElement {
 
   connectedCallback() {
     this.#render();
@@ -17,7 +17,7 @@ class TupPlaceOverview extends HTMLElement {
     // Keep source photos hidden but in DOM — the shared lightbox finds them via querySelectorAll
     photoEls.forEach((el) => { el.hidden = true; });
 
-    this.querySelector(".place-overview")?.remove();
+    this.querySelector(".bento-layout")?.remove();
 
     if (photoEls.length === 0) {
       this.hidden = true;
@@ -37,7 +37,7 @@ class TupPlaceOverview extends HTMLElement {
     const overflow = photos.length - visible.length;
 
     const grid = document.createElement("div");
-    grid.className = "place-overview";
+    grid.className = "bento-layout";
     grid.setAttribute("role", "list");
     grid.setAttribute("aria-label", "Galeria zdjęć miejsca");
 
@@ -46,19 +46,19 @@ class TupPlaceOverview extends HTMLElement {
       const showOverflow = index === visible.length - 1 && overflow > 0;
 
       return `
-        <div class="overview-item${isFeatured ? " overview-item--featured" : ""}" role="listitem">
+        <div class="bento-item${isFeatured ? " bento-item--featured" : ""}" role="listitem">
           <button
             type="button"
-            class="overview-thumb"
+            class="bento-thumb"
             data-index="${index}"
             aria-label="${escapeHtml(photo.alt ? `Powiększ: ${photo.alt}` : "Powiększ zdjęcie")}"
           >
             <img
-              class="overview-thumb-img"
+              class="bento-thumb-img"
               src="${escapeHtml(photo.src)}"
               alt="${escapeHtml(photo.alt)}"
             />
-            ${showOverflow ? `<span class="overview-overflow" aria-hidden="true">+${overflow}</span>` : ""}
+            ${showOverflow ? `<span class="bento-overflow" aria-hidden="true">+${overflow}</span>` : ""}
           </button>
         </div>
       `;
@@ -73,7 +73,7 @@ class TupPlaceOverview extends HTMLElement {
     photos.forEach((photo, index) => {
       if (!photo.fallbackSrc) return;
 
-      const img = grid.querySelector(`[data-index="${index}"] .overview-thumb-img`);
+      const img = grid.querySelector(`[data-index="${index}"] .bento-thumb-img`);
 
       if (!img) return;
 
@@ -109,4 +109,4 @@ class TupPlaceOverview extends HTMLElement {
   }
 }
 
-defineCustomElement("tup-place-overview", TupPlaceOverview);
+defineCustomElement("tup-bento-layout", TupBentoLayout);

@@ -5,7 +5,7 @@
 tup-place-header,
 tup-badge,
 tup-place-photo,
-tup-place-overview,
+tup-bento-layout,
 tup-place-summary,
 tup-route,
 tup-navigation-button,
@@ -806,7 +806,7 @@ tup-place-photo {
   text-align: center;
 }
 
-tup-place-overview {
+tup-bento-layout {
   position: relative;
   z-index: 1;
 
@@ -817,7 +817,7 @@ tup-place-overview {
   overflow: hidden;
 }
 
-.place-overview {
+.bento-layout {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 6px;
@@ -825,7 +825,7 @@ tup-place-overview {
   background: #e5e7eb;
 }
 
-.overview-item {
+.bento-item {
   position: relative;
 
   border-radius: 4px;
@@ -833,23 +833,23 @@ tup-place-overview {
   overflow: hidden;
 }
 
-.overview-item--featured {
+.bento-item--featured {
   grid-row: span 2;
 
   border-radius: 0;
 }
 
-.overview-item--featured .overview-thumb {
+.bento-item--featured .bento-thumb {
   height: 100%;
 
   aspect-ratio: auto;
 }
 
-.overview-item:not(.overview-item--featured) .overview-thumb {
+.bento-item:not(.bento-item--featured) .bento-thumb {
   aspect-ratio: 1;
 }
 
-.overview-thumb {
+.bento-thumb {
   position: relative;
 
   display: block;
@@ -870,7 +870,7 @@ tup-place-overview {
   -webkit-tap-highlight-color: transparent;
 }
 
-.overview-thumb-img {
+.bento-thumb-img {
   display: block;
 
   width: 100%;
@@ -881,7 +881,7 @@ tup-place-overview {
   transition: opacity 200ms ease;
 }
 
-.overview-overflow {
+.bento-overflow {
   position: absolute;
   inset: 0;
 
