@@ -59,18 +59,77 @@ function inferStepType(sentence, index, total) {
   return matchedType ?? "forward";
 }
 
+const ACCESS_CODE_PATTERN =
+  /\b((?:wprowadź|wpisz|wprowadz)\s+(?:kod|pin)|(?:kod|pin|klawiatura))\s*:?\s*(\S+)/i;
+
+function normalizeAccessCodeStepText(matchedPhrase) {
+  const phrase = matchedPhrase.trim().toLowerCase();
+
+  if (/^(wprowadź|wpisz|wprowadz)\s+(kod|pin)/.test(phrase)) {
+    return phrase.charAt(0).toUpperCase() + phrase.slice(1);
+  }
+
+  if (phrase === "pin") {
+    return "Wprowadź pin";
+  }
+
+  return "Wprowadź kod";
+}
+
+function extractAccessCode(sentence) {
+  const value = String(sentence ?? "").trim();
+  const match = value.match(ACCESS_CODE_PATTERN);
+
+  if (!match) {
+    return { text: value };
+  }
+
+  const code = match[2].replace(/[,;!.…]+$/g, "");
+
+  if (!code) {
+    return { text: value };
+  }
+
+  return {
+    text: normalizeAccessCodeStepText(match[1]),
+    code,
+  };
+}
+
 export function generateStepsFromDescription(text) {
   const sentences = splitSentencesByDots(text);
 
-  return sentences.map((sentence, index) => ({
-    type: inferStepType(sentence, index, sentences.length),
-    text: addBoldMarkers(sentence),
-  }));
+  return sentences.map((sentence, index) => {
+    const { text: stepText, code } = extractAccessCode(sentence);
+    const step = {
+      type: inferStepType(sentence, index, sentences.length),
+      text: addBoldMarkers(stepText),
+    };
+
+    if (code) {
+      step.type = "key";
+      step.code = code;
+    }
+
+    return step;
+  });
 }
 
 export function stepsToDescription(steps) {
   return (steps ?? [])
-    .map((step) => String(step.text ?? "").replace(/\*\*([^*]+)\*\*/g, "$1"))
+    .map((step) => {
+      const plainText = String(step.text ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
+
+      if (!plainText) {
+        return "";
+      }
+
+      if (step.code && !plainText.includes(step.code)) {
+        return `${plainText} ${step.code}`;
+      }
+
+      return plainText;
+    })
     .filter(Boolean)
     .join(". ");
 }
