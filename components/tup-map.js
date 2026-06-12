@@ -233,21 +233,19 @@ class TupMap extends HTMLElement {
 
     this.#loadPinIcon(map);
 
-    if (!this.#isEditMode()) {
-      map.addLayer({
-        id: "pickup-pins",
-        type: "symbol",
-        source: "data",
-        filter: ["==", ["get", "featureType"], "pickup"],
-        layout: {
-          "icon-image": "pickup-pin",
-          "icon-anchor": "bottom",
-          "icon-allow-overlap": true,
-          "icon-ignore-placement": true,
-          "icon-size": 1.5,
-        },
-      });
-    }
+    map.addLayer({
+      id: "pickup-pins",
+      type: "symbol",
+      source: "data",
+      filter: ["==", ["get", "featureType"], "pickup"],
+      layout: {
+        "icon-image": "pickup-pin",
+        "icon-anchor": "bottom",
+        "icon-allow-overlap": true,
+        "icon-ignore-placement": true,
+        "icon-size": 1.5,
+      },
+    });
   }
 
   #loadPinIcon(map) {
