@@ -1313,7 +1313,6 @@ tup-bento-layout > tup-map {
   background-image: url("images/icons/key.svg");
 }
 
-.route-step .route-step-icon--start::before,
 .route-step .route-step-icon--entrance::before,
 .route-step .route-step-icon--left::before,
 .route-step .route-step-icon--right::before,
@@ -1339,7 +1338,38 @@ tup-bento-layout > tup-map {
   filter: none;
 }
 
-.route-step .route-step-icon--start::before,
+.route-step .route-step-icon--start::before {
+  content: "";
+  display: block;
+  box-sizing: border-box;
+
+  width: 18px;
+  height: 18px;
+
+  border: 2px solid #8a929c;
+  border-radius: 50%;
+
+  background: transparent;
+}
+
+.route-step .route-step-icon--start::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #8a929c;
+
+  transform: translate(-50%, -50%);
+}
+
 .route-step .route-step-icon--entrance::before {
   content: "◎";
   font-size: 20px;
