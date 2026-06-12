@@ -562,6 +562,10 @@ tup-place-photo {
   margin-top: -12px;
 }
 
+.place-photo-root {
+  display: contents;
+}
+
 .place-hero-home {
   display: contents;
 }

@@ -32,7 +32,20 @@ class TupPlacePhoto extends HTMLElement {
     return Boolean(this.getAttribute("src")?.trim());
   }
 
+  #ensureRenderRoot() {
+    let root = this.querySelector(":scope > .place-photo-root");
+
+    if (!root) {
+      root = document.createElement("div");
+      root.className = "place-photo-root";
+      this.prepend(root);
+    }
+
+    return root;
+  }
+
   #render() {
+    const root = this.#ensureRenderRoot();
     const src = this.getAttribute("src") ?? "";
     const alt = this.getAttribute("alt") ?? "";
     const caption = this.getAttribute("caption") ?? "";
@@ -40,7 +53,7 @@ class TupPlacePhoto extends HTMLElement {
     const parking = this.hasAttribute("parking");
 
     if (!this.#hasPhoto() && this.#isEditMode()) {
-      this.innerHTML = `
+      root.innerHTML = `
         <div class="place-hero-home">
           <figure class="place-hero">
             <button
@@ -66,7 +79,7 @@ class TupPlacePhoto extends HTMLElement {
       ? `<figcaption class="visually-hidden">${escapeHtml(caption)}</figcaption>`
       : "";
 
-    this.innerHTML = `
+    root.innerHTML = `
       <div class="place-hero-home">
         <figure class="place-hero">
           <button
@@ -116,10 +129,6 @@ class TupPlacePhoto extends HTMLElement {
   }
 
   #bindLightbox() {
-    if (this.#isEditMode()) {
-      return;
-    }
-
     const trigger = this.querySelector("[data-lightbox]");
 
     if (!trigger || trigger.dataset.bound === "true") {

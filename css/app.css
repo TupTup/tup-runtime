@@ -775,7 +775,7 @@ tup-navigation-button {
   cursor: pointer;
 }
 
-[data-mode="edit"] tup-place-photo[src] .place-photo-edit-remove {
+[data-mode="edit"] .place-photo-edit-remove:not([hidden]) {
   display: grid;
 }
 

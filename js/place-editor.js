@@ -283,6 +283,10 @@ function setupPhotoEditing(photo, { slug, model, content }) {
     input.click();
   };
 
+  const syncRemoveButtonVisibility = () => {
+    removeButton.hidden = !photo.getAttribute("src")?.trim();
+  };
+
   photo.addEventListener(
     "click",
     (event) => {
@@ -290,9 +294,7 @@ function setupPhotoEditing(photo, { slug, model, content }) {
         return;
       }
 
-      const trigger = event.target.closest(".hero-image-trigger");
-
-      if (!trigger) {
+      if (!event.target.closest("[data-photo-add]")) {
         return;
       }
 
@@ -307,6 +309,7 @@ function setupPhotoEditing(photo, { slug, model, content }) {
     event.preventDefault();
     event.stopPropagation();
     photo.removeAttribute("src");
+    syncRemoveButtonVisibility();
     syncPhotosFromDom(content, model);
     saveDraft(slug, model);
   });
@@ -328,6 +331,7 @@ function setupPhotoEditing(photo, { slug, model, content }) {
       }
 
       photo.setAttribute("src", src);
+      syncRemoveButtonVisibility();
       syncPhotosFromDom(content, model);
       saveDraft(slug, model);
     });
@@ -336,4 +340,5 @@ function setupPhotoEditing(photo, { slug, model, content }) {
   });
 
   photo.append(input, removeButton);
+  syncRemoveButtonVisibility();
 }
