@@ -933,6 +933,10 @@ tup-bento-layout > tup-map {
   overflow: hidden;
 }
 
+.tup-map-lightbox-body .maplibregl-ctrl-top-right {
+  top: 60px;
+}
+
 .place-instructions {
   margin-top: 20px;
 
