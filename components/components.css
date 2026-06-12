@@ -13,6 +13,10 @@ tup-footer {
   display: block;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .visually-hidden {
   position: absolute;
 
