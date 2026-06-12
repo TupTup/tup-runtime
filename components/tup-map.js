@@ -57,48 +57,21 @@ class TupMap extends HTMLElement {
     this.#container.className = "tup-map-container";
     this.appendChild(this.#container);
 
-    const editMode = this.#isEditMode();
-
-    if (editMode) {
-      this.#initEditOverlay();
-    } else {
-      const trigger = document.createElement("button");
-      trigger.type = "button";
-      trigger.className = "tup-map-trigger";
-      trigger.setAttribute("aria-label", "Powiększ mapę");
-      this.#container.appendChild(trigger);
-      trigger.addEventListener("click", () => this.#openLightbox());
-    }
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "tup-map-trigger";
+    trigger.setAttribute("aria-label", "Powiększ mapę");
+    this.#container.appendChild(trigger);
+    trigger.addEventListener("click", () => this.#openLightbox());
 
     this.#map = new maplibregl.Map({
       container: this.#container,
       style: MAP_STYLE,
       attributionControl: false,
-      interactive: editMode,
+      interactive: false,
     });
 
     this.#map.once("load", () => this.#loadIntoMap(this.#map, { animate: false }));
-
-    if (editMode) {
-      this.#map.on("movestart", () => this.classList.add("is-dragging"));
-      this.#map.on("moveend", () => {
-        this.classList.remove("is-dragging");
-        const { lng, lat } = this.#map.getCenter();
-        this.#updatePickupCoords(lng, lat);
-      });
-    }
-  }
-
-  #initEditOverlay() {
-    const pin = document.createElement("div");
-    pin.className = "tup-map-edit-pin";
-    pin.setAttribute("aria-hidden", "true");
-    this.#container.appendChild(pin);
-
-    const hint = document.createElement("div");
-    hint.className = "tup-map-edit-hint";
-    hint.textContent = "Przesuń mapę, aby ustawić pozycję";
-    this.#container.appendChild(hint);
   }
 
   #updatePickupCoords(lng, lat) {
@@ -124,6 +97,8 @@ class TupMap extends HTMLElement {
   }
 
   #openLightbox() {
+    const editMode = this.#isEditMode();
+
     const dialog = document.createElement("dialog");
     dialog.className = "tup-map-lightbox";
     dialog.setAttribute("aria-label", "Mapa miejsca");
@@ -137,6 +112,18 @@ class TupMap extends HTMLElement {
     const mapBody = document.createElement("div");
     mapBody.className = "tup-map-lightbox-body";
 
+    if (editMode) {
+      const pin = document.createElement("div");
+      pin.className = "tup-map-edit-pin";
+      pin.setAttribute("aria-hidden", "true");
+      mapBody.appendChild(pin);
+
+      const hint = document.createElement("div");
+      hint.className = "tup-map-edit-hint";
+      hint.textContent = "Przesuń mapę, aby ustawić pozycję";
+      mapBody.appendChild(hint);
+    }
+
     dialog.append(closeBtn, mapBody);
     document.body.appendChild(dialog);
     dialog.showModal();
@@ -149,6 +136,15 @@ class TupMap extends HTMLElement {
     });
 
     lightboxMap.addControl(new maplibregl.NavigationControl(), "top-right");
+
+    if (editMode) {
+      lightboxMap.on("movestart", () => mapBody.classList.add("is-dragging"));
+      lightboxMap.on("moveend", () => {
+        mapBody.classList.remove("is-dragging");
+        const { lng, lat } = lightboxMap.getCenter();
+        this.#updatePickupCoords(lng, lat);
+      });
+    }
     lightboxMap.once("load", () => this.#loadIntoMap(lightboxMap, { animate: false }));
 
     const close = () => {
