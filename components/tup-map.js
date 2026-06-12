@@ -209,13 +209,11 @@ class TupMap extends HTMLElement {
         if (Math.abs(clampedLng - lng) > 1e-8 || Math.abs(clampedLat - lat) > 1e-8) {
           lightboxMap.setCenter([clampedLng, clampedLat]);
         }
+        this.#updatePickupCoords(clampedLng, clampedLat);
       });
 
       lightboxMap.on("moveend", (e) => {
         mapBody.classList.remove("is-dragging");
-        if (!e.originalEvent) return;
-        const { lng, lat } = lightboxMap.getCenter();
-        this.#updatePickupCoords(lng, lat);
       });
     }
 
