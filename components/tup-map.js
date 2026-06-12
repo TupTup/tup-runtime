@@ -1,5 +1,8 @@
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
+import nearestPointOnLine from "@turf/nearest-point-on-line";
+import { point, lineString } from "@turf/helpers";
 import { defineCustomElement } from "./define-custom-element.js";
 
 const MAP_STYLE = {
@@ -157,10 +160,7 @@ class TupMap extends HTMLElement {
         }
 
         const { lng, lat } = lightboxMap.getCenter();
-        const ring = this.#buildingRing();
-        const [clampedLng, clampedLat] = ring
-          ? this.#clampToRing(lng, lat, ring)
-          : [lng, lat];
+        const [clampedLng, clampedLat] = this.#clampToBuilding(lng, lat);
 
         const moved =
           Math.abs(clampedLng - lng) > 1e-8 ||
@@ -312,45 +312,21 @@ class TupMap extends HTMLElement {
     map.addImage("pickup-pin", ctx.getImageData(0, 0, W * S, H * S), { pixelRatio: S });
   }
 
-  #buildingRing() {
-    const f = this.#data?.features?.find(
+  #clampToBuilding(lng, lat) {
+    const building = this.#data?.features?.find(
       (f) => f.properties?.featureType === "building"
     );
-    return f?.geometry?.coordinates?.[0] ?? null;
-  }
 
-  #clampToRing(lng, lat, ring) {
-    if (this.#insideRing(lng, lat, ring)) return [lng, lat];
+    if (!building) return [lng, lat];
 
-    let minDist = Infinity;
-    let nearest = [lng, lat];
+    const pt = point([lng, lat]);
 
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      const [ax, ay] = ring[j];
-      const [bx, by] = ring[i];
-      const dx = bx - ax, dy = by - ay;
-      const lenSq = dx * dx + dy * dy;
-      const t = lenSq === 0 ? 0 : Math.max(0, Math.min(1,
-        ((lng - ax) * dx + (lat - ay) * dy) / lenSq
-      ));
-      const px = ax + t * dx, py = ay + t * dy;
-      const dist = (px - lng) ** 2 + (py - lat) ** 2;
-      if (dist < minDist) { minDist = dist; nearest = [px, py]; }
-    }
+    if (booleanPointInPolygon(pt, building)) return [lng, lat];
 
-    return nearest;
-  }
+    const ring = building.geometry.coordinates[0];
+    const nearest = nearestPointOnLine(lineString(ring), pt);
 
-  #insideRing(lng, lat, ring) {
-    let inside = false;
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      const [xi, yi] = ring[i], [xj, yj] = ring[j];
-      if ((yi > lat) !== (yj > lat) &&
-          lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) {
-        inside = !inside;
-      }
-    }
-    return inside;
+    return nearest.geometry.coordinates;
   }
 
   #computeBounds(geojson) {
