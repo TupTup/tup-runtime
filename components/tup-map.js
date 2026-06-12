@@ -159,7 +159,7 @@ class TupMap extends HTMLElement {
       id: "polygons-fill",
       type: "fill",
       source: "data",
-      filter: ["all", ["==", "$type", "Polygon"], notParking],
+      filter: ["all", ["==", ["geometry-type"], "Polygon"], notParking],
       paint: { "fill-color": "#3b82f6", "fill-opacity": 0.2 },
     });
 
@@ -167,7 +167,7 @@ class TupMap extends HTMLElement {
       id: "polygons-line",
       type: "line",
       source: "data",
-      filter: ["all", ["==", "$type", "Polygon"], notParking],
+      filter: ["all", ["==", ["geometry-type"], "Polygon"], notParking],
       paint: { "line-color": "#1e40af", "line-width": 4 },
     });
 
@@ -175,7 +175,7 @@ class TupMap extends HTMLElement {
       id: "lines",
       type: "line",
       source: "data",
-      filter: ["==", "$type", "LineString"],
+      filter: ["==", ["geometry-type"], "LineString"],
       paint: { "line-color": "#3b82f6", "line-width": 3 },
     });
 
