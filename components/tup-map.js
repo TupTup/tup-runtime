@@ -136,7 +136,10 @@ class TupMap extends HTMLElement {
     });
 
     lightboxMap.addControl(new maplibregl.NavigationControl(), "top-right");
-    lightboxMap.once("load", () => this.#loadIntoMap(lightboxMap, { animate: false, editPicker: editMode, iconSize: 1.2 }));
+    lightboxMap.once("load", () => {
+      const padding = Math.round(Math.min(mapBody.offsetWidth, mapBody.offsetHeight) * 0.25);
+      this.#loadIntoMap(lightboxMap, { animate: false, editPicker: editMode, iconSize: 1.2, padding });
+    });
 
     if (editMode) {
       lightboxMap.on("movestart", () => mapBody.classList.add("is-dragging"));
@@ -159,7 +162,7 @@ class TupMap extends HTMLElement {
     });
   }
 
-  async #loadIntoMap(map, { animate = true, editPicker = false, iconSize = 1.0 } = {}) {
+  async #loadIntoMap(map, { animate = true, editPicker = false, iconSize = 1.0, padding = 40 } = {}) {
     const src = this.getAttribute("src");
 
     if (!src || !map) {
@@ -199,7 +202,7 @@ class TupMap extends HTMLElement {
     const bounds = this.#computeBounds(data);
 
     if (bounds) {
-      map.fitBounds(bounds, { padding: 40, maxZoom: 17, animate });
+      map.fitBounds(bounds, { padding, maxZoom: 17, animate });
     }
   }
 
