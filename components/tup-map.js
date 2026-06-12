@@ -2,7 +2,24 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { defineCustomElement } from "./define-custom-element.js";
 
-const MAP_STYLE = "https://demotiles.maplibre.org/style.json";
+const MAP_STYLE = {
+  version: 8,
+  sources: {
+    carto: {
+      type: "raster",
+      tiles: [
+        "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+        "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+        "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+        "https://d.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+      ],
+      tileSize: 256,
+      attribution: "© OpenStreetMap contributors, © CARTO",
+      maxzoom: 20,
+    },
+  },
+  layers: [{ id: "carto-tiles", type: "raster", source: "carto" }],
+};
 
 class TupMap extends HTMLElement {
 
