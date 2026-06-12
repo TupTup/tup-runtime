@@ -168,7 +168,7 @@ class TupMap extends HTMLElement {
       type: "line",
       source: "data",
       filter: ["all", ["==", ["geometry-type"], "Polygon"], notParking],
-      paint: { "line-color": "#1e40af", "line-width": 4 },
+      paint: { "line-color": "#3b82f6", "line-width": 1.5, "line-opacity": 0.7 },
     });
 
     map.addLayer({
