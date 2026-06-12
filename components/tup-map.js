@@ -130,7 +130,7 @@ class TupMap extends HTMLElement {
     const padding = Math.round(
       Math.min(this.#lightboxBody.offsetWidth, this.#lightboxBody.offsetHeight) * 0.25
     );
-    this.#lightboxMap.fitBounds(bounds, { padding, maxZoom: 17, animate: false });
+    this.#lightboxMap.fitBounds(bounds, { padding, maxZoom: 19, animate: false });
   }
 
   #createLightbox() {
